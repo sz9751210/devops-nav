@@ -6,7 +6,7 @@ const resources = {
     en: {
         translation: {
             "app": {
-                "title": "OPS_MATRIX",
+                "title": "OPS_NAV",
                 "dashboard": "Dashboard",
                 "configuration": "Configuration",
                 "environments": "Environments",
@@ -118,7 +118,7 @@ const resources = {
     "zh-TW": {
         translation: {
             "app": {
-                "title": "運維矩陣",
+                "title": "運維導航",
                 "dashboard": "控制面板",
                 "configuration": "系統設定",
                 "environments": "環境管理",
@@ -223,7 +223,7 @@ const resources = {
                 "env_selector": "切換環境選單",
                 "settings": "進入系統設定",
                 "close": "關閉彈窗",
-                "footer": "運維矩陣 v1.0.0 · 為 DevOps 團隊量身打造 ❤️"
+                "footer": "運維導航 v1.0.0 · 為 DevOps 團隊量身打造 ❤️"
             }
         }
     }

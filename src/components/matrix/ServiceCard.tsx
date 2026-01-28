@@ -93,7 +93,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                         <div className="flex items-center gap-2">
                             <div className="font-medium text-[var(--foreground)] text-sm truncate uppercase tracking-tighter">{service.name}</div>
                             {isMaintenance && <Hammer className="w-3 h-3 text-amber-500" />}
-                            {version && <span className="text-[9px] px-1 bg-white/5 border border-white/10 rounded text-slate-500 font-mono">{version}</span>}
+                            {version && <span className="text-[9px] px-1 bg-white/5 border border-white/10 rounded text-[var(--foreground-muted)] font-mono">{version}</span>}
                             {isFavorite && <Star className="w-3 h-3 text-amber-500 fill-amber-500" />}
                         </div>
                     </div>
@@ -109,7 +109,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded"
+                                className="p-1.5 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded"
                                 title={link.name}
                             >
                                 <Icon className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded bg-[var(--surface-hover)] flex items-center justify-center border border-[var(--border)] text-slate-500 font-bold text-sm">
+                    <div className="w-9 h-9 rounded bg-[var(--surface-hover)] flex items-center justify-center border border-[var(--border)] text-[var(--foreground-muted)] font-bold text-sm">
                         {initial}
                     </div>
                     <div className="min-w-0">
@@ -151,7 +151,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                             healthStatus === 'warning' ? "bg-amber-500" : "bg-slate-700"
                             )} />
                         </div>
-                        <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-[140px]" title={service.id}>
+                        <div className="text-[10px] text-[var(--foreground-muted)] font-mono mt-0.5 truncate max-w-[140px]" title={service.id}>
                             {service.id}
                         </div>
                     </div>
@@ -162,7 +162,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                         onClick={() => toggleFavoriteService(service.id)}
                         className={clsx(
                             "p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors",
-                            isFavorite ? "text-amber-500" : "text-slate-600 hover:text-amber-400"
+                            isFavorite ? "text-amber-500" : "text-[var(--foreground-muted)] hover:text-amber-400"
                         )}
                     >
                         <Star className="w-3.5 h-3.5" fill={isFavorite ? "currentColor" : "none"} />
@@ -171,7 +171,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                         <div className="relative">
                             <button
                                 onClick={() => setShowInfo(!showInfo)}
-                                className={clsx("p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors", showInfo ? "text-[var(--foreground)] bg-[var(--surface-hover)]" : "text-slate-600 hover:text-slate-300")}
+                                className={clsx("p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors", showInfo ? "text-[var(--foreground)] bg-[var(--surface-hover)]" : "text-[var(--foreground-muted)] hover:text-slate-300")}
                             >
                                 <Info className="w-3.5 h-3.5" />
                             </button>
@@ -182,10 +182,10 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                         {/* Version & Owner Info */}
                                         <div className="grid grid-cols-2 gap-2 mb-2 pb-2 border-b border-[var(--border)]">
                                             <div className="bg-white/5 p-1.5 rounded border border-white/5">
-                                                <div className="flex items-center gap-1 text-[8px] text-slate-500 uppercase mb-1">
+                                                <div className="flex items-center gap-1 text-[8px] text-[var(--foreground-muted)] uppercase mb-1">
                                                     <Hash className="w-2.5 h-2.5" /> Version
                                                 </div>
-                                                <div className="text-[10px] font-mono text-slate-300">{version || 'N/A'}</div>
+                                                <div className="text-[10px] font-mono text-[var(--foreground)]">{version || 'N/A'}</div>
                                             </div>
                                             <div className="bg-white/5 p-1.5 rounded border border-white/5">
                                                 <div className="flex items-center gap-1 text-[8px] text-slate-500 uppercase mb-1">
@@ -204,13 +204,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
 
                                         {Object.entries(service.metadata || {}).filter(([key]) => key !== 'owner' && key !== 'slack').map(([key, value]) => (
                                             <div key={key} className="group/meta">
-                                                <div className="flex items-center justify-between text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">
+                                                <div className="flex items-center justify-between text-[9px] text-[var(--foreground-muted)] uppercase tracking-wider mb-0.5">
                                                     <span>{key}</span>
-                                                    <button onClick={() => handleCopyMeta(value, key)} className="text-slate-500 hover:text-[var(--foreground)] transition-colors">
+                                                    <button onClick={() => handleCopyMeta(value, key)} className="text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-colors">
                                                         {copiedMeta === key ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                                                     </button>
                                                 </div>
-                                                <div className="text-[11px] text-slate-400 font-mono bg-[var(--surface)] px-2 py-1 rounded border border-[var(--border)] break-all">
+                                                <div className="text-[11px] text-[var(--foreground)] font-mono bg-[var(--surface)] px-2 py-1 rounded border border-[var(--border)] break-all">
                                                     {value}
                                                 </div>
                                             </div>
@@ -224,7 +224,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                     <div className="relative">
                         <button
                             onClick={() => setShowBulk(!showBulk)}
-                            className={clsx("p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors", showBulk ? "text-[var(--foreground)] bg-[var(--surface-hover)]" : "text-slate-600 hover:text-slate-300")}
+                            className={clsx("p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors", showBulk ? "text-[var(--foreground)] bg-[var(--surface-hover)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]")}
                         >
                             <MoreVertical className="w-3.5 h-3.5" />
                         </button>
@@ -265,7 +265,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                 service.tags && service.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                         {service.tags.map(tag => (
-                            <span key={tag} className="px-1.5 py-[2px] text-[9px] font-mono rounded bg-[var(--surface-hover)] text-slate-500 border border-[var(--border)]">
+                            <span key={tag} className="px-1.5 py-[2px] text-[9px] font-mono rounded bg-[var(--surface-hover)] text-[var(--foreground-muted)] border border-[var(--border)]">
                                 #{tag}
                             </span>
                         ))}
@@ -287,8 +287,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                 onClick={() => handleLinkClick(link)}
                                 className="flex items-center gap-2 min-w-0"
                             >
-                                <Icon className="w-3.5 h-3.5 text-slate-500 group-hover/link:text-amber-500 transition-colors" />
-                                <span className="text-xs text-slate-500 group-hover/link:text-[var(--foreground)] truncate font-medium">{link.name}</span>
+                                <Icon className="w-3.5 h-3.5 text-[var(--foreground-muted)] group-hover/link:text-amber-500 transition-colors" />
+                                <span className="text-xs text-[var(--foreground-muted)] group-hover/link:text-[var(--foreground)] truncate font-medium">{link.name}</span>
                             </a>
                             <button onClick={(e) => handleCopyLink(e, link)} className="text-slate-700 hover:text-slate-400 opacity-0 group-hover/link:opacity-100 transition-all">
                                 {copiedId === link.id ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}

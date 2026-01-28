@@ -157,19 +157,18 @@ function App() {
 
             <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[var(--header-bg)] backdrop-blur-sm border-b border-[var(--border)] flex items-center gap-4 transition-colors">
               <div className="relative flex-1 max-w-md">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 flex items-center justify-center">
-                  <Search className="w-4 h-4" />
+                <div className="relative group">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] group-focus-within:text-amber-500 transition-colors" />
+                  <input
+                    type="text"
+                    placeholder={t('app.search_placeholder')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder:[var(--foreground-muted)] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                  />
                 </div>
-                <input
-                  id="main-search"
-                  type="text"
-                  placeholder={t('app.search_placeholder')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
-                  className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-md pl-9 pr-16 py-1.5 text-sm text-[var(--foreground)] placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all font-mono"
-                />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                   <code className="text-[10px] text-slate-600 border border-white/5 rounded px-1 bg-white/5 font-mono">⌘K</code>
                 </div>

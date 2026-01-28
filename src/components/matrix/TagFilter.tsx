@@ -26,7 +26,7 @@ export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag,
     return (
         <div className="flex flex-col gap-2 p-1">
             <div className="flex items-center justify-between px-2 mb-1">
-                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--foreground-muted)] uppercase tracking-wider">
                     <Tag className="w-3 h-3" />
                     Filter by Tags
                 </div>
@@ -52,10 +52,10 @@ export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag,
                                 "flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium transition-all border",
                                 isSelected
                                     ? "bg-amber-500/10 border-amber-500/50 text-amber-500"
-                                    : "bg-white/5 border-white/5 text-slate-400 hover:border-white/10 hover:text-slate-300"
+                                    : "bg-white/5 border-white/5 text-[var(--foreground-muted)] hover:border-white/10 hover:text-[var(--foreground)]"
                             )}
                         >
-                            <Hash className={clsx("w-2.5 h-2.5", isSelected ? "text-amber-500" : "text-slate-600")} />
+                            <Hash className={clsx("w-2.5 h-2.5", isSelected ? "text-amber-500" : "text-[var(--foreground-muted)] opacity-50")} />
                             {tag}
                         </button>
                     );

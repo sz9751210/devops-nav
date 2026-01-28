@@ -55,13 +55,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
                 "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium transition-colors group border-l-2",
                 currentPage === item.id
                     ? "border-amber-500 bg-white/5 text-[var(--foreground)]"
-                    : "border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]"
+                    : "border-transparent text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/[0.02]"
             )}
             title={collapsed ? t(item.labelKey) : undefined}
         >
             <item.icon className={clsx(
                 "w-4 h-4 shrink-0 transition-colors",
-                currentPage === item.id ? "text-amber-500" : "text-slate-500 group-hover:text-slate-400"
+                currentPage === item.id ? "text-amber-500" : "text-[var(--foreground-muted)] group-hover:text-[var(--foreground)]"
             )} />
             {!collapsed && <span>{t(item.labelKey)}</span>}
         </button>
@@ -107,8 +107,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
                         { label: t('stats.col'), val: config.columns.length }
                     ].map(stat => (
                         <div key={stat.label} className="py-2 bg-[var(--sidebar-bg)] text-center hover:bg-[var(--surface-hover)] transition-colors">
-                            <div className="font-mono text-xs font-medium text-slate-300">{stat.val}</div>
-                            <div className="text-[9px] text-slate-600 uppercase font-semibold tracking-wider italic">{stat.label}</div>
+                            <div className="font-mono text-xs font-medium text-[var(--foreground)]">{stat.val}</div>
+                            <div className="text-[9px] text-[var(--foreground-muted)] uppercase font-semibold tracking-wider italic">{stat.label}</div>
                         </div>
                     ))}
                 </div>
@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
 
                 <div className="space-y-0.5">
                     {!collapsed && (
-                        <div className="px-3 py-1.5 text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">
+                        <div className="px-3 py-1.5 text-[10px] font-bold text-[var(--foreground-muted)] opacity-50 uppercase tracking-widest font-mono">
                             {t('app.configuration')}
                         </div>
                     )}
@@ -162,7 +162,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
             <div className="border-t border-[var(--border)] bg-[var(--sidebar-bg)]">
                 <button
                     onClick={() => setShowHelp(true)}
-                    className="w-full flex items-center gap-3 px-3 py-3 text-slate-500 hover:text-[var(--foreground)] hover:bg-white/5 transition-colors group"
+                    className="w-full flex items-center gap-3 px-3 py-3 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors group"
                 >
                     <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
                     {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
