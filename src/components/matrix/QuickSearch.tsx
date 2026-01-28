@@ -1,181 +1,193 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useMatrixStore } from '../../store/useMatrixStore';
-import { resolveUrl } from '../../lib/urlResolver';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { clsx } from 'clsx';
-import type { ServiceDefinition, ColumnDefinition } from '../../types/schema';
+import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 
-// Helper for fuzzy match could go here, for now using simple includes
+// Get visible links for current environment
+const getVisibleLinks = (links: ServiceLink[] | undefined, env: string): ServiceLink[] => {
+    if (!links) return [];
+    return links.filter(link => {
+        if (!link.environments || link.environments.length === 0) return true;
+        return link.environments.includes(env);
+    });
+};
+
+// Filter and search results
 const filterItems = (
     services: ServiceDefinition[],
     columns: ColumnDefinition[],
     query: string,
     env: string
-): Array<{ service: ServiceDefinition, column?: ColumnDefinition, url?: string }> => {
+): Array<{ service: ServiceDefinition, link?: ServiceLink, column?: ColumnDefinition }> => {
     if (!query) return [];
 
     const lowerQuery = query.toLowerCase();
-    const results: Array<{ service: ServiceDefinition, column?: ColumnDefinition, url?: string }> = [];
-
-    // Match "Service Name" + "Column" logic
-    // e.g. "payment logs"
-
-    // Naive implementation: 
-    // 1. Loop through all cells
+    const results: Array<{ service: ServiceDefinition, link?: ServiceLink, column?: ColumnDefinition }> = [];
 
     services.forEach(svc => {
+        const visibleLinks = getVisibleLinks(svc.links, env);
+
         // If just service matches
         if (svc.name.toLowerCase().includes(lowerQuery) || svc.id.includes(lowerQuery)) {
             results.push({ service: svc });
         }
 
-        columns.forEach(col => {
-            const combined = `${svc.name} ${col.title}`.toLowerCase();
+        // Search through links
+        visibleLinks.forEach(link => {
+            const column = columns.find(c => c.id === link.columnId);
+            const combined = `${svc.name} ${link.name} ${column?.title || ''}`.toLowerCase();
             if (combined.includes(lowerQuery)) {
-                const url = resolveUrl(svc, col, env);
-                if (url) {
-                    results.push({ service: svc, column: col, url });
-                }
+                results.push({ service: svc, link, column });
             }
         });
     });
 
-    // Deduplicate/Sort logic would go here
-    // Return top 10
-    return results.slice(0, 10);
+    // Deduplicate and return top 10
+    const seen = new Set<string>();
+    return results.filter(r => {
+        const key = r.link ? `${r.service.id}-${r.link.id}` : r.service.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }).slice(0, 10);
 };
 
 export const QuickSearch: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const { config, currentEnv } = useMatrixStore();
 
+    const results = useMemo(() => {
+        return filterItems(config.services, config.columns, query, currentEnv);
+    }, [config.services, config.columns, query, currentEnv]);
+
     useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'k' && e.metaKey) {
+        const down = (e: KeyboardEvent) => {
+            // Cmd+K or Ctrl+K opens search
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
                 setIsOpen(prev => !prev);
-                setQuery('');
             }
-            if (e.key === 'Escape') {
+            // Escape closes
+            if (e.key === 'Escape' && isOpen) {
                 setIsOpen(false);
             }
         };
+        window.addEventListener('keydown', down);
+        return () => window.removeEventListener('keydown', down);
+    }, [isOpen]);
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
-    const results = useMemo(() => {
-        if (!config || !query) return [];
-        return filterItems(config.services, config.columns, query, currentEnv);
-    }, [query, config, currentEnv]);
-
-    // Handle arrow keys navigation
     useEffect(() => {
-        const handleNav = (e: KeyboardEvent) => {
-            if (!isOpen) return;
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                setActiveIndex(prev => Math.min(prev + 1, results.length - 1));
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                setActiveIndex(prev => Math.max(prev - 1, 0));
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (results[activeIndex]?.url) {
-                    window.open(results[activeIndex].url, '_blank');
-                    setIsOpen(false);
-                } else if (results[activeIndex]?.service) {
-                    // Maybe verify navigation? For now just close
-                    setIsOpen(false);
-                }
+        setSelectedIndex(0);
+    }, [results]);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSelectedIndex(i => (i + 1) % results.length);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSelectedIndex(i => (i - 1 + results.length) % results.length);
+        } else if (e.key === 'Enter') {
+            const item = results[selectedIndex];
+            if (item?.link?.url) {
+                window.open(item.link.url, '_blank');
+                setIsOpen(false);
+                setQuery('');
             }
-        };
-        window.addEventListener('keydown', handleNav);
-        return () => window.removeEventListener('keydown', handleNav);
-    }, [isOpen, results, activeIndex]);
+        }
+    };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] bg-black/60 backdrop-blur-md transition-all">
-            <div className="w-full max-w-lg bg-slate-900/80 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 ring-1 ring-white/5">
-                <div className="flex items-center px-4 py-4 border-b border-white/5">
-                    <Search className="w-5 h-5 text-indigo-400 mr-3" />
+        <div
+            className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+        >
+            <div
+                className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+                onClick={e => e.stopPropagation()}
+            >
+                {/* Search Input */}
+                <div className="flex items-center gap-3 p-4 border-b border-white/10">
+                    <Search className="w-5 h-5 text-slate-400" />
                     <input
-                        className="flex-1 bg-transparent border-none outline-none text-white placeholder-slate-500 font-medium"
-                        placeholder="Search services or resources..."
+                        type="text"
                         value={query}
-                        onChange={e => {
-                            setQuery(e.target.value);
-                            setActiveIndex(0);
-                        }}
+                        onChange={e => setQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="搜索服務或連結..."
+                        className="flex-1 bg-transparent text-white placeholder-slate-500 text-lg focus:outline-none"
                         autoFocus
                     />
-                    <kbd className="text-[10px] text-slate-400 bg-white/5 px-2 py-1 rounded border border-white/5 font-sans">ESC</kbd>
+                    <kbd className="px-2 py-1 rounded bg-slate-800 text-slate-500 text-xs font-mono">
+                        ESC
+                    </kbd>
                 </div>
 
-                <div className="max-h-[60vh] overflow-y-auto custom-scrollbar p-2">
-                    {results.length === 0 && query && (
-                        <div className="p-8 text-center text-slate-500 text-sm">
-                            No results found.
+                {/* Results */}
+                <div className="max-h-[50vh] overflow-y-auto p-2">
+                    {results.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500">
+                            {query ? '找不到匹配的結果' : '輸入關鍵字搜索...'}
                         </div>
-                    )}
-                    {results.length === 0 && !query && (
-                        <div className="p-8 text-center text-slate-500 text-xs">
-                            Type keywords to jump to a service or resource...
-                        </div>
-                    )}
-
-                    {results.map((result, idx) => (
-                        <div
-                            key={idx}
-                            className={clsx(
-                                "flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all duration-200",
-                                idx === activeIndex
-                                    ? "bg-indigo-500/10 text-white border border-indigo-500/20 shadow-sm"
-                                    : "text-slate-400 border border-transparent hover:bg-white/5"
-                            )}
-                            onClick={() => {
-                                if (result.url) {
-                                    window.open(result.url, '_blank');
-                                    setIsOpen(false);
-                                }
-                            }}
-                            onMouseEnter={() => setActiveIndex(idx)}
-                        >
-                            <div className="flex flex-col gap-0.5">
-                                <span className="font-medium text-sm flex items-center gap-2">
-                                    <span className={clsx(idx === activeIndex ? "text-indigo-300" : "text-slate-300")}>
-                                        {result.service.name}
-                                    </span>
-                                    {result.column && <span className="text-slate-600">/</span>}
-                                    {result.column && result.column.title}
-                                </span>
-                                {result.url && (
-                                    <span className="text-[10px] text-slate-500 truncate max-w-[350px] font-mono opacity-70">{result.url}</span>
+                    ) : (
+                        results.map((item, index) => (
+                            <div
+                                key={item.link ? `${item.service.id}-${item.link.id}` : item.service.id}
+                                className={clsx(
+                                    "flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-colors",
+                                    index === selectedIndex
+                                        ? "bg-amber-500/10 border border-amber-500/30"
+                                        : "hover:bg-white/5"
+                                )}
+                                onMouseEnter={() => setSelectedIndex(index)}
+                                onClick={() => {
+                                    if (item.link?.url) {
+                                        window.open(item.link.url, '_blank');
+                                        setIsOpen(false);
+                                        setQuery('');
+                                    }
+                                }}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="text-amber-400 font-medium">
+                                        {item.service.name}
+                                    </div>
+                                    {item.link && (
+                                        <>
+                                            <ArrowRight className="w-3 h-3 text-slate-600" />
+                                            <div className="text-slate-300 text-sm">
+                                                {item.link.name}
+                                            </div>
+                                            {item.column && (
+                                                <span className="text-xs text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">
+                                                    {item.column.title}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                                {item.link && (
+                                    <ExternalLink className="w-4 h-4 text-slate-500" />
                                 )}
                             </div>
-
-                            {result.url && (
-                                <ArrowRight className={clsx(
-                                    "w-4 h-4 transition-transform duration-200",
-                                    idx === activeIndex ? "text-indigo-400 translate-x-0" : "opacity-0 -translate-x-2"
-                                )} />
-                            )}
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
-                {results.length > 0 && (
-                    <div className="px-4 py-2 bg-white/5 text-[10px] text-slate-500 flex justify-between border-t border-white/5">
-                        <span>Use arrows to navigate</span>
-                        <span>Enter to select</span>
+                {/* Footer */}
+                <div className="flex items-center justify-between p-3 border-t border-white/10 text-xs text-slate-500">
+                    <div className="flex items-center gap-4">
+                        <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 mr-1">↑↓</kbd> 導航</span>
+                        <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 mr-1">Enter</kbd> 打開</span>
                     </div>
-                )}
+                    <span>⌘K 切換搜索</span>
+                </div>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig } from '../types/schema';
+import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig, ServiceLink } from '../types/schema';
 import { api } from '../lib/api';
 import jsyaml from 'js-yaml';
 
@@ -38,6 +38,9 @@ interface MatrixState {
     // Favorites
     toggleFavoriteEnv: (env: Environment) => void;
     isFavoriteEnv: (env: Environment) => boolean;
+    toggleFavoriteService: (serviceId: string) => void;
+    isFavoriteService: (serviceId: string) => boolean;
+    addRecentService: (serviceId: string) => void;
 
     // Column CRUD
     addColumn: (column: ColumnDefinition) => void;
@@ -48,6 +51,11 @@ interface MatrixState {
     addService: (service: ServiceDefinition) => void;
     updateService: (id: string, updates: Partial<ServiceDefinition>) => void;
     removeService: (id: string) => void;
+
+    // Service Link CRUD
+    addServiceLink: (serviceId: string, link: ServiceLink) => void;
+    updateServiceLink: (serviceId: string, linkId: string, updates: Partial<ServiceLink>) => void;
+    removeServiceLink: (serviceId: string, linkId: string) => void;
 
     // Environment Groups
     addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
@@ -222,7 +230,56 @@ export const useMatrixStore = create<MatrixState>()(
             debouncedSave(() => get().saveConfig());
         },
 
-        // Favorites
+        // Service Link CRUD
+        addServiceLink: (serviceId, link) => {
+            const { config } = get();
+            set({
+                config: {
+                    ...config,
+                    services: config.services.map(s =>
+                        s.id === serviceId
+                            ? { ...s, links: [...(s.links || []), link] }
+                            : s
+                    ),
+                },
+            });
+            debouncedSave(() => get().saveConfig());
+        },
+        updateServiceLink: (serviceId, linkId, updates) => {
+            const { config } = get();
+            set({
+                config: {
+                    ...config,
+                    services: config.services.map(s =>
+                        s.id === serviceId
+                            ? {
+                                ...s,
+                                links: (s.links || []).map(link =>
+                                    link.id === linkId ? { ...link, ...updates } : link
+                                )
+                            }
+                            : s
+                    ),
+                },
+            });
+            debouncedSave(() => get().saveConfig());
+        },
+        removeServiceLink: (serviceId, linkId) => {
+            const { config } = get();
+            set({
+                config: {
+                    ...config,
+                    services: config.services.map(s =>
+                        s.id === serviceId
+                            ? { ...s, links: (s.links || []).filter(link => link.id !== linkId) }
+                            : s
+                    ),
+                },
+            });
+            debouncedSave(() => get().saveConfig());
+        },
+
+        // Favorites - Environments
         toggleFavoriteEnv: (env) => {
             const { config } = get();
             const favorites = config.favoriteEnvs || [];
@@ -232,10 +289,31 @@ export const useMatrixStore = create<MatrixState>()(
             set({ config: { ...config, favoriteEnvs: newFavorites } });
             debouncedSave(() => get().saveConfig());
         },
-
         isFavoriteEnv: (env) => {
             const { config } = get();
             return (config.favoriteEnvs || []).includes(env);
+        },
+
+        // Favorites - Services
+        toggleFavoriteService: (serviceId) => {
+            const { config } = get();
+            const favorites = config.favoriteServices || [];
+            const newFavorites = favorites.includes(serviceId)
+                ? favorites.filter(id => id !== serviceId)
+                : [...favorites, serviceId];
+            set({ config: { ...config, favoriteServices: newFavorites } });
+            debouncedSave(() => get().saveConfig());
+        },
+        isFavoriteService: (serviceId) => {
+            const { config } = get();
+            return (config.favoriteServices || []).includes(serviceId);
+        },
+        addRecentService: (serviceId) => {
+            const { config } = get();
+            const recent = config.recentServices || [];
+            const newRecent = [serviceId, ...recent.filter(id => id !== serviceId)].slice(0, 8);
+            set({ config: { ...config, recentServices: newRecent } });
+            debouncedSave(() => get().saveConfig());
         },
 
         // Environment Groups
@@ -248,7 +326,6 @@ export const useMatrixStore = create<MatrixState>()(
             set({ config: { ...config, envGroups: [...(config.envGroups || []), newGroup] } });
             debouncedSave(() => get().saveConfig());
         },
-
         removeEnvGroup: (id) => {
             const { config } = get();
             set({ config: { ...config, envGroups: (config.envGroups || []).filter(g => g.id !== id) } });

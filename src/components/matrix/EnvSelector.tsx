@@ -256,21 +256,47 @@ interface EnvItemProps {
     onToggleFavorite: (env: Environment) => void;
 }
 
+// Helper function to get environment color based on type
+function getEnvColor(env: string): { bg: string; border: string; text: string } {
+    const envLower = env.toLowerCase();
+    if (envLower.includes('prod') || envLower.includes('production') || envLower.includes('prd')) {
+        return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' };
+    }
+    if (envLower.includes('staging') || envLower.includes('stg') || envLower.includes('uat')) {
+        return { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400' };
+    }
+    if (envLower.includes('dev') || envLower.includes('development') || envLower.includes('local')) {
+        return { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' };
+    }
+    if (envLower.includes('qa') || envLower.includes('test')) {
+        return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' };
+    }
+    if (envLower.includes('lab')) {
+        return { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' };
+    }
+    return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' };
+}
+
 const EnvItem: React.FC<EnvItemProps> = ({ env, isActive, isFavorite, onSelect, onToggleFavorite }) => {
+    const color = getEnvColor(env);
     return (
         <div
             className={clsx(
                 "flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all group",
                 isActive
-                    ? "bg-indigo-500/10 text-white border border-indigo-500/20"
+                    ? `${color.bg} ${color.text} border ${color.border}`
                     : "text-slate-400 hover:bg-white/5 hover:text-white"
             )}
         >
             <button
                 onClick={() => onSelect(env)}
-                className="flex-1 text-left font-medium text-sm uppercase tracking-wide"
+                className="flex items-center gap-2 flex-1 text-left"
             >
-                {env}
+                <span className={clsx(
+                    "w-2 h-2 rounded-full shrink-0",
+                    color.bg.replace('/10', '')
+                )} />
+                <span className="font-medium text-sm uppercase tracking-wide">{env}</span>
             </button>
             <button
                 onClick={(e) => {

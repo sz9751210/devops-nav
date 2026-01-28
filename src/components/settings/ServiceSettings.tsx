@@ -1,92 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useMatrixStore } from '../../store/useMatrixStore';
-import type { ServiceDefinition } from '../../types/schema';
-import { Plus, Trash2, Server, Pencil, X, Check, Search } from 'lucide-react';
+import type { ServiceDefinition, ServiceLink } from '../../types/schema';
+import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const ServiceSettings: React.FC = () => {
-    const { config, addService, updateService, removeService } = useMatrixStore();
-    const [isAdding, setIsAdding] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [form, setForm] = useState<Partial<ServiceDefinition>>({});
-    const [overrideKey, setOverrideKey] = useState('');
-    const [overrideValue, setOverrideValue] = useState('');
+    const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useMatrixStore();
     const [searchQuery, setSearchQuery] = useState('');
+    const [expandedService, setExpandedService] = useState<string | null>(null);
+    const [isAddingService, setIsAddingService] = useState(false);
+    const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+    const [serviceForm, setServiceForm] = useState<Partial<ServiceDefinition>>({});
 
-    const resetForm = () => {
-        setForm({});
-        setIsAdding(false);
-        setEditingId(null);
-    };
+    // Link editing state
+    const [isAddingLink, setIsAddingLink] = useState<string | null>(null);
+    const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
+    const [linkForm, setLinkForm] = useState<Partial<ServiceLink>>({});
 
-    const handleAdd = () => {
-        if (form.id && form.name) {
-            addService({
-                id: form.id,
-                name: form.name,
-                group: form.group,
-                description: form.description,
-                overrides: form.overrides || {},
-            });
-            resetForm();
-        }
-    };
-
-    const handleUpdate = () => {
-        if (editingId && form.name) {
-            updateService(editingId, form);
-            resetForm();
-        }
-    };
-
-    const startEdit = (svc: ServiceDefinition) => {
-        setEditingId(svc.id);
-        setForm({ ...svc });
-        setIsAdding(false);
-    };
-
-    const addOverride = () => {
-        if (overrideKey && overrideValue) {
-            setForm({
-                ...form,
-                overrides: { ...form.overrides, [overrideKey]: overrideValue }
-            });
-            setOverrideKey('');
-            setOverrideValue('');
-        }
-    };
-
-    const removeOverride = (key: string) => {
-        const newOverrides = { ...form.overrides };
-        delete newOverrides[key];
-        setForm({ ...form, overrides: newOverrides });
-    };
-
-    // Get unique groups
-    const groups = Array.from(new Set(config.services.map(s => s.group).filter(Boolean)));
+    // Get unique groups for suggestions
+    const groups = useMemo(() => {
+        const set = new Set<string>();
+        config.services.forEach(s => { if (s.group) set.add(s.group); });
+        return Array.from(set);
+    }, [config.services]);
 
     // Filter services
-    const filteredServices = config.services.filter(s =>
-        !searchQuery ||
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.id.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredServices = useMemo(() => {
+        if (!searchQuery) return config.services;
+        const q = searchQuery.toLowerCase();
+        return config.services.filter(s =>
+            s.name.toLowerCase().includes(q) ||
+            s.id.toLowerCase().includes(q) ||
+            s.group?.toLowerCase().includes(q)
+        );
+    }, [config.services, searchQuery]);
+
+    // Service form handlers
+    const resetServiceForm = () => {
+        setServiceForm({});
+        setIsAddingService(false);
+        setEditingServiceId(null);
+    };
+
+    const handleAddService = () => {
+        if (serviceForm.id && serviceForm.name) {
+            addService({
+                id: serviceForm.id,
+                name: serviceForm.name,
+                group: serviceForm.group,
+                description: serviceForm.description,
+                links: [],
+            });
+            resetServiceForm();
+            setExpandedService(serviceForm.id);
+        }
+    };
+
+    const handleUpdateService = () => {
+        if (editingServiceId) {
+            updateService(editingServiceId, serviceForm);
+            resetServiceForm();
+        }
+    };
+
+    // Link form handlers
+    const resetLinkForm = () => {
+        setLinkForm({});
+        setIsAddingLink(null);
+        setEditingLinkId(null);
+    };
+
+    const handleAddLink = (serviceId: string) => {
+        if (linkForm.id && linkForm.name && linkForm.url && linkForm.columnId) {
+            addServiceLink(serviceId, {
+                id: linkForm.id,
+                columnId: linkForm.columnId,
+                name: linkForm.name,
+                url: linkForm.url,
+                environments: linkForm.environments,
+            });
+            resetLinkForm();
+        }
+    };
+
+    const handleUpdateLink = (serviceId: string) => {
+        if (editingLinkId) {
+            updateServiceLink(serviceId, editingLinkId, linkForm);
+            resetLinkForm();
+        }
+    };
+
+    const startEditLink = (link: ServiceLink) => {
+        setEditingLinkId(link.id);
+        setLinkForm(link);
+        setIsAddingLink(null);
+    };
 
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Server className="w-5 h-5 text-amber-400" />
+                        <Package className="w-5 h-5 text-amber-400" />
                         服務管理
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">
-                        管理所有服務項目，可依群組分類
+                        定義服務並為每個服務新增連結
                     </p>
                 </div>
-                {!isAdding && !editingId && (
+                {!isAddingService && !editingServiceId && (
                     <button
-                        onClick={() => { setIsAdding(true); setForm({}); }}
+                        onClick={() => { setIsAddingService(true); setServiceForm({}); }}
                         className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
@@ -96,192 +121,315 @@ export const ServiceSettings: React.FC = () => {
             </div>
 
             {/* Search */}
-            {!isAdding && !editingId && config.services.length > 0 && (
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="搜尋服務..."
-                        className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                    />
-                </div>
-            )}
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="搜索服務..."
+                    className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-white/5 rounded-lg text-slate-200 placeholder-slate-500 focus:ring-2 focus:ring-amber-500/50"
+                />
+            </div>
 
-            {/* Add/Edit Form */}
-            {(isAdding || editingId) && (
+            {/* Add/Edit Service Form */}
+            {(isAddingService || editingServiceId) && (
                 <div className="p-4 bg-slate-900/80 border border-amber-500/30 rounded-lg space-y-4">
-                    <h3 className="font-medium text-amber-400">{editingId ? '編輯服務' : '新增服務'}</h3>
+                    <h3 className="font-medium text-amber-400">{editingServiceId ? '編輯服務' : '新增服務'}</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">ID (唯一識別)</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">ID</label>
                             <input
                                 type="text"
-                                value={form.id || ''}
-                                onChange={(e) => setForm({ ...form, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                                disabled={!!editingId}
-                                placeholder="例如: user-service"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50"
+                                value={serviceForm.id || ''}
+                                onChange={(e) => setServiceForm({ ...serviceForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                                disabled={!!editingServiceId}
+                                placeholder="user-service"
+                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 disabled:opacity-50"
                             />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">名稱</label>
                             <input
                                 type="text"
-                                value={form.name || ''}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                placeholder="例如: 用戶服務"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                value={serviceForm.name || ''}
+                                onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
+                                placeholder="User Service"
+                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
                             />
                         </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">群組 (可選)</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">群組</label>
                             <input
                                 type="text"
-                                value={form.group || ''}
-                                onChange={(e) => setForm({ ...form, group: e.target.value })}
-                                placeholder="例如: 核心平台"
-                                list="group-suggestions"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                list="groups"
+                                value={serviceForm.group || ''}
+                                onChange={(e) => setServiceForm({ ...serviceForm, group: e.target.value })}
+                                placeholder="Core Platform"
+                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
                             />
-                            <datalist id="group-suggestions">
+                            <datalist id="groups">
                                 {groups.map(g => <option key={g} value={g} />)}
                             </datalist>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">說明 (可選)</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">描述</label>
                             <input
                                 type="text"
-                                value={form.description || ''}
-                                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                placeholder="服務簡述..."
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                value={serviceForm.description || ''}
+                                onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
+                                placeholder="用戶管理服務"
+                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
                             />
                         </div>
                     </div>
-
-                    {/* Overrides Section */}
-                    <div>
-                        <label className="block text-xs font-medium text-slate-400 mb-2">自訂 URL (覆蓋預設模板)</label>
-                        <div className="space-y-2 mb-2">
-                            {Object.entries(form.overrides || {}).map(([key, value]) => (
-                                <div key={key} className="flex items-center gap-2 text-sm">
-                                    <span className="px-2 py-1 bg-amber-500/10 text-amber-400 rounded text-xs">{key}</span>
-                                    <span className="text-slate-500">→</span>
-                                    <span className="flex-1 text-slate-400 font-mono text-xs truncate">{value}</span>
-                                    <button onClick={() => removeOverride(key)} className="text-red-400 hover:text-red-300">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="flex gap-2">
-                            <select
-                                value={overrideKey}
-                                onChange={(e) => setOverrideKey(e.target.value)}
-                                className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                            >
-                                <option value="">選擇欄位...</option>
-                                {config.columns.map(col => (
-                                    <option key={col.id} value={col.id}>{col.title}</option>
-                                ))}
-                            </select>
-                            <input
-                                type="text"
-                                value={overrideValue}
-                                onChange={(e) => setOverrideValue(e.target.value)}
-                                placeholder="自訂 URL..."
-                                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 font-mono text-sm"
-                            />
-                            <button
-                                onClick={addOverride}
-                                disabled={!overrideKey || !overrideValue}
-                                className="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-slate-300 rounded-lg transition-colors"
-                            >
-                                <Plus className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-
                     <div className="flex justify-end gap-2">
-                        <button
-                            onClick={resetForm}
-                            className="px-4 py-2 text-slate-400 hover:text-slate-200 rounded-lg transition-colors flex items-center gap-2"
-                        >
-                            <X className="w-4 h-4" />
-                            取消
+                        <button onClick={resetServiceForm} className="px-4 py-2 text-slate-400 hover:text-white flex items-center gap-2">
+                            <X className="w-4 h-4" />取消
                         </button>
                         <button
-                            onClick={editingId ? handleUpdate : handleAdd}
-                            disabled={!form.id || !form.name}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                            onClick={editingServiceId ? handleUpdateService : handleAddService}
+                            disabled={!serviceForm.id || !serviceForm.name}
+                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-black rounded-lg font-medium flex items-center gap-2"
                         >
-                            <Check className="w-4 h-4" />
-                            {editingId ? '儲存變更' : '新增服務'}
+                            <Check className="w-4 h-4" />{editingServiceId ? '儲存' : '新增'}
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* List */}
+            {/* Service List */}
             <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-slate-400">
-                        已設定的服務 ({filteredServices.length})
-                    </h3>
-                </div>
-                {config.services.length === 0 && !isAdding ? (
+                {filteredServices.length === 0 ? (
                     <div className="text-center py-8 text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                        尚未設定任何服務。請點擊上方「新增服務」按鈕。
-                    </div>
-                ) : filteredServices.length === 0 ? (
-                    <div className="text-center py-8 text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                        沒有符合搜尋條件的服務
+                        {searchQuery ? '找不到匹配的服務' : '尚未新增任何服務'}
                     </div>
                 ) : (
-                    filteredServices.map((svc) => (
-                        <div
-                            key={svc.id}
+                    filteredServices.map(service => {
+                        const isExpanded = expandedService === service.id;
+                        const linkCount = service.links?.length || 0;
+
+                        return (
+                            <div key={service.id} className="rounded-xl border border-white/5 bg-slate-900/40 overflow-hidden">
+                                {/* Service Header */}
+                                <div className="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors">
+                                    <button
+                                        onClick={() => setExpandedService(isExpanded ? null : service.id)}
+                                        className="flex-1 flex items-center gap-3 text-left"
+                                    >
+                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+                                        <div>
+                                            <span className="font-medium text-white">{service.name}</span>
+                                            <span className="text-xs text-slate-500 ml-2">({linkCount} 連結)</span>
+                                            {service.group && (
+                                                <span className="text-xs text-slate-600 bg-white/5 px-2 py-0.5 rounded ml-2">
+                                                    {service.group}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => { setEditingServiceId(service.id); setServiceForm(service); }}
+                                            className="p-2 text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg"
+                                        >
+                                            <Pencil className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => removeService(service.id)}
+                                            className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Expanded: Links */}
+                                {isExpanded && (
+                                    <div className="border-t border-white/5 p-4 bg-slate-950/50 space-y-3">
+                                        {/* Add Link Button */}
+                                        {isAddingLink !== service.id && !editingLinkId && (
+                                            <button
+                                                onClick={() => { setIsAddingLink(service.id); setLinkForm({}); }}
+                                                className="w-full py-2 border border-dashed border-amber-500/30 text-amber-400 rounded-lg hover:bg-amber-500/10 text-sm flex items-center justify-center gap-2"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                                新增連結
+                                            </button>
+                                        )}
+
+                                        {/* Add/Edit Link Form */}
+                                        {(isAddingLink === service.id || editingLinkId) && (
+                                            <LinkForm
+                                                form={linkForm}
+                                                setForm={setLinkForm}
+                                                columns={config.columns}
+                                                environments={config.environments}
+                                                onSave={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
+                                                onCancel={resetLinkForm}
+                                                isEditing={!!editingLinkId}
+                                            />
+                                        )}
+
+                                        {/* Link List */}
+                                        {(service.links || []).map(link => {
+                                            const column = config.columns.find(c => c.id === link.columnId);
+                                            return (
+                                                <div
+                                                    key={link.id}
+                                                    className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg"
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <Link2 className="w-3 h-3 text-slate-500" />
+                                                            <span className="font-medium text-slate-200 text-sm">{link.name}</span>
+                                                            {column && (
+                                                                <span className="text-[10px] px-1.5 py-0.5 bg-slate-700 text-slate-400 rounded">
+                                                                    {column.title}
+                                                                </span>
+                                                            )}
+                                                            {link.environments && link.environments.length > 0 && (
+                                                                <div className="flex gap-1">
+                                                                    {link.environments.map(env => (
+                                                                        <span key={env} className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded">
+                                                                            {env}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-xs text-slate-500 font-mono truncate">{link.url}</p>
+                                                    </div>
+                                                    <div className="flex gap-1">
+                                                        <button
+                                                            onClick={() => startEditLink(link)}
+                                                            className="p-1.5 text-slate-500 hover:text-amber-400 rounded"
+                                                        >
+                                                            <Pencil className="w-3 h-3" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => removeServiceLink(service.id, link.id)}
+                                                            className="p-1.5 text-slate-500 hover:text-red-400 rounded"
+                                                        >
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {linkCount === 0 && isAddingLink !== service.id && (
+                                            <p className="text-center text-slate-500 text-sm py-4">
+                                                尚無連結，點擊上方按鈕新增
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+        </div>
+    );
+};
+
+// Link Form Component
+interface LinkFormProps {
+    form: Partial<ServiceLink>;
+    setForm: (form: Partial<ServiceLink>) => void;
+    columns: { id: string; title: string }[];
+    environments: string[];
+    onSave: () => void;
+    onCancel: () => void;
+    isEditing: boolean;
+}
+
+const LinkForm: React.FC<LinkFormProps> = ({ form, setForm, columns, environments, onSave, onCancel, isEditing }) => {
+    const toggleEnv = (env: string) => {
+        const current = form.environments || [];
+        const newEnvs = current.includes(env)
+            ? current.filter(e => e !== env)
+            : [...current, env];
+        setForm({ ...form, environments: newEnvs.length > 0 ? newEnvs : undefined });
+    };
+
+    return (
+        <div className="p-3 bg-slate-900 border border-amber-500/30 rounded-lg space-y-3">
+            <div className="grid grid-cols-3 gap-3">
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1">ID</label>
+                    <input
+                        type="text"
+                        value={form.id || ''}
+                        onChange={(e) => setForm({ ...form, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                        disabled={isEditing}
+                        placeholder="grafana"
+                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200 disabled:opacity-50"
+                    />
+                </div>
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1">名稱</label>
+                    <input
+                        type="text"
+                        value={form.name || ''}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        placeholder="Grafana Dashboard"
+                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200"
+                    />
+                </div>
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1">類別</label>
+                    <select
+                        value={form.columnId || ''}
+                        onChange={(e) => setForm({ ...form, columnId: e.target.value })}
+                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200"
+                    >
+                        <option value="">選擇類別...</option>
+                        {columns.map(c => (
+                            <option key={c.id} value={c.id}>{c.title}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label className="block text-xs text-slate-400 mb-1">URL</label>
+                <input
+                    type="text"
+                    value={form.url || ''}
+                    onChange={(e) => setForm({ ...form, url: e.target.value })}
+                    placeholder="https://grafana.example.com/d/user-service"
+                    className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200 font-mono"
+                />
+            </div>
+            <div>
+                <label className="block text-xs text-slate-400 mb-1">顯示環境 (留空=全部)</label>
+                <div className="flex flex-wrap gap-1">
+                    {environments.map(env => (
+                        <button
+                            key={env}
+                            onClick={() => toggleEnv(env)}
                             className={clsx(
-                                "flex items-center justify-between px-4 py-3 rounded-lg border transition-colors",
-                                editingId === svc.id ? "border-amber-500 bg-amber-500/10" : "bg-slate-900/50 border-slate-700 hover:border-slate-600"
+                                "px-2 py-1 text-xs rounded transition-all",
+                                form.environments?.includes(env)
+                                    ? "bg-amber-500 text-black"
+                                    : "bg-slate-800 text-slate-400 hover:bg-slate-700"
                             )}
                         >
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold">
-                                    {svc.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-medium text-slate-200">{svc.name}</span>
-                                        <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded">{svc.id}</span>
-                                        {svc.group && <span className="text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">{svc.group}</span>}
-                                    </div>
-                                    {svc.description && (
-                                        <p className="text-xs text-slate-500 truncate max-w-md mt-0.5">{svc.description}</p>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <button
-                                    onClick={() => startEdit(svc)}
-                                    className="p-2 text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition-colors"
-                                >
-                                    <Pencil className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => removeService(svc.id)}
-                                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+                            {env}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <div className="flex justify-end gap-2">
+                <button onClick={onCancel} className="px-3 py-1.5 text-slate-400 text-sm">取消</button>
+                <button
+                    onClick={onSave}
+                    disabled={!form.id || !form.name || !form.url || !form.columnId}
+                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-black text-sm rounded font-medium"
+                >
+                    {isEditing ? '儲存' : '新增'}
+                </button>
             </div>
         </div>
     );

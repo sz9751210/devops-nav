@@ -2,45 +2,53 @@ export type Environment = 'dev' | 'staging' | 'prod' | string;
 
 export type ColumnType = 'link' | 'text' | 'status';
 
+/**
+ * A link configured for a specific service.
+ */
+export interface ServiceLink {
+    id: string;              // Unique link ID
+    columnId: string;        // Which column category this belongs to (e.g., 'monitoring')
+    name: string;            // Display name (e.g., 'Grafana Dashboard')
+    url: string;             // Direct URL (no template, user enters full URL)
+    environments?: string[]; // Limit to specific envs (empty = all)
+}
+
+/**
+ * Column defines a category (監控, 日誌, etc.)
+ * Columns no longer contain links - links are on services.
+ */
 export interface ColumnDefinition {
-    id: string;        // e.g., 'source', 'logs', 'apm'
-    title: string;     // e.g., 'Source Code', 'Kibana Logs'
+    id: string;        // e.g., 'monitoring', 'logs'
+    title: string;     // e.g., '監控', '日誌'
     type: ColumnType;
-    template?: string; // Default template, e.g., 'https://github.com/org/{{service_id}}'
-    icon?: string;     // e.g., 'github', 'aws', 'datadog'
+    icon?: string;     // e.g., 'activity', 'file'
 }
 
 export interface ServiceDefinition {
-    id: string;        // e.g., 'user-service'
-    name: string;      // e.g., 'User Service'
-    group?: string;    // e.g., 'Core Platform'
+    id: string;
+    name: string;
+    group?: string;
     description?: string;
-    /**
-     * Overrides for specific columns.
-     * Key is the column.id, Value is the specific URL for this service.
-     */
+    // Links for this service, organized by column
+    links?: ServiceLink[];
+    // Legacy fields (kept for backwards compatibility)
     overrides?: Record<string, string>;
-
-    /**
-     * Additional service-specific variables for substitution.
-     * e.g. { "db_name": "users_db_v1" }
-     */
     variables?: Record<string, string>;
 }
 
 export interface EnvGroup {
-    id: string;           // e.g., 'lab', 'platform', 'prod'
-    name: string;         // e.g., 'Lab Environments'
-    pattern?: string;     // e.g., 'lab-*' (glob pattern)
-    color?: string;       // e.g., 'blue', 'green', 'red'
-    icon?: string;        // e.g., '📦', '🚀', '🔥'
-    environments: Environment[]; // Manually assigned envs if no pattern
+    id: string;
+    name: string;
+    pattern?: string;
+    color?: string;
+    icon?: string;
+    environments: Environment[];
 }
 
 export interface EnvSpecificConfig {
-    visibleServices?: string[]; // IDs of services visible in this environment
-    visibleColumns?: string[];  // IDs of columns visible in this environment
-    viewMode?: 'list' | 'card'; // Preferred view mode for this enviroment
+    visibleServices?: string[];
+    visibleColumns?: string[];
+    viewMode?: 'list' | 'card';
 }
 
 export interface OpsMatrixConfig {
@@ -48,7 +56,9 @@ export interface OpsMatrixConfig {
     environments: Environment[];
     columns: ColumnDefinition[];
     services: ServiceDefinition[];
-    envGroups?: EnvGroup[];        // Optional environment grouping
-    favoriteEnvs?: Environment[];  // User's favorite environments
-    envConfigs?: Record<string, EnvSpecificConfig>; // Per-environment configuration
+    envGroups?: EnvGroup[];
+    favoriteEnvs?: Environment[];
+    favoriteServices?: string[];
+    recentServices?: string[];
+    envConfigs?: Record<string, EnvSpecificConfig>;
 }

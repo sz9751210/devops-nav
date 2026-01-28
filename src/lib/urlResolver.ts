@@ -1,48 +1,59 @@
-import type { ServiceDefinition, ColumnDefinition, Environment } from '../types/schema';
+import type { ServiceDefinition, ServiceLink, ColumnDefinition, Environment } from '../types/schema';
 
 /**
- * Resolves the final URL for a given service, column, and environment.
- * Handles variable substitution ({{var}}) and overrides.
+ * Get visible links for a service based on current environment.
  */
-export function resolveUrl(
-    service: ServiceDefinition,
-    column: ColumnDefinition,
-    env: Environment,
-    globalVars: Record<string, string> = {}
-): string | null {
-    // 1. Check for explicit overrides first
-    if (service.overrides && service.overrides[column.id]) {
-        // We still might need to support variables in overrides? 
-        // Usually overrides are absolute, but let's support substitutions just in case.
-        return substituteVariables(service.overrides[column.id], service, env, globalVars);
-    }
-
-    // 2. If no override, use the column template
-    if (!column.template) {
-        return null;
-    }
-
-    return substituteVariables(column.template, service, env, globalVars);
+export function getVisibleLinks(
+    links: ServiceLink[] | undefined,
+    env: Environment
+): ServiceLink[] {
+    if (!links) return [];
+    return links.filter(link => {
+        if (!link.environments || link.environments.length === 0) return true;
+        return link.environments.includes(env);
+    });
 }
 
-function substituteVariables(
+/**
+ * Get visible links for a service, grouped by column.
+ */
+export function getLinksByColumn(
+    links: ServiceLink[] | undefined,
+    columns: ColumnDefinition[],
+    env: Environment
+): Map<string, ServiceLink[]> {
+    const result = new Map<string, ServiceLink[]>();
+    const visible = getVisibleLinks(links, env);
+
+    columns.forEach(col => {
+        const colLinks = visible.filter(l => l.columnId === col.id);
+        if (colLinks.length > 0) {
+            result.set(col.id, colLinks);
+        }
+    });
+
+    return result;
+}
+
+/**
+ * Substitute variables in a URL template (legacy support).
+ */
+export function substituteVariables(
     template: string,
     service: ServiceDefinition,
     env: Environment,
-    globalVars: Record<string, string>
+    globalVars: Record<string, string> = {}
 ): string {
     let result = template;
 
-    // Standard variables
     const vars: Record<string, string> = {
         ...globalVars,
         service_id: service.id,
         service_name: service.name,
         env: env,
-        ...service.variables // Merge service-specific variables
+        ...service.variables
     };
 
-    // Replace {{key}}
     for (const [key, value] of Object.entries(vars)) {
         const regex = new RegExp(`{{${key}}}`, 'g');
         result = result.replace(regex, value);
