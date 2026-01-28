@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup } from '../types/schema';
+import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig } from '../types/schema';
 import jsyaml from 'js-yaml';
 
 const DEFAULT_CONFIG: OpsMatrixConfig = {
@@ -8,6 +8,7 @@ const DEFAULT_CONFIG: OpsMatrixConfig = {
     environments: [],
     columns: [],
     services: [],
+    envConfigs: {},
 };
 
 interface MatrixState {
@@ -16,17 +17,20 @@ interface MatrixState {
     isLoading: boolean;
     error: string | null;
     recentEnvs: Environment[];  // Track last 5 environments
+    viewMode: 'list' | 'card';
 
     // Actions
     loadConfig: (url?: string) => Promise<void>;
     setConfig: (config: OpsMatrixConfig) => void;
     setEnv: (env: Environment) => void;
+    setViewMode: (mode: 'list' | 'card') => void;
     parseConfig: (yamlString: string) => void;
     exportConfig: () => string;
 
     // Environment CRUD
     addEnvironment: (env: string) => void;
     removeEnvironment: (env: string) => void;
+    setEnvConfig: (env: string, config: EnvSpecificConfig) => void;
 
     // Favorites
     toggleFavoriteEnv: (env: Environment) => void;
@@ -56,6 +60,7 @@ export const useMatrixStore = create<MatrixState>()(
             isLoading: false,
             error: null,
             recentEnvs: [],
+            viewMode: 'list',
 
             loadConfig: async (url = '/default.yaml') => {
                 set({ isLoading: true, error: null });
@@ -84,10 +89,25 @@ export const useMatrixStore = create<MatrixState>()(
             },
 
             setEnv: (env) => {
-                const { recentEnvs } = get();
+                const { recentEnvs, config } = get();
                 // Update recent environments (max 5, most recent first)
                 const newRecent = [env, ...recentEnvs.filter(e => e !== env)].slice(0, 5);
-                set({ currentEnv: env, recentEnvs: newRecent });
+
+                // Restore per-environment view mode preference if set
+                const envConfig = config.envConfigs?.[env];
+                const viewMode = envConfig?.viewMode || get().viewMode;
+
+                set({ currentEnv: env, recentEnvs: newRecent, viewMode });
+            },
+
+            setViewMode: (mode) => {
+                set({ viewMode: mode });
+                // Optional: Auto-save view mode preference to env config
+                const { currentEnv, config } = get();
+                if (currentEnv) {
+                    const currentConfig = config.envConfigs?.[currentEnv] || {};
+                    get().setEnvConfig(currentEnv, { ...currentConfig, viewMode: mode });
+                }
             },
 
             parseConfig: (yamlString) => {
@@ -123,6 +143,19 @@ export const useMatrixStore = create<MatrixState>()(
                 set({
                     config: { ...config, environments: newEnvs },
                     currentEnv: currentEnv === env ? (newEnvs[0] || '') : currentEnv,
+                });
+            },
+
+            setEnvConfig: (env, envConfig) => {
+                const { config } = get();
+                set({
+                    config: {
+                        ...config,
+                        envConfigs: {
+                            ...(config.envConfigs || {}),
+                            [env]: envConfig
+                        }
+                    }
                 });
             },
 
@@ -199,7 +232,8 @@ export const useMatrixStore = create<MatrixState>()(
             partialize: (state) => ({
                 config: state.config,
                 currentEnv: state.currentEnv,
-                recentEnvs: state.recentEnvs
+                recentEnvs: state.recentEnvs,
+                viewMode: state.viewMode,
             }),
         }
     )

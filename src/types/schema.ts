@@ -37,6 +37,12 @@ export interface EnvGroup {
     environments: Environment[]; // Manually assigned envs if no pattern
 }
 
+export interface EnvSpecificConfig {
+    visibleServices?: string[]; // IDs of services visible in this environment
+    visibleColumns?: string[];  // IDs of columns visible in this environment
+    viewMode?: 'list' | 'card'; // Preferred view mode for this enviroment
+}
+
 export interface OpsMatrixConfig {
     title: string;
     environments: Environment[];
@@ -44,4 +50,5 @@ export interface OpsMatrixConfig {
     services: ServiceDefinition[];
     envGroups?: EnvGroup[];        // Optional environment grouping
     favoriteEnvs?: Environment[];  // User's favorite environments
+    envConfigs?: Record<string, EnvSpecificConfig>; // Per-environment configuration
 }

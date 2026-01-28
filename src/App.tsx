@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMatrixStore } from './store/useMatrixStore';
-import { MatrixTable } from './components/matrix/MatrixTable';
+import { MatrixContainer } from './components/matrix/MatrixContainer';
 import { EnvSelector } from './components/matrix/EnvSelector';
 import { QuickSearch } from './components/matrix/QuickSearch';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
@@ -64,7 +64,7 @@ function App() {
                 </div>
               </div>
             ) : (
-              <MatrixTable />
+              <MatrixContainer />
             )}
           </div>
         );

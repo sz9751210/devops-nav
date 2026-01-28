@@ -9,10 +9,26 @@ import { useMatrixStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition } from '../../types/schema';
 import { ServiceCell } from './ServiceCell';
 
-export const MatrixTable: React.FC = () => {
+interface MatrixTableProps {
+    services?: ServiceDefinition[];
+    visibleColumns?: string[];
+}
+
+export const MatrixTable: React.FC<MatrixTableProps> = ({ services, visibleColumns }) => {
     const { config } = useMatrixStore();
 
     const columnHelper = createColumnHelper<ServiceDefinition>();
+
+    // Use passed services or fallback to all services from config
+    const data = useMemo(() => services || config.services, [services, config.services]);
+
+    // Determine which columns to show
+    const displayColumns = useMemo(() => {
+        if (!config) return [];
+        return visibleColumns
+            ? config.columns.filter(c => visibleColumns.includes(c.id))
+            : config.columns;
+    }, [config, visibleColumns]);
 
     const columns = useMemo(() => {
         if (!config) return [];
@@ -32,7 +48,7 @@ export const MatrixTable: React.FC = () => {
             enablePinning: true,
         });
 
-        const dynamicCols = config.columns.map(col =>
+        const dynamicCols = displayColumns.map(col =>
             columnHelper.display({
                 id: col.id,
                 header: col.title,
@@ -41,10 +57,10 @@ export const MatrixTable: React.FC = () => {
         );
 
         return [serviceCol, ...dynamicCols];
-    }, [config]);
+    }, [config, displayColumns]);
 
     const table = useReactTable({
-        data: config?.services || [],
+        data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
