@@ -12,7 +12,7 @@ import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
 import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
-import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Command, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote, Filter } from 'lucide-react';
 import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
 import { TopologyModal } from './components/matrix/TopologyModal';
@@ -34,12 +34,10 @@ function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K to open Command Palette
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsCmdKOpen(true);
       }
-      // Escape
       if (e.key === 'Escape') {
         if (isCmdKOpen) setIsCmdKOpen(false);
         else if (isConfigOpen) setIsConfigOpen(false);
@@ -47,7 +45,6 @@ function App() {
         else if (isTopologyOpen) setIsTopologyOpen(false);
         else if (searchQuery) setSearchQuery('');
       }
-      // 1/2 shortcuts
       if (!isSearchFocused && !isCmdKOpen && !isConfigOpen && !isNotesOpen && !isTopologyOpen) {
         if (e.key === '1') setViewMode('card');
         if (e.key === '2') setViewMode('table');
@@ -135,10 +132,10 @@ function App() {
             {/* Announcement Banner */}
             {config.announcement?.active && (
               <div className={clsx(
-                "rounded-lg p-3 flex items-center gap-3 mb-4 animate-in slide-in-from-top-2",
-                config.announcement.level === 'error' ? "bg-red-500/10 border border-red-500/20 text-red-200" :
-                  config.announcement.level === 'warning' ? "bg-amber-500/10 border border-amber-500/20 text-amber-200" :
-                    "bg-blue-500/10 border border-blue-500/20 text-blue-200"
+                "rounded border-l-4 p-3 flex items-center gap-3 mb-4 animate-in slide-in-from-top-2",
+                config.announcement.level === 'error' ? "bg-red-500/10 border-red-500 text-red-200" :
+                  config.announcement.level === 'warning' ? "bg-amber-500/10 border-amber-500 text-amber-200" :
+                    "bg-blue-500/10 border-blue-500 text-blue-200"
               )}>
                 {config.announcement.level === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> :
                   config.announcement.level === 'warning' ? <AlertTriangle className="w-5 h-5 shrink-0" /> :
@@ -147,135 +144,125 @@ function App() {
               </div>
             )}
 
-            <div className="flex flex-col gap-4 pt-2">
-              <div className="flex items-center gap-3">
-                <div className="relative flex-1 max-w-xl">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    id="main-search"
-                    type="text"
-                    placeholder="搜尋服務、連結或標籤..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
-                    className="w-full bg-slate-900/60 border border-white/10 rounded-lg pl-9 pr-20 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all"
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-600 text-xs cursor-pointer hover:text-amber-500 transition-colors" onClick={() => setIsCmdKOpen(true)}>
-                    <Command className="w-3 h-3" />
-                    <span>K</span>
-                  </div>
+            {/* Filter Toolbar Stickiness */}
+            <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[#09090b]/95 backdrop-blur-sm border-b border-white/10 flex items-center gap-4">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 flex items-center justify-center">
+                  <Search className="w-4 h-4" />
                 </div>
-                <EnvSelector />
+                <input
+                  id="main-search"
+                  type="text"
+                  placeholder="Search services..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  className="w-full bg-[#18181b] border border-white/10 rounded-md pl-9 pr-16 py-1.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all font-mono"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  <code className="text-[10px] text-slate-600 border border-white/5 rounded px-1 bg-white/5">⌘K</code>
+                </div>
               </div>
 
-              <div className="flex items-center gap-4 text-xs text-slate-500">
-                <span>{filteredServices.length} 服務</span>
-                <span className="text-slate-700">|</span>
-                <span>{totalLinks} 連結</span>
-                <span className="text-slate-700">|</span>
-                <span>{config.columns.length} 分類</span>
-                {searchQuery && (
-                  <>
-                    <span className="text-slate-700">|</span>
-                    <span className="text-amber-500">篩選結果: {filteredServices.length}</span>
-                  </>
-                )}
-              </div>
-            </div>
+              {/* Environment */}
+              <EnvSelector />
 
-            <div className="sticky top-0 z-20 -mx-6 px-6 py-2 bg-black/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span className="text-xs font-medium text-slate-400">總覽</span>
+              <div className="h-6 w-px bg-white/10 mx-2" />
+
+              {/* Tools Group */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setIsTopologyOpen(true)}
+                  className="p-1.5 rounded-md text-slate-500 hover:text-slate-200 hover:bg-white/5 transition-all"
+                  title="View Topology"
+                >
+                  <Network className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsNotesOpen(!isNotesOpen)}
+                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-slate-500 hover:text-slate-200 hover:bg-white/5")}
+                  title="Quick Notes"
+                >
+                  <StickyNote className="w-4 h-4" />
+                </button>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
+              <div className="h-6 w-px bg-white/10 mx-2" />
+
+              {/* Groups Filter */}
+              <div className="flex items-center gap-1">
+                <Filter className="w-4 h-4 text-slate-500 mr-1" />
+                <div className="flex items-center gap-1 bg-[#18181b] rounded-md p-1 border border-white/5">
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
-                      "px-2 py-1 rounded text-[10px] transition-all",
-                      !activeGroup ? "bg-amber-500/20 text-amber-400" : "text-slate-500 hover:text-white"
+                      "px-2 py-0.5 rounded text-[11px] font-medium transition-colors",
+                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
                     )}
                   >
-                    全部
+                    ALL
                   </button>
                   {serviceGroups.map(group => (
                     <button
                       key={group}
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
-                        "px-2 py-1 rounded text-[10px] transition-all",
-                        activeGroup === group ? "bg-amber-500/20 text-amber-400" : "text-slate-500 hover:text-white"
+                        "px-2 py-0.5 rounded text-[11px] font-medium transition-colors",
+                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
                       )}
                     >
-                      {group}
+                      {group.toUpperCase()}
                     </button>
                   ))}
                 </div>
+              </div>
 
-                <div className="w-px h-4 bg-white/10" />
-
-                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
-                  <button
-                    onClick={() => setIsTopologyOpen(true)}
-                    className="p-1 rounded transition-all text-slate-500 hover:text-white hover:bg-white/10"
-                    title="拓撲圖"
-                  >
-                    <Network className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => setIsNotesOpen(!isNotesOpen)}
-                    className={clsx("p-1 rounded transition-all", isNotesOpen ? "text-amber-400 bg-amber-500/10" : "text-slate-500 hover:text-white hover:bg-white/10")}
-                    title="隨手筆記"
-                  >
-                    <StickyNote className="w-3 h-3" />
-                  </button>
-                </div>
-
-                <div className="w-px h-4 bg-white/10" />
-
-                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
+              <div className="ml-auto flex items-center gap-2">
+                {/* View Toggles */}
+                <div className="flex items-center bg-[#18181b] rounded-md border border-white/5 p-0.5">
                   <button
                     onClick={() => setShowServices(!showServices)}
                     className={clsx(
-                      "px-2 py-1 rounded text-[10px] transition-all",
-                      showServices ? "bg-amber-500/20 text-amber-400" : "text-slate-500 hover:text-white"
+                      "px-2 py-1 rounded-[3px] text-[10px] font-bold uppercase transition-colors mr-1",
+                      showServices ? "bg-white/10 text-slate-200" : "text-slate-600 hover:text-slate-400"
                     )}
-                    title={showServices ? "隱藏服務列表" : "顯示服務列表"}
                   >
-                    顯示服務
+                    Services
                   </button>
-                </div>
-
-                <div className="w-px h-4 bg-white/10" />
-
-                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
+                  <div className="w-px h-3 bg-white/10 mx-1" />
                   <button
                     onClick={() => setViewMode('card')}
-                    className={clsx("p-1 rounded transition-all", viewMode === 'card' ? "bg-amber-500 text-black" : "text-slate-500 hover:text-white")}
-                    title="卡片檢視 (1)"
+                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'card' ? "bg-amber-500 text-black" : "text-slate-600 hover:text-slate-400")}
                   >
-                    <LayoutGrid className="w-3 h-3" />
+                    <LayoutGrid className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => setViewMode('table')}
-                    className={clsx("p-1 rounded transition-all", viewMode === 'table' ? "bg-amber-500 text-black" : "text-slate-500 hover:text-white")}
-                    title="列表檢視 (2)"
+                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'table' ? "bg-amber-500 text-black" : "text-slate-600 hover:text-slate-400")}
                   >
-                    <List className="w-3 h-3" />
+                    <List className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 <button
                   onClick={() => setIsConfigOpen(true)}
-                  className="p-1 rounded-md text-slate-500 hover:text-white bg-slate-900/60 border border-white/5 transition-colors"
-                  title="配置"
+                  className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                 >
-                  <SlidersHorizontal className="w-3 h-3" />
+                  <SlidersHorizontal className="w-4 h-4" />
                 </button>
               </div>
+            </div>
+
+            {/* Summary Data */}
+            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-slate-500 uppercase tracking-tight border-b border-white/5 pb-4">
+              <div>Services: <span className="text-slate-300">{filteredServices.length}</span></div>
+              <div>Links: <span className="text-slate-300">{totalLinks}</span></div>
+              <div>Categories: <span className="text-slate-300">{config.columns.length}</span></div>
+              {searchQuery && (
+                <div className="text-amber-500">Filtered: {filteredServices.length}</div>
+              )}
             </div>
 
             {isLoading ? (
@@ -283,21 +270,22 @@ function App() {
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500" />
               </div>
             ) : (
-              <div className="space-y-10 pb-16">
+              <div className="space-y-8 pb-16">
                 {showServices && (
                   <section>
-                    <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                      <LayoutGrid className="w-4 h-4 text-amber-500" />
-                      服務
-                      <span className="text-slate-600 font-normal">({filteredServices.length})</span>
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <LayoutGrid className="w-3.5 h-3.5" />
+                      Services Directory
                     </h2>
                     {filteredServices.length === 0 ? (
-                      <p className="text-xs text-slate-600 italic py-4">無匹配服務</p>
+                      <div className="text-center py-12 border border-dashed border-white/10 rounded-lg">
+                        <p className="text-slate-500 text-sm">No services found matching "{searchQuery}"</p>
+                      </div>
                     ) : (
                       <div className={clsx(
                         viewMode === 'card'
                           ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"
-                          : "space-y-1"
+                          : "space-y-px"
                       )}>
                         {filteredServices.map(service => (
                           <ServiceCard
@@ -319,12 +307,11 @@ function App() {
                   const Icon = getIconComponent(col.icon);
                   return (
                     <section key={col.id}>
-                      <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2 border-b border-white/5 pb-2">
-                        <div className="p-1.5 bg-amber-500/10 rounded">
-                          <Icon className="w-3.5 h-3.5 text-amber-400" />
-                        </div>
+                      <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-white/5 pb-2">
+                        <Icon className="w-3.5 h-3.5" />
                         {col.title}
-                        <span className="text-slate-600 font-normal">({links.length})</span>
+                        <span className="text-slate-700">/</span>
+                        <span className="text-slate-400">{links.length}</span>
                       </h2>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                         {links.map(item => (
@@ -361,10 +348,10 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen selection:bg-amber-500/30">
+    <div className="flex min-h-screen selection:bg-amber-500/30 font-sans">
       <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
       <main className="flex-1 overflow-auto relative">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           {renderPage()}
         </div>
       </main>

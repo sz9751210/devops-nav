@@ -1,62 +1,85 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --background: #0a0a0a;
-  /* Deep black */
-  --foreground: #f8fafc;
+  --background: #09090b;
+  /* Zinc 950 */
+  --surface: #18181b;
+  /* Zinc 900 */
+  --surface-hover: #27272a;
+  /* Zinc 800 */
+  --border: #27272a;
+  /* Zinc 800 */
+  --foreground: #e4e4e7;
+  /* Zinc 200 */
 
-  /* Glass effects */
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-surface: rgba(30, 41, 59, 0.4);
-  --glass-highlight: rgba(255, 255, 255, 0.05);
-
-  /* Brand Colors */
-  --primary: #6366f1;
-  /* Indigo 500 */
-  --primary-glow: rgba(99, 102, 241, 0.4);
-  --accent: #8b5cf6;
-  /* Violet 500 */
+  /* DevOps Colors */
+  --color-success: #10b981;
+  /* Emerald 500 */
+  --color-warning: #f59e0b;
+  /* Amber 500 */
+  --color-error: #ef4444;
+  /* Red 500 */
+  --color-info: #3b82f6;
+  /* Blue 500 */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
-  /* Aurora Background */
-  background-image:
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
-  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Typography Overrides */
+code,
+pre,
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Headers */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.025em;
+  color: #fafafa;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbar */
+/* Scrollbar (Slim & Stealth) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--background);
+  border-left: 1px solid var(--border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  background: #3f3f46;
+  /* Zinc 700 */
+  border: 2px solid var(--background);
+  /* Creates padding effect */
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #52525b;
+  /* Zinc 600 */
+}
+
+/* Utility for grid lines (optional background pattern) */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
