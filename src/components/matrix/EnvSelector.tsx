@@ -27,8 +27,56 @@ export const EnvSelector: React.FC = () => {
         const manualGroups = config.envGroups || [];
 
         if (manualGroups.length > 0) {
-            // Use manual groups
-            return manualGroups;
+            // Use manual groups and match environments by pattern
+            const matchedEnvs = new Set<string>();
+            const processedGroups: EnvGroup[] = [];
+
+            manualGroups.forEach(group => {
+                const groupEnvs: Environment[] = [];
+
+                if (group.pattern) {
+                    // Convert glob pattern to regex (e.g., "brpp-*" -> /^brpp-.*$/)
+                    const regexPattern = group.pattern
+                        .replace(/\*/g, '.*')
+                        .replace(/\?/g, '.');
+                    const regex = new RegExp(`^${regexPattern}$`);
+
+                    envs.forEach(env => {
+                        if (regex.test(env) && !matchedEnvs.has(env)) {
+                            groupEnvs.push(env);
+                            matchedEnvs.add(env);
+                        }
+                    });
+                } else {
+                    // Use manually assigned environments
+                    group.environments.forEach(env => {
+                        if (envs.includes(env) && !matchedEnvs.has(env)) {
+                            groupEnvs.push(env);
+                            matchedEnvs.add(env);
+                        }
+                    });
+                }
+
+                if (groupEnvs.length > 0) {
+                    processedGroups.push({
+                        ...group,
+                        environments: groupEnvs,
+                    });
+                }
+            });
+
+            // Add ungrouped environments
+            const ungrouped = envs.filter(env => !matchedEnvs.has(env));
+            if (ungrouped.length > 0) {
+                processedGroups.push({
+                    id: 'other',
+                    name: 'Other',
+                    environments: ungrouped,
+                    icon: '📦',
+                });
+            }
+
+            return processedGroups;
         }
 
         // Auto-group by prefix (e.g., lab-, platform-, prod-)
