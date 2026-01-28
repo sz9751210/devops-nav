@@ -1,73 +1,92 @@
-# OpsBridge Matrix 
+# OpsBridge Matrix 🛸
 
-[English](#english) | [中文](#chinese)
+> **The Engineer-Ready Service Matrix for Modern DevOps Teams.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/Build-Success-emerald.svg)]()
+[![i18n](https://img.shields.io/badge/i18n-EN%20%7C%20ZH--TW-blue.svg)]()
+
+[English](#english) | [繁體中文](./README.zh-TW.md)
+
+---
 
 <a name="english"></a>
-## English
+## 📖 Introduction
 
-OpsBridge Matrix is a **Dynamic Service Matrix** designed for IT/DevOps teams. Unlike static bookmark walls, it uses a schema-driven approach to generate navigation links for your microservices across multiple environments and tools (Git, CI/CD, Logs, Metrics, Cloud).
+**OpsBridge Matrix** is a schema-driven navigation hub designed for complex microservice architectures. Instead of maintaining hundreds of static bookmarks, it provides a dynamic grid where **Services (Rows)** meet **Categories (Columns)** across multiple **Environments**.
 
-### Key Features
-- **Dynamic Matrix View**: Define services (rows) and resources (columns) once; links are generated automatically.
-- **Context-Aware**: Switch between `Dev`, `Staging`, `Prod` globally. All links update instantly.
-- **Template Logic**: Define URL patterns like `https://grafana.internal/d/{{service_id}}?var-env={{env}}`.
-- **Quick Search**: Press `Cmd+K` to search for any service or specific resource (e.g., "payment logs").
-- **Ops-First**: Compact design, keyboard shortcuts, and sticky columns for handling large matrices.
+It is built with an "Engineer-First" aesthetic, prioritizing density, keyboard shortcuts, and dark mode excellence.
 
-### Quick Start
+### ✨ Key Features
 
-#### Run Locally
+- 🏗️ **Dynamic Matrix View**: Automatically maps service links to category columns.
+- 🌍 **Contextual Environments**: One-click switching between `Dev`, `Staging`, and `Prod` with synchronized URL updates.
+- 📂 **Environment Grouping**: Organize environments (e.g., `Lab`, `Internal`, `Public`) for cleaner navigation.
+- 🛠️ **Full Management UI**: Add, Edit, or Remove environments, columns, and services directly from the browser.
+- 🔗 **Smart Link Templates**: Use `{{service_id}}` and `{{env}}` variables to generate thousands of links with a single rule.
+- 🔍 **Quick Search (Cmd+K)**: Instant access to any service or resource.
+- 📝 **Scratchpad**: A built-in markdown editor for temporary notes and snippets.
+- 🕸️ **Topology Graph**: Visualize service dependencies and metadata.
+- 💾 **YAML Sync/Backup**: Version-control your configuration with ease.
+
+---
+
+## 🚀 Quick Start
+
+### Run Locally
 ```bash
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
 ```
 Open [http://localhost:5173](http://localhost:5173)
 
-#### Run with Docker
+### Run with Docker
 ```bash
 docker-compose up -d
 ```
 Open [http://localhost:8080](http://localhost:8080)
 
-### Configuration
-Edit `public/default.yaml` (or valid path mapped in Docker) to configure your matrix.
+---
 
-```yaml
-services:
-  - id: my-service
-    name: My Service
-    overrides:
-      logs: "https://custom-log-url..."
-```
+## 🛠️ Operating Instructions
+
+### 1. Set Up Environments
+Go to **Settings > Environments**. Add your targets (e.g., `dev`, `stage`, `prod`). Use **Environment Groups** to cluster them (e.g., `lab-envs` pattern matches `lab-*`).
+
+### 2. Define Columns (Categories)
+Go to **Settings > Columns**. Create categories like `Monitoring`, `Logs`, `CI/CD`. These will appear as columns in your matrix.
+
+### 3. Add Services
+Go to **Settings > Services**. Register your microservices.
+- **Metadata**: Add owners, descriptions, or SSH info.
+- **Direct Links**: Manually add a link that only applies to specific environments.
+
+### 4. Configuration via YAML (Optional)
+For power users, go to **Settings > Sync / Backup**. You can paste a full YAML configuration or use **Smart Snippets** to quickly inject common toolsets (Prometheus, ELK, etc.).
 
 ---
 
-<a name="chinese"></a>
-## 中文 (Chinese)
+## ⌨️ Keyboard Shortcuts
 
-OpsBridge Matrix 是一款專為 IT/DevOps 團隊設計的**動態服務矩陣**。與傳統的靜態書籤牆不同，它採用設定檔驅動 (Schema-Driven) 的方式，自動為您的微服務生成跨環境、跨工具的導航連結。
+| Shortcut | Action |
+| :--- | :--- |
+| `Cmd + K` | Open Quick Search |
+| `1` | Card View Mode |
+| `2` | Matrix (Table) Mode |
+| `Esc` | Close any modal |
 
-### 核心功能
-- **動態矩陣視圖**: 定義一次服務 (Rows) 與資源 (Columns)，自動生成結構化連結。
-- **情境感知**: 全域切換 `Dev`, `Staging`, `Prod` 環境，所有連結即時更新。
-- **模板邏輯**: 支援 URL 模板，例如 `https://grafana.internal/d/{{service_id}}?var-env={{env}}`。
-- **快速搜尋**: 按下 `Cmd+K` 即可搜尋任何服務或特定資源 (例如：輸入 "payment logs")。
-- **維運友善**: 緊湊的介面設計、鍵盤快捷鍵支援，以及適合大量資料的凍結欄位 (Sticky Columns) 功能。
+---
 
-### 快速開始
+## 🎨 Design System
+OpsBridge uses a custom **"Engineer Dark"** theme:
+- **Surface**: High-contrast slate backgrounds.
+- **Accents**: Amber and Gold for high visibility.
+- **Typography**: Monospace hints for technical IDs.
 
-#### 本地執行
-```bash
-npm install
-npm run dev
-```
-開啟 [http://localhost:5173](http://localhost:5173)
+---
 
-#### Docker 執行
-```bash
-docker-compose up -d
-```
-開啟 [http://localhost:8080](http://localhost:8080)
-
-### 設定說明
-編輯 `public/default.yaml` (或 Docker 掛載的路徑) 即可配置您的矩陣。
+## 📄 License
+This project is licensed under the MIT License.
