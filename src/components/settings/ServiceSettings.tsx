@@ -182,8 +182,119 @@ export const ServiceSettings: React.FC = () => {
                                 className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
                             />
                         </div>
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Tags (comma separated)</label>
+                            <input
+                                type="text"
+                                value={serviceForm.tags?.join(', ') || ''}
+                                onChange={(e) => setServiceForm({
+                                    ...serviceForm,
+                                    tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)
+                                })}
+                                placeholder="java, backend, critical"
+                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+                            />
+                        </div>
                     </div>
-                    <div className="flex justify-end gap-2">
+
+                    {/* Metadata Editor */}
+                    <div className="border-t border-white/5 pt-3">
+                        <label className="block text-xs font-medium text-slate-400 mb-2">Metadata (Key-Value)</label>
+                        <div className="space-y-2">
+                            {/* Existing Metadata */}
+                            {serviceForm.metadata && Object.entries(serviceForm.metadata).map(([key, value]) => (
+                                <div key={key} className="flex gap-2">
+                                    <input
+                                        readOnly
+                                        value={key}
+                                        className="w-1/3 px-2 py-1 bg-slate-800/50 border border-slate-600 rounded text-xs text-slate-400"
+                                    />
+                                    <input
+                                        type="text"
+                                        value={value}
+                                        onChange={(e) => setServiceForm({
+                                            ...serviceForm,
+                                            metadata: { ...serviceForm.metadata, [key]: e.target.value }
+                                        })}
+                                        className="flex-1 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            const newMeta = { ...serviceForm.metadata };
+                                            delete newMeta[key];
+                                            setServiceForm({ ...serviceForm, metadata: newMeta });
+                                        }}
+                                        className="p-1 hover:bg-red-500/20 text-red-400 rounded"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* Add New Metadata */}
+                            <div className="flex gap-2">
+                                <input
+                                    id="new-meta-key"
+                                    placeholder="Key (e.g. SSH)"
+                                    className="w-1/3 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            const keyInput = e.currentTarget;
+                                            const valInput = document.getElementById('new-meta-val') as HTMLInputElement;
+                                            if (keyInput.value && valInput.value) {
+                                                setServiceForm({
+                                                    ...serviceForm,
+                                                    metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
+                                                });
+                                                keyInput.value = '';
+                                                valInput.value = '';
+                                                keyInput.focus();
+                                            }
+                                        }
+                                    }}
+                                />
+                                <input
+                                    id="new-meta-val"
+                                    placeholder="Value"
+                                    className="flex-1 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            const valInput = e.currentTarget;
+                                            const keyInput = document.getElementById('new-meta-key') as HTMLInputElement;
+                                            if (keyInput.value && valInput.value) {
+                                                setServiceForm({
+                                                    ...serviceForm,
+                                                    metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
+                                                });
+                                                keyInput.value = '';
+                                                valInput.value = '';
+                                                keyInput.focus();
+                                            }
+                                        }
+                                    }}
+                                />
+                                <button
+                                    onClick={() => {
+                                        const keyInput = document.getElementById('new-meta-key') as HTMLInputElement;
+                                        const valInput = document.getElementById('new-meta-val') as HTMLInputElement;
+                                        if (keyInput.value && valInput.value) {
+                                            setServiceForm({
+                                                ...serviceForm,
+                                                metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
+                                            });
+                                            keyInput.value = '';
+                                            valInput.value = '';
+                                        }
+                                    }}
+                                    className="p-1 hover:bg-amber-500/20 text-amber-500 rounded"
+                                >
+                                    <Plus className="w-3 h-3" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-2">
                         <button onClick={resetServiceForm} className="px-4 py-2 text-slate-400 hover:text-white flex items-center gap-2">
                             <X className="w-4 h-4" />取消
                         </button>

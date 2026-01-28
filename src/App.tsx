@@ -12,8 +12,10 @@ import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
 import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
-import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Command, AlertCircle, AlertTriangle, Info as InfoIcon } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Command, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote } from 'lucide-react';
 import { clsx } from 'clsx';
+import { QuickNotes } from './components/matrix/QuickNotes';
+import { TopologyModal } from './components/matrix/TopologyModal';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('matrix');
@@ -24,6 +26,8 @@ function App() {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isCmdKOpen, setIsCmdKOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isTopologyOpen, setIsTopologyOpen] = useState(false);
 
   const { config, currentEnv, isLoading } = useMatrixStore();
 
@@ -39,17 +43,19 @@ function App() {
       if (e.key === 'Escape') {
         if (isCmdKOpen) setIsCmdKOpen(false);
         else if (isConfigOpen) setIsConfigOpen(false);
+        else if (isNotesOpen) setIsNotesOpen(false);
+        else if (isTopologyOpen) setIsTopologyOpen(false);
         else if (searchQuery) setSearchQuery('');
       }
       // 1/2 shortcuts
-      if (!isSearchFocused && !isCmdKOpen && !isConfigOpen) {
+      if (!isSearchFocused && !isCmdKOpen && !isConfigOpen && !isNotesOpen && !isTopologyOpen) {
         if (e.key === '1') setViewMode('card');
         if (e.key === '2') setViewMode('table');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isConfigOpen, searchQuery, isSearchFocused, isCmdKOpen]);
+  }, [isConfigOpen, searchQuery, isSearchFocused, isCmdKOpen, isNotesOpen, isTopologyOpen]);
 
   // Derived State
   const serviceGroups = useMemo(() => {
@@ -213,6 +219,25 @@ function App() {
 
                 <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
                   <button
+                    onClick={() => setIsTopologyOpen(true)}
+                    className="p-1 rounded transition-all text-slate-500 hover:text-white hover:bg-white/10"
+                    title="拓撲圖"
+                  >
+                    <Network className="w-3 h-3" />
+                  </button>
+                  <button
+                    onClick={() => setIsNotesOpen(!isNotesOpen)}
+                    className={clsx("p-1 rounded transition-all", isNotesOpen ? "text-amber-400 bg-amber-500/10" : "text-slate-500 hover:text-white hover:bg-white/10")}
+                    title="隨手筆記"
+                  >
+                    <StickyNote className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="w-px h-4 bg-white/10" />
+
+                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
+                  <button
                     onClick={() => setShowServices(!showServices)}
                     className={clsx(
                       "px-2 py-1 rounded text-[10px] transition-all",
@@ -344,6 +369,9 @@ function App() {
         </div>
       </main>
       <QuickSearch />
+
+      <QuickNotes isOpen={isNotesOpen} onClose={() => setIsNotesOpen(false)} />
+      {isTopologyOpen && <TopologyModal onClose={() => setIsTopologyOpen(false)} />}
 
       {isCmdKOpen && (
         <CommandPaletteModal

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useMatrixStore } from '../../store/useMatrixStore';
-import { FileCode, Upload, Download, Copy, Check } from 'lucide-react';
+import { FileCode, Upload, Download, Copy, Check, Sparkles } from 'lucide-react';
 
 export const ImportExport: React.FC = () => {
     const { exportConfig, parseConfig } = useMatrixStore();
@@ -136,6 +136,74 @@ export const ImportExport: React.FC = () => {
                     </span>
                 )}
             </div>
+            {/* Snippets / Smart Import */}
+            <div className="pt-4 border-t border-white/5">
+                <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    Quick Snippets (Smart Import)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <button
+                        onClick={() => setYamlContent(prev => prev + `
+# Added Monitoring Stack
+services:
+  - id: prometheus
+    name: Prometheus
+    group: Monitoring
+    tags: [infra, monitoring]
+    links: []
+  - id: grafana
+    name: Grafana
+    group: Monitoring
+    tags: [infra, monitoring]
+    links: []
+`)}
+                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-amber-500/50 hover:bg-slate-800 transition-all group"
+                    >
+                        <div className="font-medium text-slate-200 group-hover:text-amber-400">Add Monitoring Stack</div>
+                        <div className="text-xs text-slate-500 mt-1">Adds Prometheus & Grafana services</div>
+                    </button>
+
+                    <button
+                        onClick={() => setYamlContent(prev => prev + `
+# Added Logging Stack
+services:
+  - id: elasticsearch
+    name: Elasticsearch
+    group: Logging
+    tags: [data, logging]
+    links: []
+  - id: kibana
+    name: Kibana
+    group: Logging
+    tags: [data, logging]
+    links: []
+`)}
+                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-blue-500/50 hover:bg-slate-800 transition-all group"
+                    >
+                        <div className="font-medium text-slate-200 group-hover:text-blue-400">Add EFK Stack</div>
+                        <div className="text-xs text-slate-500 mt-1">Adds Elasticsearch & Kibana</div>
+                    </button>
+
+                    <button
+                        onClick={() => setYamlContent(prev => prev + `
+# Common Tags Config
+theme:
+  primaryColor: amber
+announcement:
+  active: true
+  level: info
+  message: "Maintenance Window: Sunday 2AM - 4AM UTC"
+`)}
+                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-green-500/50 hover:bg-slate-800 transition-all group"
+                    >
+                        <div className="font-medium text-slate-200 group-hover:text-green-400">Apply Standard Config</div>
+                        <div className="text-xs text-slate-500 mt-1">Sets theme and standard announcements</div>
+                    </button>
+                </div>
+            </div>
+
+            <div className="h-8"></div>
         </div>
     );
 };
