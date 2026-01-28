@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from './store/useMatrixStore';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
 import { EnvironmentSettings } from './components/settings/EnvironmentSettings';
@@ -12,24 +13,40 @@ import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
 import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
-import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote, Filter } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote, Filter, Moon, Sun, Languages } from 'lucide-react';
 import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
 import { TopologyModal } from './components/matrix/TopologyModal';
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [currentPage, setCurrentPage] = useState<PageId>('matrix');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
-  const [showServices, setShowServices] = useState(true);
+  const [showServices, setShowServices] = useState(false); // Default to CLOSED
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isCmdKOpen, setIsCmdKOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isTopologyOpen, setIsTopologyOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const { config, currentEnv, isLoading } = useMatrixStore();
+
+  // Theme Sync
+  useEffect(() => {
+    if (!isDarkMode) {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+  }, [isDarkMode]);
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'en' ? 'zh-TW' : 'en';
+    i18n.changeLanguage(next);
+  };
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -129,7 +146,6 @@ function App() {
       case 'matrix':
         return (
           <div className="space-y-6">
-            {/* Announcement Banner */}
             {config.announcement?.active && (
               <div className={clsx(
                 "rounded border-l-4 p-3 flex items-center gap-3 mb-4 animate-in slide-in-from-top-2",
@@ -144,9 +160,7 @@ function App() {
               </div>
             )}
 
-            {/* Filter Toolbar Stickiness */}
-            <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[#09090b]/95 backdrop-blur-sm border-b border-white/10 flex items-center gap-4">
-              {/* Search */}
+            <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[var(--header-bg)] backdrop-blur-sm border-b border-[var(--border)] flex items-center gap-4 transition-colors">
               <div className="relative flex-1 max-w-md">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 flex items-center justify-center">
                   <Search className="w-4 h-4" />
@@ -154,84 +168,101 @@ function App() {
                 <input
                   id="main-search"
                   type="text"
-                  placeholder="Search services..."
+                  placeholder={t('app.search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full bg-[#18181b] border border-white/10 rounded-md pl-9 pr-16 py-1.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all font-mono"
+                  className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-md pl-9 pr-16 py-1.5 text-sm text-[var(--foreground)] placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all font-mono"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <code className="text-[10px] text-slate-600 border border-white/5 rounded px-1 bg-white/5">⌘K</code>
+                  <code className="text-[10px] text-slate-600 border border-white/5 rounded px-1 bg-white/5 font-mono">⌘K</code>
                 </div>
               </div>
 
-              {/* Environment */}
               <EnvSelector />
 
-              <div className="h-6 w-px bg-white/10 mx-2" />
+              <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
-              {/* Tools Group */}
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setIsTopologyOpen(true)}
-                  className="p-1.5 rounded-md text-slate-500 hover:text-slate-200 hover:bg-white/5 transition-all"
-                  title="View Topology"
+                  className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all"
+                  title={t('actions.view_topology')}
                 >
                   <Network className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setIsNotesOpen(!isNotesOpen)}
-                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-slate-500 hover:text-slate-200 hover:bg-white/5")}
-                  title="Quick Notes"
+                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]")}
+                  title={t('actions.quick_notes')}
                 >
                   <StickyNote className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="h-6 w-px bg-white/10 mx-2" />
+              <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
-              {/* Groups Filter */}
               <div className="flex items-center gap-1">
                 <Filter className="w-4 h-4 text-slate-500 mr-1" />
-                <div className="flex items-center gap-1 bg-[#18181b] rounded-md p-1 border border-white/5">
+                <div className="flex items-center gap-1 bg-[var(--surface)] rounded-md p-1 border border-[var(--border)]">
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
-                      "px-2 py-0.5 rounded text-[11px] font-medium transition-colors",
+                      "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
                       !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
                     )}
                   >
-                    ALL
+                    {t('actions.all')}
                   </button>
                   {serviceGroups.map(group => (
                     <button
                       key={group}
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
-                        "px-2 py-0.5 rounded text-[11px] font-medium transition-colors",
+                        "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
                         activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
                       )}
                     >
-                      {group.toUpperCase()}
+                      {group}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="ml-auto flex items-center gap-2">
-                {/* View Toggles */}
-                <div className="flex items-center bg-[#18181b] rounded-md border border-white/5 p-0.5">
+              <div className="ml-auto flex items-center gap-3">
+                {/* Language Switch */}
+                <button
+                  onClick={toggleLanguage}
+                  className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center gap-2 text-xs font-mono font-bold"
+                  title="Switch Language"
+                >
+                  <Languages className="w-4 h-4" />
+                  <span className="w-4 text-center">{i18n.language === 'en' ? 'TW' : 'EN'}</span>
+                </button>
+
+                {/* Theme Switch */}
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all"
+                  title="Toggle Theme"
+                >
+                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+
+                <div className="h-6 w-px bg-[var(--border)] mx-1" />
+
+                <div className="flex items-center bg-[var(--surface)] rounded-md border border-[var(--border)] p-0.5">
                   <button
                     onClick={() => setShowServices(!showServices)}
                     className={clsx(
                       "px-2 py-1 rounded-[3px] text-[10px] font-bold uppercase transition-colors mr-1",
-                      showServices ? "bg-white/10 text-slate-200" : "text-slate-600 hover:text-slate-400"
+                      showServices ? "bg-white/10 text-[var(--foreground)]" : "text-slate-600 hover:text-slate-400"
                     )}
                   >
-                    Services
+                    {t('app.services')}
                   </button>
-                  <div className="w-px h-3 bg-white/10 mx-1" />
+                  <div className="w-px h-3 bg-[var(--border)] mx-1" />
                   <button
                     onClick={() => setViewMode('card')}
                     className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'card' ? "bg-amber-500 text-black" : "text-slate-600 hover:text-slate-400")}
@@ -248,20 +279,19 @@ function App() {
 
                 <button
                   onClick={() => setIsConfigOpen(true)}
-                  className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-md transition-colors"
+                  className="p-2 text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Summary Data */}
-            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-slate-500 uppercase tracking-tight border-b border-white/5 pb-4">
-              <div>Services: <span className="text-slate-300">{filteredServices.length}</span></div>
-              <div>Links: <span className="text-slate-300">{totalLinks}</span></div>
-              <div>Categories: <span className="text-slate-300">{config.columns.length}</span></div>
+            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-slate-500 uppercase tracking-tight border-b border-[var(--border)] pb-4">
+              <div>{t('stats.svc')}: <span className="text-[var(--foreground)]">{filteredServices.length}</span></div>
+              <div>Links: <span className="text-[var(--foreground)]">{totalLinks}</span></div>
+              <div>{t('stats.col')}: <span className="text-[var(--foreground)]">{config.columns.length}</span></div>
               {searchQuery && (
-                <div className="text-amber-500">Filtered: {filteredServices.length}</div>
+                <div className="text-amber-500">{t('app.filtered')}: {filteredServices.length}</div>
               )}
             </div>
 
@@ -275,11 +305,11 @@ function App() {
                   <section>
                     <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                       <LayoutGrid className="w-3.5 h-3.5" />
-                      Services Directory
+                      {t('app.services_directory')}
                     </h2>
                     {filteredServices.length === 0 ? (
-                      <div className="text-center py-12 border border-dashed border-white/10 rounded-lg">
-                        <p className="text-slate-500 text-sm">No services found matching "{searchQuery}"</p>
+                      <div className="text-center py-12 border border-dashed border-[var(--border)] rounded-lg">
+                        <p className="text-slate-500 text-sm">{t('app.no_services')} "{searchQuery}"</p>
                       </div>
                     ) : (
                       <div className={clsx(
@@ -307,7 +337,7 @@ function App() {
                   const Icon = getIconComponent(col.icon);
                   return (
                     <section key={col.id}>
-                      <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-white/5 pb-2">
+                      <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-[var(--border)] pb-2 transition-colors">
                         <Icon className="w-3.5 h-3.5" />
                         {col.title}
                         <span className="text-slate-700">/</span>
@@ -348,7 +378,7 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen selection:bg-amber-500/30 font-sans">
+    <div className="flex min-h-screen selection:bg-amber-500/30 font-sans transition-colors bg-[var(--background)]">
       <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
       <main className="flex-1 overflow-auto relative">
         <div className="max-w-7xl mx-auto px-6 py-4">

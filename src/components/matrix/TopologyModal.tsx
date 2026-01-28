@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from '../../store/useMatrixStore';
 import { X, Network } from 'lucide-react';
 
@@ -7,6 +8,7 @@ interface TopologyModalProps {
 }
 
 export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
+    const { t } = useTranslation();
     const { config } = useMatrixStore();
 
     const nodes = useMemo(() => {
@@ -53,21 +55,21 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
     }, [config.services]);
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-[95vw] h-[85vh] bg-[#09090b] border border-white/10 rounded-lg shadow-2xl overflow-hidden relative flex flex-col">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#09090b]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="w-[95vw] h-[85vh] bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl overflow-hidden relative flex flex-col">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)]">
                     <div className="flex items-center gap-2">
                         <Network className="w-5 h-5 text-amber-500" />
-                        <h2 className="font-mono text-sm text-slate-200 uppercase tracking-widest">Dependency Graph</h2>
+                        <h2 className="font-mono text-sm text-[var(--foreground)] uppercase tracking-widest">{t('app.topology')}</h2>
                     </div>
-                    <button onClick={onClose} className="p-1 hover:bg-white/10 rounded-sm text-slate-500 hover:text-white transition-colors">
+                    <button onClick={onClose} className="p-1 hover:bg-white/10 rounded-sm text-slate-500 hover:text-[var(--foreground)] transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-hidden relative bg-[#09090b]">
+                <div className="flex-1 overflow-hidden relative bg-[var(--background)]">
                     {/* Grid Background */}
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
 
                     <svg width="100%" height="100%" viewBox="0 0 800 700" className="pointer-events-none relative z-10">
                         {/* Links */}
@@ -80,7 +82,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
                                     key={i}
                                     x1={source.x} y1={source.y}
                                     x2={target.x} y2={target.y}
-                                    stroke="#27272a"
+                                    style={{ stroke: 'var(--border)' }}
                                     strokeWidth="1.5"
                                 />
                             );
@@ -91,20 +93,20 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
                             <g key={node.id} transform={`translate(${node.x},${node.y})`}>
                                 {node.type === 'group' ? (
                                     <>
-                                        <circle r="40" fill="#18181b" stroke="#3f3f46" strokeWidth="1" />
-                                        <text y="55" textAnchor="middle" fill="#d4d4d8" fontSize="11" fontFamily="monospace" fontWeight="bold">{node.label}</text>
+                                        <circle r="40" style={{ fill: 'var(--surface)', stroke: 'var(--border)' }} strokeWidth="1" />
+                                        <text y="55" textAnchor="middle" style={{ fill: 'var(--foreground)' }} fontSize="11" fontFamily="monospace" fontWeight="bold">{node.label}</text>
                                     </>
                                 ) : (
                                     <>
-                                        <circle r="4" fill="#71717a" stroke="#09090b" strokeWidth="1" />
-                                        <text y="14" textAnchor="middle" fill="#71717a" fontSize="9" fontFamily="monospace">{node.label}</text>
+                                        <circle r="4" style={{ fill: 'var(--foreground-muted)', stroke: 'var(--background)' }} strokeWidth="1" />
+                                        <text y="14" textAnchor="middle" style={{ fill: 'var(--foreground-muted)' }} fontSize="9" fontFamily="monospace">{node.label}</text>
                                     </>
                                 )}
                             </g>
                         ))}
                     </svg>
 
-                    <div className="absolute bottom-4 left-4 p-2 bg-[#18181b] border border-white/10 rounded text-[10px] text-slate-500 font-mono">
+                    <div className="absolute bottom-4 left-4 p-2 bg-[var(--surface)] border border-[var(--border)] rounded text-[10px] text-slate-500 font-mono">
                         <div>NODES: {nodes.length}</div>
                         <div>GROUPS: {nodes.filter(n => n.type === 'group').length}</div>
                     </div>
