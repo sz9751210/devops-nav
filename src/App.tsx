@@ -19,6 +19,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [showServices, setShowServices] = useState(true);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
@@ -27,18 +28,15 @@ function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K to focus search
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         const searchInput = document.getElementById('main-search');
         searchInput?.focus();
       }
-      // Escape to clear search or close modals
       if (e.key === 'Escape') {
         if (isConfigOpen) setIsConfigOpen(false);
         else if (searchQuery) setSearchQuery('');
       }
-      // 1/2 to switch view modes when not in input
       if (!isSearchFocused && e.key === '1') setViewMode('card');
       if (!isSearchFocused && e.key === '2') setViewMode('table');
     };
@@ -119,9 +117,7 @@ function App() {
       case 'matrix':
         return (
           <div className="space-y-6">
-            {/* Compact Header */}
             <div className="flex flex-col gap-4 pt-2">
-              {/* Search + Env */}
               <div className="flex items-center gap-3">
                 <div className="relative flex-1 max-w-xl">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -143,7 +139,6 @@ function App() {
                 <EnvSelector />
               </div>
 
-              {/* Stats Bar */}
               <div className="flex items-center gap-4 text-xs text-slate-500">
                 <span>{filteredServices.length} 服務</span>
                 <span className="text-slate-700">|</span>
@@ -153,7 +148,6 @@ function App() {
               </div>
             </div>
 
-            {/* Sticky Toolbar */}
             <div className="sticky top-0 z-20 -mx-6 px-6 py-2 bg-black/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -161,7 +155,6 @@ function App() {
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Group Filter */}
                 <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
                   <button
                     onClick={() => setActiveGroup(null)}
@@ -188,7 +181,21 @@ function App() {
 
                 <div className="w-px h-4 bg-white/10" />
 
-                {/* View Toggle */}
+                <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
+                  <button
+                    onClick={() => setShowServices(!showServices)}
+                    className={clsx(
+                      "px-2 py-1 rounded text-[10px] transition-all",
+                      showServices ? "bg-amber-500/20 text-amber-400" : "text-slate-500 hover:text-white"
+                    )}
+                    title={showServices ? "隱藏服務列表" : "顯示服務列表"}
+                  >
+                    顯示服務
+                  </button>
+                </div>
+
+                <div className="w-px h-4 bg-white/10" />
+
                 <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-md p-0.5 border border-white/5">
                   <button
                     onClick={() => setViewMode('card')}
@@ -216,42 +223,41 @@ function App() {
               </div>
             </div>
 
-            {/* Content */}
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500" />
               </div>
             ) : (
               <div className="space-y-10 pb-16">
-                {/* Services Section */}
-                <section>
-                  <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                    <LayoutGrid className="w-4 h-4 text-amber-500" />
-                    服務
-                    <span className="text-slate-600 font-normal">({filteredServices.length})</span>
-                  </h2>
-                  {filteredServices.length === 0 ? (
-                    <p className="text-xs text-slate-600 italic py-4">無匹配服務</p>
-                  ) : (
-                    <div className={clsx(
-                      viewMode === 'card'
-                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"
-                        : "space-y-1"
-                    )}>
-                      {filteredServices.map(service => (
-                        <ServiceCard
-                          key={service.id}
-                          service={service}
-                          columns={config.columns}
-                          currentEnv={currentEnv}
-                          viewMode={viewMode}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </section>
+                {showServices && (
+                  <section>
+                    <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                      <LayoutGrid className="w-4 h-4 text-amber-500" />
+                      服務
+                      <span className="text-slate-600 font-normal">({filteredServices.length})</span>
+                    </h2>
+                    {filteredServices.length === 0 ? (
+                      <p className="text-xs text-slate-600 italic py-4">無匹配服務</p>
+                    ) : (
+                      <div className={clsx(
+                        viewMode === 'card'
+                          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"
+                          : "space-y-1"
+                      )}>
+                        {filteredServices.map(service => (
+                          <ServiceCard
+                            key={service.id}
+                            service={service}
+                            columns={config.columns}
+                            currentEnv={currentEnv}
+                            viewMode={viewMode}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                )}
 
-                {/* Category Sections */}
                 {config.columns.map(col => {
                   const links = getLinksForCategory(col.id);
                   if (links.length === 0) return null;
@@ -313,4 +319,3 @@ function App() {
 }
 
 export default App;
-
