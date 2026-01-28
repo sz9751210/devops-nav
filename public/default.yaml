@@ -1,0 +1,51 @@
+title: "OpsBridge Matrix"
+environments:
+  - dev
+  - staging
+  - prod
+
+columns:
+  - id: source
+    title: Source Code
+    type: link
+    template: "https://github.com/myorg/{{service_id}}"
+    icon: github
+  - id: ci
+    title: CI/CD
+    type: link
+    template: "https://jenkins.internal/job/{{service_id}}/job/{{env}}"
+    icon: jenkins
+  - id: logs
+    title: Logs
+    type: link
+    template: "https://kibana.internal/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logstash-*',key:service,negate:!f,params:(query:{{service_id}}),type:phrase),query:(match_phrase:(service:{{service_id}})))),index:'logstash-*',interval:auto,query:(language:kuery,query:''),sort:!(!('@timestamp',desc)))"
+    icon: kibana
+  - id: metrics
+    title: Metrics
+    type: link
+    template: "https://grafana.internal/d/{{service_id}}?var-env={{env}}"
+    icon: grafana
+  - id: status
+    title: Health
+    type: status
+    template: "https://api.{{env}}.internal/{{service_id}}/health"
+
+services:
+  - id: user-service
+    name: User Service
+    group: Core Platform
+    description: Handles user authentication and profiles
+  
+  - id: payment-gateway
+    name: Payment Gateway
+    group: Core Platform
+    description: Wraps Stripe and Paypal
+    variables:
+      stripe_key: pk_test_123
+    overrides:
+      logs: "https://datadog.com/logs?query=service:payment-gateway"
+
+  - id: bff-web
+    name: Web BFF
+    group: Frontend
+    description: Backend for Frontend for the main web app
