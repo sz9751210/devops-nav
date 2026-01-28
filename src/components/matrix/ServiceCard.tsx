@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check, Hammer, Hash, User, MessageCircle, MoreVertical, CopyCheck, TerminalSquare } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -14,7 +14,7 @@ interface ServiceCardProps {
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, currentEnv, viewMode }) => {
     const { t } = useTranslation();
-    const { toggleFavoriteService, isFavoriteService, addRecentService, trackLinkUsage } = useMatrixStore();
+    const { toggleFavoriteService, isFavoriteService, addRecentService, trackLinkUsage } = useNavigationStore();
     const [isHovered, setIsHovered] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
     const [showBulk, setShowBulk] = useState(false);

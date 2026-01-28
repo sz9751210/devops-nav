@@ -5,17 +5,17 @@ import {
     flexRender,
     createColumnHelper
 } from '@tanstack/react-table';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import type { ServiceDefinition } from '../../types/schema';
 import { ServiceCell } from './ServiceCell';
 
-interface MatrixTableProps {
+interface NavigationTableProps {
     services?: ServiceDefinition[];
     visibleColumns?: string[];
 }
 
-export const MatrixTable: React.FC<MatrixTableProps> = ({ services, visibleColumns }) => {
-    const { config } = useMatrixStore();
+export const NavigationTable: React.FC<NavigationTableProps> = ({ services, visibleColumns }) => {
+    const { config } = useNavigationStore();
 
     const columnHelper = createColumnHelper<ServiceDefinition>();
 

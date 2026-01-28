@@ -12,14 +12,14 @@ export const QuickNotes: React.FC<QuickNotesProps> = ({ isOpen, onClose }) => {
     const [note, setNote] = useState('');
 
     useEffect(() => {
-        const saved = localStorage.getItem('ops-matrix-scratchpad');
+        const saved = localStorage.getItem('ops-navigation-scratchpad');
         if (saved) setNote(saved);
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newVal = e.target.value;
         setNote(newVal);
-        localStorage.setItem('ops-matrix-scratchpad', newVal);
+        localStorage.setItem('ops-navigation-scratchpad', newVal);
     };
 
     if (!isOpen) return null;

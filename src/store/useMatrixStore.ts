@@ -1,19 +1,19 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig, ServiceLink } from '../types/schema';
+import type { OpsNavigationConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig, ServiceLink } from '../types/schema';
 import { api } from '../lib/api';
 import jsyaml from 'js-yaml';
 
-const DEFAULT_CONFIG: OpsMatrixConfig = {
-    title: 'OpsBridge Matrix',
+const DEFAULT_CONFIG: OpsNavigationConfig = {
+    title: 'OpsBridge Navigation',
     environments: [],
     columns: [],
     services: [],
     envConfigs: {},
 };
 
-interface MatrixState {
-    config: OpsMatrixConfig;
+interface NavigationState {
+    config: OpsNavigationConfig;
     currentEnv: Environment;
     isLoading: boolean;
     isSaving: boolean;
@@ -24,7 +24,7 @@ interface MatrixState {
     // Actions
     loadConfig: () => Promise<void>;
     saveConfig: () => Promise<void>;
-    setConfig: (config: OpsMatrixConfig) => void;
+    setConfig: (config: OpsNavigationConfig) => void;
     setEnv: (env: Environment) => void;
     setViewMode: (mode: 'list' | 'card') => void;
     parseConfig: (yamlString: string) => void;
@@ -74,7 +74,7 @@ const debouncedSave = (saveFn: () => Promise<void>) => {
     }, 500);
 };
 
-export const useMatrixStore = create<MatrixState>()(
+export const useNavigationStore = create<NavigationState>()(
     subscribeWithSelector((set, get) => ({
         config: DEFAULT_CONFIG,
         currentEnv: '',
@@ -138,7 +138,7 @@ export const useMatrixStore = create<MatrixState>()(
 
         parseConfig: (yamlString) => {
             try {
-                const parsed = jsyaml.load(yamlString) as OpsMatrixConfig;
+                const parsed = jsyaml.load(yamlString) as OpsNavigationConfig;
                 if (!parsed.services) parsed.services = [];
                 if (!parsed.columns) parsed.columns = [];
                 if (!parsed.environments) parsed.environments = [];
@@ -349,4 +349,4 @@ export const useMatrixStore = create<MatrixState>()(
 );
 
 // Load config on startup
-useMatrixStore.getState().loadConfig();
+useNavigationStore.getState().loadConfig();

@@ -1,6 +1,6 @@
 services:
   # Frontend (Nginx)
-  ops-matrix:
+  ops-navigation:
     build: .
     ports:
       - "8080:80"

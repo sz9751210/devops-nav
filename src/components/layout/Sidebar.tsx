@@ -16,9 +16,9 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HelpModal } from './HelpModal';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 
-export type PageId = 'matrix' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
+export type PageId = 'navigation' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
 
 interface SidebarProps {
     currentPage: PageId;
@@ -33,7 +33,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { id: 'matrix', labelKey: 'app.dashboard', icon: LayoutGrid },
+    { id: 'navigation', labelKey: 'app.dashboard', icon: LayoutGrid },
     { id: 'env-settings', labelKey: 'app.environments', icon: Globe, groupKey: 'app.configuration' },
     { id: 'env-group-settings', labelKey: 'app.groups', icon: FolderTree, groupKey: 'app.configuration' },
     { id: 'column-settings', labelKey: 'app.columns', icon: Layers, groupKey: 'app.configuration' },
@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
     const { t } = useTranslation();
     const [collapsed, setCollapsed] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
 
     const renderNavItem = (item: NavItem) => (
         <button

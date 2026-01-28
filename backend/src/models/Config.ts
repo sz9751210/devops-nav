@@ -47,7 +47,7 @@ export interface IConfig {
 
 const ConfigSchema = new Schema<IConfig>({
     _id: { type: String, default: 'default' },
-    title: { type: String, required: true, default: 'OpsBridge Matrix' },
+    title: { type: String, required: true, default: 'OpsBridge Navigation' },
     environments: [{ type: String }],
     columns: [{
         id: String,

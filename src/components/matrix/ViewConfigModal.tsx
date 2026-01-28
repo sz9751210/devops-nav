@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { X, Search, Check, Save } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -10,7 +10,7 @@ interface ViewConfigModalProps {
 
 export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => {
     const { t } = useTranslation();
-    const { config, currentEnv, setEnvConfig } = useMatrixStore();
+    const { config, currentEnv, setEnvConfig } = useNavigationStore();
     const [activeTab, setActiveTab] = useState<'services' | 'columns'>('services');
     const [searchQuery, setSearchQuery] = useState('');
 

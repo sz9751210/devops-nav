@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import type { ColumnDefinition } from '../../types/schema';
 import {
     Plus, Trash2, Layers, Pencil, X, Check,
@@ -36,7 +36,7 @@ const getIconComponent = (iconName: string) => {
 
 export const ColumnSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addColumn, updateColumn, removeColumn } = useMatrixStore();
+    const { config, addColumn, updateColumn, removeColumn } = useNavigationStore();
     const [isAddingColumn, setIsAddingColumn] = useState(false);
     const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
     const [columnForm, setColumnForm] = useState<Partial<ColumnDefinition>>({});
@@ -230,7 +230,7 @@ export const ColumnSettings: React.FC = () => {
 
             {/* Help Text */}
             <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-600 font-mono italic">
-                SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the matrix organized.
+                SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.
             </div>
         </div>
     );

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const EnvironmentSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvironment, removeEnvironment, setEnvConfig } = useMatrixStore();
+    const { config, addEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
     const [newEnv, setNewEnv] = useState('');
     const [expandedEnv, setExpandedEnv] = useState<string | null>(null);
 

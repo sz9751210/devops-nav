@@ -1,9 +1,9 @@
 import React from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { clsx } from 'clsx';
 
 export const EnvSwitcher: React.FC = () => {
-    const { config, currentEnv, setEnv } = useMatrixStore();
+    const { config, currentEnv, setEnv } = useNavigationStore();
 
     if (!config) return null;
 

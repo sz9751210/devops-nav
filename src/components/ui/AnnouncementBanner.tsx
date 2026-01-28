@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { AlertCircle, Info, AlertTriangle, CheckCircle, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const AnnouncementBanner: React.FC = () => {
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
     const [isVisible, setIsVisible] = useState(true);
 
     if (!config.announcement?.active || !isVisible) return null;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
@@ -58,7 +58,7 @@ export const QuickSearch: React.FC = () => {
     const [query, setQuery] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const { config, currentEnv } = useMatrixStore();
+    const { config, currentEnv } = useNavigationStore();
 
     const results = useMemo(() => {
         return filterItems(config.services, config.columns, query, currentEnv);

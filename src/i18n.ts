@@ -31,7 +31,7 @@ const resources = {
             "actions": {
                 "all": "ALL",
                 "services": "SERVICES",
-                "matrix": "MATRIX",
+                "navigation": "NAVIGATION",
                 "copy_url": "Copy URL",
                 "view_topology": "View Topology",
                 "quick_notes": "Quick Notes",
@@ -143,7 +143,7 @@ const resources = {
             "actions": {
                 "all": "全部",
                 "services": "服務列表",
-                "matrix": "矩陣檢視",
+                "navigation": "導航檢視",
                 "copy_url": "複製連結",
                 "view_topology": "檢視拓撲",
                 "quick_notes": "隨手筆記",

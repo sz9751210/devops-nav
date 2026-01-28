@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
-import { MatrixTable } from './MatrixTable';
+import { useNavigationStore } from '../../store/useNavigationStore';
+import { NavigationTable } from './NavigationTable';
 import { CardView } from './CardView';
 import { ViewConfigModal } from './ViewConfigModal';
 import { LayoutList, LayoutGrid, Settings2, SlidersHorizontal } from 'lucide-react';
 import { clsx } from 'clsx';
 
-export const MatrixContainer: React.FC = () => {
-    const { config, currentEnv, viewMode, setViewMode, isLoading } = useMatrixStore();
+export const NavigationContainer: React.FC = () => {
+    const { config, currentEnv, viewMode, setViewMode, isLoading } = useNavigationStore();
     const [isConfigOpen, setIsConfigOpen] = useState(false);
 
     // Get current environment config
@@ -108,7 +108,7 @@ export const MatrixContainer: React.FC = () => {
             ) : (
                 <>
                     {viewMode === 'list' ? (
-                        <MatrixTable
+                        <NavigationTable
                             services={filteredServices}
                             visibleColumns={visibleColumns}
                         />

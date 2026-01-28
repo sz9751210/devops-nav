@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, Activity, FileText, Settings, Eye, Database, Link2 } from 'lucide-react';
 
@@ -33,7 +33,7 @@ const getVisibleLinks = (links: ServiceLink[] | undefined, env: string): Service
 };
 
 export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) => {
-    const { config, currentEnv } = useMatrixStore();
+    const { config, currentEnv } = useNavigationStore();
 
     // Helper to get columns for display
     const columns = config.columns.filter(c => visibleColumns.includes(c.id));

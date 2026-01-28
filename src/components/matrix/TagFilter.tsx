@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { Tag, Hash, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -10,7 +10,7 @@ interface TagFilterProps {
 }
 
 export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag, onClear }) => {
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
 
     // Extract all unique tags
     const allTags = React.useMemo(() => {

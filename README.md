@@ -1,6 +1,6 @@
-# OpsBridge Matrix 🛸
+# OpsBridge Navigation 🛸
 
-> **The Engineer-Ready Service Matrix for Modern DevOps Teams.**
+> **The Engineer-Ready Service Navigation for Modern DevOps Teams.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://img.shields.io/badge/Build-Success-emerald.svg)]()
@@ -13,13 +13,13 @@
 <a name="english"></a>
 ## 📖 Introduction
 
-**OpsBridge Matrix** is a schema-driven navigation hub designed for complex microservice architectures. Instead of maintaining hundreds of static bookmarks, it provides a dynamic grid where **Services (Rows)** meet **Categories (Columns)** across multiple **Environments**.
+**OpsBridge Navigation** is a schema-driven navigation hub designed for complex microservice architectures. Instead of maintaining hundreds of static bookmarks, it provides a dynamic grid where **Services (Rows)** meet **Categories (Columns)** across multiple **Environments**.
 
 It is built with an "Engineer-First" aesthetic, prioritizing density, keyboard shortcuts, and dark mode excellence.
 
 ### ✨ Key Features
 
-- 🏗️ **Dynamic Matrix View**: Automatically maps service links to category columns.
+- 🏗️ **Dynamic Navigation View**: Automatically maps service links to category columns.
 - 🌍 **Contextual Environments**: One-click switching between `Dev`, `Staging`, and `Prod` with synchronized URL updates.
 - � **Service Health UI**: Integrated status indicators (Healthy, Warning, Error) with pulsing alerts.
 - 🏷️ **Tag Filter System**: Instantly filter your entire dashboard by functional tags (e.g., `#frontend`, `#critical`).
@@ -61,7 +61,7 @@ Open [http://localhost:8080](http://localhost:8080)
 Go to **Settings > Environments**. Add your targets (e.g., `dev`, `stage`, `prod`). Use **Environment Groups** to cluster them (e.g., `lab-envs` pattern matches `lab-*`).
 
 ### 2. Define Columns (Categories)
-Go to **Settings > Columns**. Create categories like `Monitoring`, `Logs`, `CI/CD`. These will appear as columns in your matrix.
+Go to **Settings > Columns**. Create categories like `Monitoring`, `Logs`, `CI/CD`. These will appear as columns in your navigation.
 
 ### 3. Add Services
 Go to **Settings > Services**. Register your microservices.
@@ -79,7 +79,7 @@ For power users, go to **Settings > Sync / Backup**. You can paste a full YAML c
 | :--- | :--- |
 | `Cmd + K` | Open Quick Search |
 | `1` | Card View Mode |
-| `2` | Matrix (Table) Mode |
+| `2` | Navigation (Table) Mode |
 | `Esc` | Close any modal |
 
 ---

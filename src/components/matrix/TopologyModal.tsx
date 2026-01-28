@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { X, Network } from 'lucide-react';
 
 interface TopologyModalProps {
@@ -9,7 +9,7 @@ interface TopologyModalProps {
 
 export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
     const { t } = useTranslation();
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
 
     const nodes = useMemo(() => {
         const groups = Array.from(new Set(config.services.map(s => s.group || 'Ungrouped')));

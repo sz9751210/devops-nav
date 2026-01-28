@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { Plus, Trash2, FolderTree } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const EnvGroupSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvGroup, removeEnvGroup } = useMatrixStore();
+    const { config, addEnvGroup, removeEnvGroup } = useNavigationStore();
     const [newGroup, setNewGroup] = useState({
         id: '',
         name: '',

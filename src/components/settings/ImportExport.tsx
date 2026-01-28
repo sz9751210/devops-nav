@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { FileCode, Upload, Download, Copy, Check, Sparkles } from 'lucide-react';
 
 export const ImportExport: React.FC = () => {
     const { t } = useTranslation();
-    const { exportConfig, parseConfig } = useMatrixStore();
+    const { exportConfig, parseConfig } = useNavigationStore();
     const [yamlContent, setYamlContent] = useState('');
     const [copied, setCopied] = useState(false);
     const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');

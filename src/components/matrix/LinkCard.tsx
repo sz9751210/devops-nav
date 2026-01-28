@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ServiceDefinition, ServiceLink, ColumnDefinition } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, Activity, FileText, Settings, Eye, Database, Link2, Copy, Check } from 'lucide-react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 
@@ -42,7 +42,7 @@ const getServiceColor = (id: string) => {
 
 export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compact = false }) => {
     const { t } = useTranslation();
-    const { addRecentService } = useMatrixStore();
+    const { addRecentService } = useNavigationStore();
     const [copied, setCopied] = useState(false);
     const Icon = getIconComponent(column?.icon);
     const color = getServiceColor(service.id);

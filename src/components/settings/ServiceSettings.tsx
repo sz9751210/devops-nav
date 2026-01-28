@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
 import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const ServiceSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useMatrixStore();
+    const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useNavigationStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedService, setExpandedService] = useState<string | null>(null);
     const [isAddingService, setIsAddingService] = useState(false);

@@ -1,17 +1,17 @@
-import type { OpsMatrixConfig, EnvSpecificConfig } from '../types/schema';
+import type { OpsNavigationConfig, EnvSpecificConfig } from '../types/schema';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export const api = {
     // Get current config
-    async getConfig(): Promise<OpsMatrixConfig> {
+    async getConfig(): Promise<OpsNavigationConfig> {
         const res = await fetch(`${API_BASE}/api/config`);
         if (!res.ok) throw new Error('Failed to fetch config');
         return res.json();
     },
 
     // Update full config
-    async saveConfig(config: OpsMatrixConfig): Promise<OpsMatrixConfig> {
+    async saveConfig(config: OpsNavigationConfig): Promise<OpsNavigationConfig> {
         const res = await fetch(`${API_BASE}/api/config`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -22,7 +22,7 @@ export const api = {
     },
 
     // Update env-specific config
-    async saveEnvConfig(env: string, envConfig: EnvSpecificConfig): Promise<OpsMatrixConfig> {
+    async saveEnvConfig(env: string, envConfig: EnvSpecificConfig): Promise<OpsNavigationConfig> {
         const res = await fetch(`${API_BASE}/api/config/env/${encodeURIComponent(env)}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },

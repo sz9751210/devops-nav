@@ -1,9 +1,9 @@
 import React from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { Server, Layers, Globe } from 'lucide-react';
 
 export const DashboardStats: React.FC = () => {
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
 
     const stats = [
         {

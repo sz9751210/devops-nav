@@ -6,7 +6,7 @@ const router = Router();
 // Default config for initialization
 const DEFAULT_CONFIG = {
     _id: 'default',
-    title: 'OpsBridge Matrix',
+    title: 'OpsBridge Navigation',
     environments: [],
     columns: [],
     services: [],

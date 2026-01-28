@@ -56,7 +56,7 @@ export interface EnvSpecificConfig {
     viewMode?: 'list' | 'card';
 }
 
-export interface OpsMatrixConfig {
+export interface OpsNavigationConfig {
     title: string;
     environments: Environment[];
     columns: ColumnDefinition[];

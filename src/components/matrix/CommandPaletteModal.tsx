@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Settings, LayoutGrid, Terminal, FileText, Moon, Database } from 'lucide-react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { clsx } from 'clsx';
 import type { PageId } from '../layout/Sidebar';
 
@@ -22,11 +22,11 @@ type CommandItem = {
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClose, onNavigate }) => {
     const [query, setQuery] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const { config } = useMatrixStore();
+    const { config } = useNavigationStore();
 
     // Define Actions
     const actions: CommandItem[] = useMemo(() => [
-        { id: 'goto-matrix', title: 'Go to Dashboard', icon: LayoutGrid, action: () => onNavigate('matrix') },
+        { id: 'goto-navigation', title: 'Go to Dashboard', icon: LayoutGrid, action: () => onNavigate('navigation') },
         { id: 'goto-env', title: 'Environment Settings', icon: Settings, action: () => onNavigate('env-settings') },
         { id: 'goto-col', title: 'Column Settings', icon: Settings, action: () => onNavigate('column-settings') },
         { id: 'goto-svc', title: 'Service Settings', icon: Database, action: () => onNavigate('service-settings') },

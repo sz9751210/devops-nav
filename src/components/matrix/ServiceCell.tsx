@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { ExternalLink, Github, Terminal, Activity, Cloud, Link2 } from 'lucide-react';
 
 interface ServiceCellProps {
@@ -31,7 +31,7 @@ const getVisibleLinks = (links: ServiceLink[] | undefined, env: string): Service
 };
 
 export const ServiceCell: React.FC<ServiceCellProps> = ({ service, column }) => {
-    const currentEnv = useMatrixStore((state) => state.currentEnv);
+    const currentEnv = useNavigationStore((state) => state.currentEnv);
 
     // Get links for this service under this column
     const visibleLinks = getVisibleLinks(service.links, currentEnv);

@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useMatrixStore } from '../../store/useMatrixStore';
+import { useNavigationStore } from '../../store/useNavigationStore';
 import { ChevronDown, Search, Star, Clock, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { Environment, EnvGroup } from '../../types/schema';
 
 export const EnvSelector: React.FC = () => {
-    const { config, currentEnv, setEnv, recentEnvs, toggleFavoriteEnv, isFavoriteEnv } = useMatrixStore();
+    const { config, currentEnv, setEnv, recentEnvs, toggleFavoriteEnv, isFavoriteEnv } = useNavigationStore();
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
