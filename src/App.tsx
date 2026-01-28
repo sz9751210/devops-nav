@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useMatrixStore } from './store/useMatrixStore';
 import { MatrixTable } from './components/matrix/MatrixTable';
-import { EnvSwitcher } from './components/matrix/EnvSwitcher';
+import { EnvSelector } from './components/matrix/EnvSelector';
 import { QuickSearch } from './components/matrix/QuickSearch';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
 import { EnvironmentSettings } from './components/settings/EnvironmentSettings';
 import { ColumnSettings } from './components/settings/ColumnSettings';
 import { ServiceSettings } from './components/settings/ServiceSettings';
 import { ImportExport } from './components/settings/ImportExport';
+import { EnvGroupSettings } from './components/settings/EnvGroupSettings';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('matrix');
@@ -26,7 +27,7 @@ function App() {
                   {config.services.length} services · {config.columns.length} columns
                 </p>
               </div>
-              <EnvSwitcher />
+              <EnvSelector />
             </div>
 
             {config.services.length === 0 || config.columns.length === 0 ? (
@@ -69,6 +70,8 @@ function App() {
         );
       case 'env-settings':
         return <EnvironmentSettings />;
+      case 'env-group-settings':
+        return <EnvGroupSettings />;
       case 'column-settings':
         return <ColumnSettings />;
       case 'service-settings':

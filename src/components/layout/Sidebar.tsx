@@ -7,11 +7,16 @@ import {
     Globe,
     FileCode,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    BarChart3,
+    HelpCircle,
+    FolderTree
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { DashboardStats } from './DashboardStats';
+import { HelpModal } from './HelpModal';
 
-export type PageId = 'matrix' | 'env-settings' | 'column-settings' | 'service-settings' | 'import-export';
+export type PageId = 'matrix' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
 
 interface SidebarProps {
     currentPage: PageId;
@@ -28,6 +33,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     { id: 'matrix', label: 'Matrix', icon: LayoutGrid },
     { id: 'env-settings', label: 'Environments', icon: Globe, group: 'Settings' },
+    { id: 'env-group-settings', label: 'Env Groups', icon: FolderTree, group: 'Settings' },
     { id: 'column-settings', label: 'Columns', icon: Layers, group: 'Settings' },
     { id: 'service-settings', label: 'Services', icon: Server, group: 'Settings' },
     { id: 'import-export', label: 'Import/Export', icon: FileCode },
@@ -35,6 +41,7 @@ const navItems: NavItem[] = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
 
     const renderNavItem = (item: NavItem) => (
         <button
@@ -90,6 +97,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
                 </button>
             </div>
 
+            {/* Dashboard Stats */}
+            {!collapsed && (
+                <div className="p-4 border-b border-white/5">
+                    <div className="flex items-center gap-2 mb-3 text-slate-400">
+                        <BarChart3 className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider">Overview</span>
+                    </div>
+                    <DashboardStats />
+                </div>
+            )}
+
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
                 {mainItems.map(renderNavItem)}
@@ -108,18 +126,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-white/5 bg-slate-900/20">
-                {!collapsed ? (
-                    <div className="flex items-center justify-between text-xs text-slate-500 px-2">
-                        <span>Quick Search</span>
-                        <kbd className="bg-white/10 px-2 py-1 rounded text-slate-300 font-sans">⌘K</kbd>
-                    </div>
-                ) : (
-                    <div className="text-center text-slate-500">
-                        <kbd className="bg-white/10 px-1.5 py-1 rounded text-[10px] text-slate-300">⌘K</kbd>
-                    </div>
-                )}
+            <div className="border-t border-white/5 bg-slate-900/20">
+                {/* Help Button */}
+                <button
+                    onClick={() => setShowHelp(!showHelp)}
+                    className="w-full p-4 flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                >
+                    <HelpCircle className="w-5 h-5" />
+                    {!collapsed && <span className="text-sm font-medium">Help & Shortcuts</span>}
+                </button>
+
+                {/* Quick Search Hint */}
+                <div className="p-4 border-t border-white/5">
+                    {!collapsed ? (
+                        <div className="flex items-center justify-between text-xs text-slate-500 px-2">
+                            <span>Quick Search</span>
+                            <kbd className="bg-white/10 px-2 py-1 rounded text-slate-300 font-sans">⌘K</kbd>
+                        </div>
+                    ) : (
+                        <div className="text-center text-slate-500">
+                            <kbd className="bg-white/10 px-1.5 py-1 rounded text-[10px] text-slate-300">⌘K</kbd>
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* Help Modal */}
+            {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
         </aside>
     );
 };

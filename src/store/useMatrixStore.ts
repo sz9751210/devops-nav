@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition } from '../types/schema';
+import type { OpsMatrixConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup } from '../types/schema';
 import jsyaml from 'js-yaml';
 
 const DEFAULT_CONFIG: OpsMatrixConfig = {
@@ -15,6 +15,7 @@ interface MatrixState {
     currentEnv: Environment;
     isLoading: boolean;
     error: string | null;
+    recentEnvs: Environment[];  // Track last 5 environments
 
     // Actions
     loadConfig: (url?: string) => Promise<void>;
@@ -27,6 +28,10 @@ interface MatrixState {
     addEnvironment: (env: string) => void;
     removeEnvironment: (env: string) => void;
 
+    // Favorites
+    toggleFavoriteEnv: (env: Environment) => void;
+    isFavoriteEnv: (env: Environment) => boolean;
+
     // Column CRUD
     addColumn: (column: ColumnDefinition) => void;
     updateColumn: (id: string, updates: Partial<ColumnDefinition>) => void;
@@ -36,7 +41,12 @@ interface MatrixState {
     addService: (service: ServiceDefinition) => void;
     updateService: (id: string, updates: Partial<ServiceDefinition>) => void;
     removeService: (id: string) => void;
+
+    // Environment Groups
+    addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
+    removeEnvGroup: (id: string) => void;
 }
+
 
 export const useMatrixStore = create<MatrixState>()(
     persist(
@@ -45,6 +55,7 @@ export const useMatrixStore = create<MatrixState>()(
             currentEnv: '',
             isLoading: false,
             error: null,
+            recentEnvs: [],
 
             loadConfig: async (url = '/default.yaml') => {
                 set({ isLoading: true, error: null });
@@ -72,7 +83,12 @@ export const useMatrixStore = create<MatrixState>()(
                 set({ config, currentEnv: nextEnv, error: null });
             },
 
-            setEnv: (env) => set({ currentEnv: env }),
+            setEnv: (env) => {
+                const { recentEnvs } = get();
+                // Update recent environments (max 5, most recent first)
+                const newRecent = [env, ...recentEnvs.filter(e => e !== env)].slice(0, 5);
+                set({ currentEnv: env, recentEnvs: newRecent });
+            },
 
             parseConfig: (yamlString) => {
                 try {
@@ -147,10 +163,44 @@ export const useMatrixStore = create<MatrixState>()(
                 const { config } = get();
                 set({ config: { ...config, services: config.services.filter(s => s.id !== id) } });
             },
+
+            // Favorites
+            toggleFavoriteEnv: (env) => {
+                const { config } = get();
+                const favorites = config.favoriteEnvs || [];
+                const newFavorites = favorites.includes(env)
+                    ? favorites.filter(e => e !== env)
+                    : [...favorites, env];
+                set({ config: { ...config, favoriteEnvs: newFavorites } });
+            },
+
+            isFavoriteEnv: (env) => {
+                const { config } = get();
+                return (config.favoriteEnvs || []).includes(env);
+            },
+
+            // Environment Groups
+            addEnvGroup: (group) => {
+                const { config } = get();
+                const newGroup: EnvGroup = {
+                    ...group,
+                    environments: group.environments || []
+                };
+                set({ config: { ...config, envGroups: [...(config.envGroups || []), newGroup] } });
+            },
+
+            removeEnvGroup: (id) => {
+                const { config } = get();
+                set({ config: { ...config, envGroups: (config.envGroups || []).filter(g => g.id !== id) } });
+            },
         }),
         {
             name: 'opsbridge-matrix-config',
-            partialize: (state) => ({ config: state.config, currentEnv: state.currentEnv }),
+            partialize: (state) => ({
+                config: state.config,
+                currentEnv: state.currentEnv,
+                recentEnvs: state.recentEnvs
+            }),
         }
     )
 );

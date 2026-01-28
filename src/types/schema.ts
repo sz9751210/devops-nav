@@ -28,9 +28,20 @@ export interface ServiceDefinition {
     variables?: Record<string, string>;
 }
 
+export interface EnvGroup {
+    id: string;           // e.g., 'lab', 'platform', 'prod'
+    name: string;         // e.g., 'Lab Environments'
+    pattern?: string;     // e.g., 'lab-*' (glob pattern)
+    color?: string;       // e.g., 'blue', 'green', 'red'
+    icon?: string;        // e.g., '📦', '🚀', '🔥'
+    environments: Environment[]; // Manually assigned envs if no pattern
+}
+
 export interface OpsMatrixConfig {
     title: string;
     environments: Environment[];
     columns: ColumnDefinition[];
     services: ServiceDefinition[];
+    envGroups?: EnvGroup[];        // Optional environment grouping
+    favoriteEnvs?: Environment[];  // User's favorite environments
 }
