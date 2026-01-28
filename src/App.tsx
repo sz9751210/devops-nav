@@ -13,16 +13,19 @@ import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
 import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
-import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, AlertCircle, AlertTriangle, Info as InfoIcon, Network, StickyNote, Filter, Moon, Sun, Languages } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter, Moon, Sun, Languages } from 'lucide-react';
 import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
 import { TopologyModal } from './components/matrix/TopologyModal';
+import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
+import { TagFilter } from './components/matrix/TagFilter';
 
 function App() {
   const { t, i18n } = useTranslation();
   const [currentPage, setCurrentPage] = useState<PageId>('matrix');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [showServices, setShowServices] = useState(false); // Default to CLOSED
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -106,8 +109,13 @@ function App() {
     if (activeGroup) {
       services = services.filter(s => s.group === activeGroup);
     }
+    if (selectedTags.length > 0) {
+      services = services.filter(s =>
+        selectedTags.every(tag => s.tags?.includes(tag))
+      );
+    }
     return services;
-  }, [config.services, envVisibleServices, searchQuery, activeGroup]);
+  }, [config.services, envVisibleServices, searchQuery, activeGroup, selectedTags]);
 
   const getLinksForCategory = useCallback((columnId: string) => {
     const links: Array<{ service: import('./types/schema').ServiceDefinition, link: import('./types/schema').ServiceLink }> = [];
@@ -145,20 +153,7 @@ function App() {
     switch (currentPage) {
       case 'matrix':
         return (
-          <div className="space-y-6">
-            {config.announcement?.active && (
-              <div className={clsx(
-                "rounded border-l-4 p-3 flex items-center gap-3 mb-4 animate-in slide-in-from-top-2",
-                config.announcement.level === 'error' ? "bg-red-500/10 border-red-500 text-red-200" :
-                  config.announcement.level === 'warning' ? "bg-amber-500/10 border-amber-500 text-amber-200" :
-                    "bg-blue-500/10 border-blue-500 text-blue-200"
-              )}>
-                {config.announcement.level === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> :
-                  config.announcement.level === 'warning' ? <AlertTriangle className="w-5 h-5 shrink-0" /> :
-                    <InfoIcon className="w-5 h-5 shrink-0" />}
-                <div className="text-sm font-medium">{config.announcement.message}</div>
-              </div>
-            )}
+          <div className="space-y-6 pt-2">
 
             <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[var(--header-bg)] backdrop-blur-sm border-b border-[var(--border)] flex items-center gap-4 transition-colors">
               <div className="relative flex-1 max-w-md">
@@ -286,6 +281,12 @@ function App() {
               </div>
             </div>
 
+            <TagFilter
+              selectedTags={selectedTags}
+              onToggleTag={(tag) => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
+              onClear={() => setSelectedTags([])}
+            />
+
             <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-slate-500 uppercase tracking-tight border-b border-[var(--border)] pb-4">
               <div>{t('stats.svc')}: <span className="text-[var(--foreground)]">{filteredServices.length}</span></div>
               <div>Links: <span className="text-[var(--foreground)]">{totalLinks}</span></div>
@@ -381,6 +382,7 @@ function App() {
     <div className="flex min-h-screen selection:bg-amber-500/30 font-sans transition-colors bg-[var(--background)]">
       <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
       <main className="flex-1 overflow-auto relative">
+        <AnnouncementBanner />
         <div className="max-w-7xl mx-auto px-6 py-4">
           {renderPage()}
         </div>

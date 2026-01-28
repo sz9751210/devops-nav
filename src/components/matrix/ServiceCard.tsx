@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
-import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check } from 'lucide-react';
+import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check, Hammer, Hash, User, MessageCircle, MoreVertical, CopyCheck, TerminalSquare } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface ServiceCardProps {
@@ -14,28 +14,31 @@ interface ServiceCardProps {
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, currentEnv, viewMode }) => {
     const { t } = useTranslation();
-    const { toggleFavoriteService, isFavoriteService, addRecentService } = useMatrixStore();
+    const { toggleFavoriteService, isFavoriteService, addRecentService, trackLinkUsage } = useMatrixStore();
     const [isHovered, setIsHovered] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
+    const [showBulk, setShowBulk] = useState(false);
     const [copiedMeta, setCopiedMeta] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [copiedAll, setCopiedAll] = useState(false);
 
-    // Mock Health Status
-    const isHealthy = React.useMemo(() => {
-        const hash = service.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        return hash % 10 !== 0;
-    }, [service.id]);
+    // Use real status or fallback to mock
+    const healthStatus = service.status || 'unknown';
+    const isMaintenance = service.maintenanceMode;
 
     const isFavorite = isFavoriteService(service.id);
     const initial = service.name.charAt(0).toUpperCase();
+
+    const version = service.versions?.[currentEnv];
 
     // Helper to get links visible in current env
     const visibleLinks = (service.links || []).filter(link => {
         return !link.environments || link.environments.length === 0 || link.environments.includes(currentEnv);
     });
 
-    const handleLinkClick = () => {
+    const handleLinkClick = (link: ServiceLink) => {
         addRecentService(service.id);
+        trackLinkUsage(service.id, link.columnId);
     };
 
     const handleCopyMeta = (text: string, key: string) => {
@@ -52,6 +55,19 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
         setTimeout(() => setCopiedId(null), 1500);
     };
 
+    const handleOpenAll = () => {
+        visibleLinks.forEach(link => window.open(link.url, '_blank'));
+        setShowBulk(false);
+    };
+
+    const handleCopyAll = () => {
+        const text = visibleLinks.map(l => `${l.name}: ${l.url}`).join('\n');
+        navigator.clipboard.writeText(text);
+        setCopiedAll(true);
+        setTimeout(() => setCopiedAll(false), 2000);
+        setShowBulk(false);
+    };
+
     const getIconComponent = (iconName?: string) => {
         const map: Record<string, React.ElementType> = {
             'terminal': Terminal, 'globe': Globe, 'file': FileText,
@@ -66,10 +82,18 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
         return (
             <div className="group flex items-center justify-between p-2 pl-3 bg-[var(--surface)] border border-[var(--border)] hover:border-amber-500/20 rounded transition-all">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className={clsx("w-1.5 h-1.5 rounded-full shrink-0 shadow-sm", isHealthy ? "bg-emerald-500" : "bg-red-500")} />
+                    <div className={clsx(
+                        "w-2 h-2 rounded-full shrink-0 shadow-sm",
+                        isMaintenance ? "bg-amber-500 animate-pulse" :
+                            healthStatus === 'healthy' ? "bg-emerald-500" :
+                                healthStatus === 'error' ? "bg-red-500" :
+                                    healthStatus === 'warning' ? "bg-amber-500" : "bg-slate-700"
+                    )} />
                     <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                            <div className="font-medium text-[var(--foreground)] text-sm truncate">{service.name}</div>
+                            <div className="font-medium text-[var(--foreground)] text-sm truncate uppercase tracking-tighter">{service.name}</div>
+                            {isMaintenance && <Hammer className="w-3 h-3 text-amber-500" />}
+                            {version && <span className="text-[9px] px-1 bg-white/5 border border-white/10 rounded text-slate-500 font-mono">{version}</span>}
                             {isFavorite && <Star className="w-3 h-3 text-amber-500 fill-amber-500" />}
                         </div>
                     </div>
@@ -118,8 +142,14 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                     </div>
                     <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-[var(--foreground)] text-sm truncate">{service.name}</h3>
-                            <div className={clsx("w-1.5 h-1.5 rounded-full", isHealthy ? "bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.4)]" : "bg-red-500")} />
+                            <h3 className="font-semibold text-[var(--foreground)] text-sm truncate uppercase tracking-tight">{service.name}</h3>
+                            <div className={clsx(
+                                "w-1.5 h-1.5 rounded-full",
+                                isMaintenance ? "bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" :
+                                    healthStatus === 'healthy' ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" :
+                                        healthStatus === 'error' ? "bg-red-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" :
+                                            healthStatus === 'warning' ? "bg-amber-500" : "bg-slate-700"
+                            )} />
                         </div>
                         <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-[140px]" title={service.id}>
                             {service.id}
@@ -147,9 +177,32 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                             </button>
 
                             {showInfo && (
-                                <div className="absolute right-0 top-8 z-50 w-64 bg-[var(--background)] border border-[var(--border)] rounded shadow-xl p-2.5">
-                                    <div className="space-y-2">
-                                        {Object.entries(service.metadata).map(([key, value]) => (
+                                <div className="absolute right-0 top-8 z-50 w-72 bg-[var(--background)] border border-[var(--border)] rounded shadow-2xl p-3 animate-in fade-in zoom-in-95 duration-100">
+                                    <div className="space-y-3">
+                                        {/* Version & Owner Info */}
+                                        <div className="grid grid-cols-2 gap-2 mb-2 pb-2 border-b border-[var(--border)]">
+                                            <div className="bg-white/5 p-1.5 rounded border border-white/5">
+                                                <div className="flex items-center gap-1 text-[8px] text-slate-500 uppercase mb-1">
+                                                    <Hash className="w-2.5 h-2.5" /> Version
+                                                </div>
+                                                <div className="text-[10px] font-mono text-slate-300">{version || 'N/A'}</div>
+                                            </div>
+                                            <div className="bg-white/5 p-1.5 rounded border border-white/5">
+                                                <div className="flex items-center gap-1 text-[8px] text-slate-500 uppercase mb-1">
+                                                    <User className="w-2.5 h-2.5" /> Owner
+                                                </div>
+                                                <div className="text-[10px] text-amber-500 font-medium truncate flex items-center gap-1">
+                                                    {service.metadata?.owner || 'Unassigned'}
+                                                    {service.metadata?.slack && (
+                                                        <a href={`slack://channel?id=${service.metadata.slack}`} className="hover:text-amber-400">
+                                                            <MessageCircle className="w-3 h-3" />
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {Object.entries(service.metadata || {}).filter(([key]) => key !== 'owner' && key !== 'slack').map(([key, value]) => (
                                             <div key={key} className="group/meta">
                                                 <div className="flex items-center justify-between text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">
                                                     <span>{key}</span>
@@ -167,19 +220,58 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                             )}
                         </div>
                     )}
+
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowBulk(!showBulk)}
+                            className={clsx("p-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors", showBulk ? "text-[var(--foreground)] bg-[var(--surface-hover)]" : "text-slate-600 hover:text-slate-300")}
+                        >
+                            <MoreVertical className="w-3.5 h-3.5" />
+                        </button>
+
+                        {showBulk && (
+                            <div className="absolute right-0 top-8 z-50 w-48 bg-[var(--background)] border border-[var(--border)] rounded shadow-2xl p-1 animate-in slide-in-from-top-1 duration-100">
+                                <button
+                                    onClick={handleOpenAll}
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/5 rounded transition-colors"
+                                >
+                                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                                    Open All Links
+                                </button>
+                                <button
+                                    onClick={handleCopyAll}
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/5 rounded transition-colors"
+                                >
+                                    <CopyCheck className="w-3.5 h-3.5 text-slate-500" />
+                                    {copiedAll ? <span className="text-emerald-500">Copied!</span> : "Copy All Links"}
+                                </button>
+                                {service.metadata?.kubectl && (
+                                    <button
+                                        onClick={() => handleCopyMeta(service.metadata!.kubectl, 'kubectl')}
+                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/5 rounded transition-colors border-t border-white/5 mt-1 pt-2"
+                                    >
+                                        <TerminalSquare className="w-3.5 h-3.5 text-amber-500/70" />
+                                        Copy `kubectl` Command
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {/* Tags */}
-            {service.tags && service.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                    {service.tags.map(tag => (
-                        <span key={tag} className="px-1.5 py-[2px] text-[9px] font-mono rounded bg-[var(--surface-hover)] text-slate-500 border border-[var(--border)]">
-                            #{tag}
-                        </span>
-                    ))}
-                </div>
-            )}
+            {
+                service.tags && service.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                        {service.tags.map(tag => (
+                            <span key={tag} className="px-1.5 py-[2px] text-[9px] font-mono rounded bg-[var(--surface-hover)] text-slate-500 border border-[var(--border)]">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+                )
+            }
 
             {/* Links Grid */}
             <div className="space-y-px bg-[var(--border)] border border-[var(--border)] rounded overflow-hidden">
@@ -192,7 +284,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={handleLinkClick}
+                                onClick={() => handleLinkClick(link)}
                                 className="flex items-center gap-2 min-w-0"
                             >
                                 <Icon className="w-3.5 h-3.5 text-slate-500 group-hover/link:text-amber-500 transition-colors" />
@@ -206,11 +298,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                 })}
             </div>
 
-            {visibleLinks.length > 5 && (
-                <div className="text-[10px] text-center text-slate-600 mt-2 hover:text-slate-400 cursor-pointer italic font-mono">
-                    + {visibleLinks.length - 5} {t('app.more_links', { count: visibleLinks.length - 5 })}
-                </div>
-            )}
-        </div>
+            {
+                visibleLinks.length > 5 && (
+                    <div className="text-[10px] text-center text-slate-600 mt-2 hover:text-slate-400 cursor-pointer italic font-mono">
+                        + {visibleLinks.length - 5} {t('app.more_links', { count: visibleLinks.length - 5 })}
+                    </div>
+                )
+            }
+        </div >
     );
 };

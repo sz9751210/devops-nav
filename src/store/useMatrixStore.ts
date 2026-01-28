@@ -60,6 +60,9 @@ interface MatrixState {
     // Environment Groups
     addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
     removeEnvGroup: (id: string) => void;
+
+    // Link Usage Tracking
+    trackLinkUsage: (serviceId: string, columnId: string) => void;
 }
 
 // Debounce helper
@@ -329,6 +332,17 @@ export const useMatrixStore = create<MatrixState>()(
         removeEnvGroup: (id) => {
             const { config } = get();
             set({ config: { ...config, envGroups: (config.envGroups || []).filter(g => g.id !== id) } });
+            debouncedSave(() => get().saveConfig());
+        },
+
+        trackLinkUsage: (serviceId, columnId) => {
+            const { config } = get();
+            const recent = config.recentLinks || [];
+            const newEntry = { serviceId, columnId, timestamp: Date.now() };
+            // Filter out existing entries for the same service-column pair and keep last 10
+            const filtered = recent.filter(r => !(r.serviceId === serviceId && r.columnId === columnId));
+            const newRecent = [newEntry, ...filtered].slice(0, 10);
+            set({ config: { ...config, recentLinks: newRecent } });
             debouncedSave(() => get().saveConfig());
         },
     }))

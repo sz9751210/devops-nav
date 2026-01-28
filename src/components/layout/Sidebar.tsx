@@ -10,7 +10,9 @@ import {
     ChevronRight,
     HelpCircle,
     FolderTree,
-    TerminalSquare
+    TerminalSquare,
+    History,
+    Zap
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HelpModal } from './HelpModal';
@@ -126,6 +128,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
                     )}
                     {configItems.map(renderNavItem)}
                 </div>
+
+                {!collapsed && config.recentLinks && config.recentLinks.length > 0 && (
+                    <div className="space-y-1 mt-6 animate-in fade-in slide-in-from-left-2">
+                        <div className="px-3 py-1.5 text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono flex items-center gap-2">
+                            <History className="w-3 h-3" />
+                            Recent Links
+                        </div>
+                        <div className="px-1 space-y-0.5">
+                            {config.recentLinks.map((rl, idx) => {
+                                const service = config.services.find(s => s.id === rl.serviceId);
+                                const link = service?.links?.find(l => l.columnId === rl.columnId);
+                                if (!service || !link) return null;
+                                return (
+                                    <a
+                                        key={`${rl.serviceId}-${rl.columnId}-${idx}`}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-2 py-1.5 text-[11px] text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded transition-all group"
+                                    >
+                                        <Zap className="w-3 h-3 text-slate-700 group-hover:text-amber-500/50" />
+                                        <span className="truncate">{service.name} / {link.name}</span>
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </nav>
 
             {/* Footer Actions */}
