@@ -21,12 +21,16 @@ It is built with an "Engineer-First" aesthetic, prioritizing density, keyboard s
 
 - 🏗️ **Dynamic Matrix View**: Automatically maps service links to category columns.
 - 🌍 **Contextual Environments**: One-click switching between `Dev`, `Staging`, and `Prod` with synchronized URL updates.
-- 📂 **Environment Grouping**: Organize environments (e.g., `Lab`, `Internal`, `Public`) for cleaner navigation.
-- 🛠️ **Full Management UI**: Add, Edit, or Remove environments, columns, and services directly from the browser.
-- 🔗 **Smart Link Templates**: Use `{{service_id}}` and `{{env}}` variables to generate thousands of links with a single rule.
+- � **Service Health UI**: Integrated status indicators (Healthy, Warning, Error) with pulsing alerts.
+- 🏷️ **Tag Filter System**: Instantly filter your entire dashboard by functional tags (e.g., `#frontend`, `#critical`).
+- 🚧 **Maintenance Mode**: Mark services as under maintenance with dedicated UI flags.
+- � **Recent Links History**: Automatically tracks your most visited links for one-click access in the sidebar.
+- ⚡ **Bulk Actions**: Open all environment links at once or copy them formatted to your clipboard.
+- ⌨️ **Quick Commands**: Direct clipboard access to `kubectl`, `ssh`, or custom terminal commands from service metadata.
+- 👤 **Ownership Integration**: Link services to owners and Slack channels for faster team communication.
 - 🔍 **Quick Search (Cmd+K)**: Instant access to any service or resource.
 - 📝 **Scratchpad**: A built-in markdown editor for temporary notes and snippets.
-- 🕸️ **Topology Graph**: Visualize service dependencies and metadata.
+- � **Announcement System**: Top-level banner for system-wide site maintenance or incident alerts.
 - 💾 **YAML Sync/Backup**: Version-control your configuration with ease.
 
 ---
@@ -81,10 +85,10 @@ For power users, go to **Settings > Sync / Backup**. You can paste a full YAML c
 ---
 
 ## 🎨 Design System
-OpsBridge uses a custom **"Engineer Dark"** theme:
-- **Surface**: High-contrast slate backgrounds.
+OpsBridge uses a custom **"Engineer High-Contrast"** theme:
+- **Typography**: Optimized readability with **Pure Black** text in Light Mode and **Pure White** text in Dark Mode.
 - **Accents**: Amber and Gold for high visibility.
-- **Typography**: Monospace hints for technical IDs.
+- **Surface**: Slim borders and backdrop-blur effects for a premium feel.
 
 ---
 
