@@ -46,7 +46,10 @@ const resources = {
                 "edit": "Edit",
                 "create": "Create",
                 "commit": "Commit",
-                "update": "Update"
+                "update": "Update",
+                "select_all": "Select All",
+                "deselect_all": "Deselect All",
+                "save_config": "Save Config"
             },
             "settings": {
                 "env_groups": {
@@ -85,6 +88,12 @@ const resources = {
                     "title": "Service Definitions",
                     "subtitle": "Manage the core services and their metadata.",
                     "search_placeholder": "Search services by name, ID or group..."
+                },
+                "view_config": {
+                    "title": "View Configuration",
+                    "subtitle": "Customize what you see for",
+                    "services_tab": "Services",
+                    "columns_tab": "Columns"
                 }
             },
             "form": {
@@ -149,7 +158,10 @@ const resources = {
                 "edit": "編輯",
                 "create": "建立",
                 "commit": "確認提交",
-                "update": "更新設定"
+                "update": "更新設定",
+                "select_all": "全選",
+                "deselect_all": "全不選",
+                "save_config": "儲存配置"
             },
             "settings": {
                 "env_groups": {
@@ -188,6 +200,12 @@ const resources = {
                     "title": "服務清單管理",
                     "subtitle": "管理核心服務清單及其屬性。",
                     "search_placeholder": "透過名稱、ID 或群組搜尋服務..."
+                },
+                "view_config": {
+                    "title": "視圖配置",
+                    "subtitle": "自定義顯示內容：",
+                    "services_tab": "服務項目",
+                    "columns_tab": "顯示欄位"
                 }
             },
             "form": {
