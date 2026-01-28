@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from '../../store/useMatrixStore';
 import type { ColumnDefinition } from '../../types/schema';
 import {
@@ -9,23 +10,23 @@ import { clsx } from 'clsx';
 
 // Quick templates for common column types
 const COLUMN_TEMPLATES = [
-    { id: 'monitoring', title: '監控', icon: 'activity' },
-    { id: 'logs', title: '日誌', icon: 'file' },
-    { id: 'config', title: '配置', icon: 'settings' },
-    { id: 'terminal', title: '終端', icon: 'terminal' },
-    { id: 'status', title: '狀態', icon: 'eye' },
-    { id: 'database', title: '資料庫', icon: 'database' },
+    { id: 'monitoring', title: 'Monitoring', icon: 'activity' },
+    { id: 'logs', title: 'Logs', icon: 'file' },
+    { id: 'config', title: 'Config', icon: 'settings' },
+    { id: 'terminal', title: 'Terminal', icon: 'terminal' },
+    { id: 'status', title: 'Status', icon: 'eye' },
+    { id: 'database', title: 'Database', icon: 'database' },
 ];
 
 const ICON_OPTIONS = [
-    { value: 'activity', label: '監控', Icon: Activity },
-    { value: 'file', label: '日誌', Icon: FileText },
-    { value: 'settings', label: '配置', Icon: Settings },
-    { value: 'terminal', label: '終端', Icon: Terminal },
-    { value: 'eye', label: '狀態', Icon: Eye },
-    { value: 'database', label: '資料庫', Icon: Database },
-    { value: 'link', label: '連結', Icon: Link2 },
-    { value: 'globe', label: '網站', Icon: Globe },
+    { value: 'activity', label: 'Monitor', Icon: Activity },
+    { value: 'file', label: 'Logs', Icon: FileText },
+    { value: 'settings', label: 'Config', Icon: Settings },
+    { value: 'terminal', label: 'Terminal', Icon: Terminal },
+    { value: 'eye', label: 'Status', Icon: Eye },
+    { value: 'database', label: 'DB', Icon: Database },
+    { value: 'link', label: 'Link', Icon: Link2 },
+    { value: 'globe', label: 'Web', Icon: Globe },
 ];
 
 const getIconComponent = (iconName: string) => {
@@ -34,6 +35,7 @@ const getIconComponent = (iconName: string) => {
 };
 
 export const ColumnSettings: React.FC = () => {
+    const { t } = useTranslation();
     const { config, addColumn, updateColumn, removeColumn } = useMatrixStore();
     const [isAddingColumn, setIsAddingColumn] = useState(false);
     const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
@@ -78,29 +80,29 @@ export const ColumnSettings: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-amber-400" />
-                        欄位管理
+                    <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 font-mono">
+                        <Layers className="w-5 h-5 text-amber-500" />
+                        {t('settings.columns.title')}
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">
-                        定義連結類別 (如：監控、日誌)，連結在服務管理中設定
+                        {t('settings.columns.subtitle')}
                     </p>
                 </div>
                 {!isAddingColumn && !editingColumnId && (
                     <button
                         onClick={() => { setIsAddingColumn(true); setColumnForm({ type: 'link', icon: 'link' }); }}
-                        className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded font-bold transition-all flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        新增欄位
+                        {t('actions.add_new')}
                     </button>
                 )}
             </div>
 
             {/* Quick Templates */}
             {!isAddingColumn && !editingColumnId && (
-                <div className="space-y-2">
-                    <span className="text-xs text-slate-500">⚡ 快速新增</span>
+                <div className="space-y-3">
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ QUICK_PROFILES</span>
                     <div className="flex flex-wrap gap-2">
                         {COLUMN_TEMPLATES.map(temp => {
                             const exists = config.columns.some(c => c.id === temp.id);
@@ -111,15 +113,15 @@ export const ColumnSettings: React.FC = () => {
                                     onClick={() => !exists && applyColumnTemplate(temp)}
                                     disabled={exists}
                                     className={clsx(
-                                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all",
+                                        "flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-all border font-mono uppercase tracking-tighter",
                                         exists
-                                            ? "bg-slate-900 text-slate-600 cursor-not-allowed"
-                                            : "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30"
+                                            ? "bg-[var(--surface)] text-slate-700 border-transparent cursor-not-allowed"
+                                            : "bg-amber-500/5 text-amber-500/80 hover:bg-amber-500/10 border-amber-500/20"
                                     )}
                                 >
-                                    <Icon className="w-4 h-4" />
+                                    <Icon className="w-3.5 h-3.5" />
                                     {temp.title}
-                                    {exists && <Check className="w-3 h-3 text-green-500" />}
+                                    {exists && <Check className="w-3 h-3 text-emerald-600" />}
                                 </button>
                             );
                         })}
@@ -129,36 +131,38 @@ export const ColumnSettings: React.FC = () => {
 
             {/* Add/Edit Column Form */}
             {(isAddingColumn || editingColumnId) && (
-                <div className="p-4 bg-slate-900/80 border border-amber-500/30 rounded-lg space-y-4">
-                    <h3 className="font-medium text-amber-400">{editingColumnId ? '編輯欄位' : '新增欄位'}</h3>
-                    <div className="grid grid-cols-3 gap-4">
+                <div className="p-4 bg-[var(--surface)] border border-amber-500/30 rounded space-y-4 shadow-xl">
+                    <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest font-mono">
+                        {editingColumnId ? `${t('actions.edit')}: COLUMN` : `${t('actions.create')}: COLUMN`}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">ID</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.id')}</label>
                             <input
                                 type="text"
                                 value={columnForm.id || ''}
                                 onChange={(e) => setColumnForm({ ...columnForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                 disabled={!!editingColumnId}
                                 placeholder="monitoring"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">標題</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.label')}</label>
                             <input
                                 type="text"
                                 value={columnForm.title || ''}
                                 onChange={(e) => setColumnForm({ ...columnForm, title: e.target.value })}
-                                placeholder="監控"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-500 focus:ring-2 focus:ring-amber-500/50"
+                                placeholder="Monitoring"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">圖標</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.icon')}</label>
                             <select
                                 value={columnForm.icon || 'link'}
                                 onChange={(e) => setColumnForm({ ...columnForm, icon: e.target.value })}
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 focus:ring-2 focus:ring-amber-500/50"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             >
                                 {ICON_OPTIONS.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -166,26 +170,26 @@ export const ColumnSettings: React.FC = () => {
                             </select>
                         </div>
                     </div>
-                    <div className="flex justify-end gap-2">
-                        <button onClick={resetColumnForm} className="px-4 py-2 text-slate-400 hover:text-white flex items-center gap-2">
-                            <X className="w-4 h-4" />取消
+                    <div className="flex justify-end gap-2 pt-2">
+                        <button onClick={resetColumnForm} className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono">
+                            <X className="w-4 h-4" />{t('actions.cancel')}
                         </button>
                         <button
                             onClick={editingColumnId ? handleUpdateColumn : handleAddColumn}
                             disabled={!columnForm.id || !columnForm.title}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-black rounded-lg font-medium flex items-center gap-2"
+                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
                         >
-                            <Check className="w-4 h-4" />{editingColumnId ? '儲存' : '新增'}
+                            <Check className="w-4 h-4" />{editingColumnId ? t('actions.save') : t('actions.add_new')}
                         </button>
                     </div>
                 </div>
             )}
 
             {/* Column List */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {config.columns.length === 0 && !isAddingColumn ? (
-                    <div className="col-span-full text-center py-8 text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                        尚未設定任何欄位。請使用上方的快速新增或自訂欄位。
+                    <div className="col-span-full text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                        NO_COLUMNS_DEFINED
                     </div>
                 ) : (
                     config.columns.map(column => {
@@ -193,24 +197,27 @@ export const ColumnSettings: React.FC = () => {
                         return (
                             <div
                                 key={column.id}
-                                className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-white/5 transition-colors"
+                                className="flex items-center justify-between p-3 rounded border border-[var(--border)] bg-[var(--surface)] hover:border-amber-500/30 hover:bg-[var(--surface-hover)] transition-all group"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                                        <Icon className="w-4 h-4 text-amber-400" />
+                                    <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center border border-amber-500/10 transition-colors group-hover:bg-amber-500/20">
+                                        <Icon className="w-4 h-4 text-amber-500" />
                                     </div>
-                                    <span className="font-medium text-white">{column.title}</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-slate-300 group-hover:text-[var(--foreground)] transition-colors text-sm">{column.title}</span>
+                                        <span className="text-[10px] text-slate-600 font-mono uppercase tracking-tighter">{column.id}</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
                                         onClick={() => { setEditingColumnId(column.id); setColumnForm(column); }}
-                                        className="p-1.5 text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg"
+                                        className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
                                     >
                                         <Pencil className="w-3.5 h-3.5" />
                                     </button>
                                     <button
                                         onClick={() => removeColumn(column.id)}
-                                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                        className="p-1.5 text-slate-600 hover:text-red-500 rounded transition-colors"
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
                                     </button>
@@ -222,10 +229,8 @@ export const ColumnSettings: React.FC = () => {
             </div>
 
             {/* Help Text */}
-            <div className="p-3 bg-slate-900/50 border border-white/5 rounded-lg">
-                <p className="text-xs text-slate-500">
-                    💡 欄位定義連結的類別。建立欄位後，請到「服務管理」為每個服務新增該類別的連結。
-                </p>
+            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-600 font-mono italic">
+                SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the matrix organized.
             </div>
         </div>
     );

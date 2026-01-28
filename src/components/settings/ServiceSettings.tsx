@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
 import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const ServiceSettings: React.FC = () => {
+    const { t } = useTranslation();
     const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useMatrixStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedService, setExpandedService] = useState<string | null>(null);
@@ -101,209 +103,100 @@ export const ServiceSettings: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Package className="w-5 h-5 text-amber-400" />
-                        服務管理
+                    <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 font-mono">
+                        <Package className="w-5 h-5 text-amber-500" />
+                        {t('settings.services.title')}
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">
-                        定義服務並為每個服務新增連結
+                        {t('settings.services.subtitle')}
                     </p>
                 </div>
                 {!isAddingService && !editingServiceId && (
                     <button
                         onClick={() => { setIsAddingService(true); setServiceForm({}); }}
-                        className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded font-bold transition-all flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        新增服務
+                        {t('actions.add_new')}
                     </button>
                 )}
             </div>
 
             {/* Search */}
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 transition-colors group-focus-within:text-amber-500/50" />
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="搜索服務..."
-                    className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-white/5 rounded-lg text-slate-200 placeholder-slate-500 focus:ring-2 focus:ring-amber-500/50"
+                    placeholder={t('settings.services.search_placeholder')}
+                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-800 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
             </div>
 
             {/* Add/Edit Service Form */}
             {(isAddingService || editingServiceId) && (
-                <div className="p-4 bg-slate-900/80 border border-amber-500/30 rounded-lg space-y-4">
-                    <h3 className="font-medium text-amber-400">{editingServiceId ? '編輯服務' : '新增服務'}</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-[var(--surface)] border border-amber-500/30 rounded space-y-4 shadow-xl">
+                    <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest font-mono">
+                        {editingServiceId ? `${t('actions.edit')}: SERVICE` : `${t('actions.create')}: SERVICE`}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">ID</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.id')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.id || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                 disabled={!!editingServiceId}
-                                placeholder="user-service"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 disabled:opacity-50"
+                                placeholder="e.g. auth-service"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">名稱</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.label')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.name || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                placeholder="User Service"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+                                placeholder="Service Name"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">群組</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.group')}</label>
                             <input
                                 type="text"
                                 list="groups"
                                 value={serviceForm.group || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, group: e.target.value })}
-                                placeholder="Core Platform"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+                                placeholder="e.g. Core, Payment"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                             <datalist id="groups">
                                 {groups.map(g => <option key={g} value={g} />)}
                             </datalist>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">描述</label>
+                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.description')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.description || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
-                                placeholder="用戶管理服務"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">Tags (comma separated)</label>
-                            <input
-                                type="text"
-                                value={serviceForm.tags?.join(', ') || ''}
-                                onChange={(e) => setServiceForm({
-                                    ...serviceForm,
-                                    tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)
-                                })}
-                                placeholder="java, backend, critical"
-                                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+                                placeholder="Optional brief"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
                     </div>
-
-                    {/* Metadata Editor */}
-                    <div className="border-t border-white/5 pt-3">
-                        <label className="block text-xs font-medium text-slate-400 mb-2">Metadata (Key-Value)</label>
-                        <div className="space-y-2">
-                            {/* Existing Metadata */}
-                            {serviceForm.metadata && Object.entries(serviceForm.metadata).map(([key, value]) => (
-                                <div key={key} className="flex gap-2">
-                                    <input
-                                        readOnly
-                                        value={key}
-                                        className="w-1/3 px-2 py-1 bg-slate-800/50 border border-slate-600 rounded text-xs text-slate-400"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={value}
-                                        onChange={(e) => setServiceForm({
-                                            ...serviceForm,
-                                            metadata: { ...serviceForm.metadata, [key]: e.target.value }
-                                        })}
-                                        className="flex-1 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
-                                    />
-                                    <button
-                                        onClick={() => {
-                                            const newMeta = { ...serviceForm.metadata };
-                                            delete newMeta[key];
-                                            setServiceForm({ ...serviceForm, metadata: newMeta });
-                                        }}
-                                        className="p-1 hover:bg-red-500/20 text-red-400 rounded"
-                                    >
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-
-                            {/* Add New Metadata */}
-                            <div className="flex gap-2">
-                                <input
-                                    id="new-meta-key"
-                                    placeholder="Key (e.g. SSH)"
-                                    className="w-1/3 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            const keyInput = e.currentTarget;
-                                            const valInput = document.getElementById('new-meta-val') as HTMLInputElement;
-                                            if (keyInput.value && valInput.value) {
-                                                setServiceForm({
-                                                    ...serviceForm,
-                                                    metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
-                                                });
-                                                keyInput.value = '';
-                                                valInput.value = '';
-                                                keyInput.focus();
-                                            }
-                                        }
-                                    }}
-                                />
-                                <input
-                                    id="new-meta-val"
-                                    placeholder="Value"
-                                    className="flex-1 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-xs text-slate-200"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            const valInput = e.currentTarget;
-                                            const keyInput = document.getElementById('new-meta-key') as HTMLInputElement;
-                                            if (keyInput.value && valInput.value) {
-                                                setServiceForm({
-                                                    ...serviceForm,
-                                                    metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
-                                                });
-                                                keyInput.value = '';
-                                                valInput.value = '';
-                                                keyInput.focus();
-                                            }
-                                        }
-                                    }}
-                                />
-                                <button
-                                    onClick={() => {
-                                        const keyInput = document.getElementById('new-meta-key') as HTMLInputElement;
-                                        const valInput = document.getElementById('new-meta-val') as HTMLInputElement;
-                                        if (keyInput.value && valInput.value) {
-                                            setServiceForm({
-                                                ...serviceForm,
-                                                metadata: { ...(serviceForm.metadata || {}), [keyInput.value]: valInput.value }
-                                            });
-                                            keyInput.value = '';
-                                            valInput.value = '';
-                                        }
-                                    }}
-                                    className="p-1 hover:bg-amber-500/20 text-amber-500 rounded"
-                                >
-                                    <Plus className="w-3 h-3" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                     <div className="flex justify-end gap-2 pt-2">
-                        <button onClick={resetServiceForm} className="px-4 py-2 text-slate-400 hover:text-white flex items-center gap-2">
-                            <X className="w-4 h-4" />取消
+                        <button onClick={resetServiceForm} className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono">
+                            <X className="w-4 h-4" />{t('actions.cancel')}
                         </button>
                         <button
                             onClick={editingServiceId ? handleUpdateService : handleAddService}
                             disabled={!serviceForm.id || !serviceForm.name}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-black rounded-lg font-medium flex items-center gap-2"
+                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
                         >
-                            <Check className="w-4 h-4" />{editingServiceId ? '儲存' : '新增'}
+                            <Check className="w-4 h-4" />{editingServiceId ? t('actions.save') : t('actions.add_new')}
                         </button>
                     </div>
                 </div>
@@ -312,8 +205,8 @@ export const ServiceSettings: React.FC = () => {
             {/* Service List */}
             <div className="space-y-2">
                 {filteredServices.length === 0 ? (
-                    <div className="text-center py-8 text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                        {searchQuery ? '找不到匹配的服務' : '尚未新增任何服務'}
+                    <div className="text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
+                        {searchQuery ? 'ERR: NO_MATCHES_FOUND' : 'STAT: NO_SERVICES_DEFINED'}
                     </div>
                 ) : (
                     filteredServices.map(service => {
@@ -321,19 +214,19 @@ export const ServiceSettings: React.FC = () => {
                         const linkCount = service.links?.length || 0;
 
                         return (
-                            <div key={service.id} className="rounded-xl border border-white/5 bg-slate-900/40 overflow-hidden">
+                            <div key={service.id} className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                                 {/* Service Header */}
-                                <div className="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors">
+                                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)] transition-colors">
                                     <button
                                         onClick={() => setExpandedService(isExpanded ? null : service.id)}
                                         className="flex-1 flex items-center gap-3 text-left"
                                     >
-                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
-                                        <div>
-                                            <span className="font-medium text-white">{service.name}</span>
-                                            <span className="text-xs text-slate-500 ml-2">({linkCount} 連結)</span>
+                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
+                                        <div className="flex items-center gap-3">
+                                            <span className="font-bold text-slate-200 text-sm tracking-tight">{service.name}</span>
+                                            <span className="text-[10px] text-slate-600 font-mono uppercase">LINKS: {linkCount}</span>
                                             {service.group && (
-                                                <span className="text-xs text-slate-600 bg-white/5 px-2 py-0.5 rounded ml-2">
+                                                <span className="text-[10px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
                                                 </span>
                                             )}
@@ -342,96 +235,172 @@ export const ServiceSettings: React.FC = () => {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => { setEditingServiceId(service.id); setServiceForm(service); }}
-                                            className="p-2 text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg"
+                                            className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
                                         >
-                                            <Pencil className="w-4 h-4" />
+                                            <Pencil className="w-3.5 h-3.5" />
                                         </button>
                                         <button
                                             onClick={() => removeService(service.id)}
-                                            className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                            className="p-1.5 text-slate-600 hover:text-red-500 rounded transition-colors"
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-3.5 h-3.5" />
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Expanded: Links */}
                                 {isExpanded && (
-                                    <div className="border-t border-white/5 p-4 bg-slate-950/50 space-y-3">
+                                    <div className="border-t border-[var(--border)] p-4 bg-[var(--background)] space-y-3">
                                         {/* Add Link Button */}
                                         {isAddingLink !== service.id && !editingLinkId && (
                                             <button
                                                 onClick={() => { setIsAddingLink(service.id); setLinkForm({}); }}
-                                                className="w-full py-2 border border-dashed border-amber-500/30 text-amber-400 rounded-lg hover:bg-amber-500/10 text-sm flex items-center justify-center gap-2"
+                                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-slate-600 hover:text-amber-500 rounded text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
                                             >
-                                                <Plus className="w-4 h-4" />
-                                                新增連結
+                                                <Plus className="w-3 h-3" />
+                                                ADD_RESOURCE_LINK
                                             </button>
                                         )}
 
                                         {/* Add/Edit Link Form */}
                                         {(isAddingLink === service.id || editingLinkId) && (
-                                            <LinkForm
-                                                form={linkForm}
-                                                setForm={setLinkForm}
-                                                columns={config.columns}
-                                                environments={config.environments}
-                                                onSave={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
-                                                onCancel={resetLinkForm}
-                                                isEditing={!!editingLinkId}
-                                            />
+                                            <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono">
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                    <div>
+                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.id')}</label>
+                                                        <input
+                                                            type="text"
+                                                            value={linkForm.id || ''}
+                                                            onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                                                            disabled={!!editingLinkId}
+                                                            placeholder="grafana-dashboard"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.label')}</label>
+                                                        <input
+                                                            type="text"
+                                                            value={linkForm.name || ''}
+                                                            onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
+                                                            placeholder="Main Dashboard"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('app.columns')}</label>
+                                                        <select
+                                                            value={linkForm.columnId || ''}
+                                                            onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                        >
+                                                            <option value="">SELECT_COLUMN</option>
+                                                            {config.columns.map(c => (
+                                                                <option key={c.id} value={c.id}>{c.title}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.url')}</label>
+                                                    <input
+                                                        type="text"
+                                                        value={linkForm.url || ''}
+                                                        onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
+                                                        placeholder="https://..."
+                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50 font-mono"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[9px] font-bold text-slate-600 uppercase mb-2">{t('form.environments')}</label>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {config.environments.map(env => (
+                                                            <button
+                                                                key={env}
+                                                                onClick={() => {
+                                                                    const current = linkForm.environments || [];
+                                                                    const next = current.includes(env) ? current.filter(e => e !== env) : [...current, env];
+                                                                    setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
+                                                                }}
+                                                                className={clsx(
+                                                                    "px-2 py-1 text-[9px] rounded transition-all uppercase tracking-tighter border",
+                                                                    linkForm.environments?.includes(env)
+                                                                        ? "bg-amber-500 text-black border-amber-600"
+                                                                        : "bg-[var(--background)] text-slate-600 border-[var(--border)] hover:border-slate-700"
+                                                                )}
+                                                            >
+                                                                {env}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-end gap-2 pt-1">
+                                                    <button onClick={resetLinkForm} className="text-[10px] text-slate-600 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                                        {t('actions.cancel')}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
+                                                        disabled={!linkForm.id || !linkForm.name || !linkForm.url || !linkForm.columnId}
+                                                        className="bg-amber-500/90 hover:bg-amber-500 text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
+                                                    >
+                                                        {editingLinkId ? t('actions.update') : t('actions.commit')}
+                                                    </button>
+                                                </div>
+                                            </div>
                                         )}
 
                                         {/* Link List */}
-                                        {(service.links || []).map(link => {
-                                            const column = config.columns.find(c => c.id === link.columnId);
-                                            return (
-                                                <div
-                                                    key={link.id}
-                                                    className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg"
-                                                >
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2">
-                                                            <Link2 className="w-3 h-3 text-slate-500" />
-                                                            <span className="font-medium text-slate-200 text-sm">{link.name}</span>
-                                                            {column && (
-                                                                <span className="text-[10px] px-1.5 py-0.5 bg-slate-700 text-slate-400 rounded">
-                                                                    {column.title}
-                                                                </span>
-                                                            )}
-                                                            {link.environments && link.environments.length > 0 && (
-                                                                <div className="flex gap-1">
-                                                                    {link.environments.map(env => (
-                                                                        <span key={env} className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded">
-                                                                            {env}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            )}
+                                        <div className="space-y-1">
+                                            {(service.links || []).map(link => {
+                                                const column = config.columns.find(c => c.id === link.columnId);
+                                                return (
+                                                    <div
+                                                        key={link.id}
+                                                        className="flex items-center justify-between px-3 py-2 bg-[var(--surface-hover)] border border-[var(--border)] rounded group/link transition-all"
+                                                    >
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <Link2 className="w-3 h-3 text-slate-700" />
+                                                                <span className="font-bold text-slate-300 text-[11px] tracking-tight">{link.name}</span>
+                                                                {column && (
+                                                                    <span className="text-[9px] px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
+                                                                        {column.title}
+                                                                    </span>
+                                                                )}
+                                                                {link.environments && link.environments.length > 0 && (
+                                                                    <div className="flex gap-1">
+                                                                        {link.environments.map(env => (
+                                                                            <span key={env} className="text-[8px] px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
+                                                                                {env}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-[9px] text-slate-700 font-mono truncate mt-0.5 opacity-50">{link.url}</div>
                                                         </div>
-                                                        <p className="text-xs text-slate-500 font-mono truncate">{link.url}</p>
+                                                        <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
+                                                            <button
+                                                                onClick={() => startEditLink(link)}
+                                                                className="p-1 text-slate-600 hover:text-amber-500 rounded"
+                                                            >
+                                                                <Pencil className="w-3 h-3" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => removeServiceLink(service.id, link.id)}
+                                                                className="p-1 text-slate-600 hover:text-red-500 rounded"
+                                                            >
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex gap-1">
-                                                        <button
-                                                            onClick={() => startEditLink(link)}
-                                                            className="p-1.5 text-slate-500 hover:text-amber-400 rounded"
-                                                        >
-                                                            <Pencil className="w-3 h-3" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => removeServiceLink(service.id, link.id)}
-                                                            className="p-1.5 text-slate-500 hover:text-red-400 rounded"
-                                                        >
-                                                            <Trash2 className="w-3 h-3" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                                );
+                                            })}
+                                        </div>
 
                                         {linkCount === 0 && isAddingLink !== service.id && (
-                                            <p className="text-center text-slate-500 text-sm py-4">
-                                                尚無連結，點擊上方按鈕新增
+                                            <p className="text-center text-slate-800 text-[10px] py-4 font-mono font-bold uppercase tracking-widest">
+                                                ST_NULL: NO_LINKS_DEFINED
                                             </p>
                                         )}
                                     </div>
@@ -441,107 +410,8 @@ export const ServiceSettings: React.FC = () => {
                     })
                 )}
             </div>
-        </div>
-    );
-};
 
-// Link Form Component
-interface LinkFormProps {
-    form: Partial<ServiceLink>;
-    setForm: (form: Partial<ServiceLink>) => void;
-    columns: { id: string; title: string }[];
-    environments: string[];
-    onSave: () => void;
-    onCancel: () => void;
-    isEditing: boolean;
-}
-
-const LinkForm: React.FC<LinkFormProps> = ({ form, setForm, columns, environments, onSave, onCancel, isEditing }) => {
-    const toggleEnv = (env: string) => {
-        const current = form.environments || [];
-        const newEnvs = current.includes(env)
-            ? current.filter(e => e !== env)
-            : [...current, env];
-        setForm({ ...form, environments: newEnvs.length > 0 ? newEnvs : undefined });
-    };
-
-    return (
-        <div className="p-3 bg-slate-900 border border-amber-500/30 rounded-lg space-y-3">
-            <div className="grid grid-cols-3 gap-3">
-                <div>
-                    <label className="block text-xs text-slate-400 mb-1">ID</label>
-                    <input
-                        type="text"
-                        value={form.id || ''}
-                        onChange={(e) => setForm({ ...form, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                        disabled={isEditing}
-                        placeholder="grafana"
-                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200 disabled:opacity-50"
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-slate-400 mb-1">名稱</label>
-                    <input
-                        type="text"
-                        value={form.name || ''}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        placeholder="Grafana Dashboard"
-                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200"
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-slate-400 mb-1">類別</label>
-                    <select
-                        value={form.columnId || ''}
-                        onChange={(e) => setForm({ ...form, columnId: e.target.value })}
-                        className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200"
-                    >
-                        <option value="">選擇類別...</option>
-                        {columns.map(c => (
-                            <option key={c.id} value={c.id}>{c.title}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label className="block text-xs text-slate-400 mb-1">URL</label>
-                <input
-                    type="text"
-                    value={form.url || ''}
-                    onChange={(e) => setForm({ ...form, url: e.target.value })}
-                    placeholder="https://grafana.example.com/d/user-service"
-                    className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-sm text-slate-200 font-mono"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-slate-400 mb-1">顯示環境 (留空=全部)</label>
-                <div className="flex flex-wrap gap-1">
-                    {environments.map(env => (
-                        <button
-                            key={env}
-                            onClick={() => toggleEnv(env)}
-                            className={clsx(
-                                "px-2 py-1 text-xs rounded transition-all",
-                                form.environments?.includes(env)
-                                    ? "bg-amber-500 text-black"
-                                    : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            )}
-                        >
-                            {env}
-                        </button>
-                    ))}
-                </div>
-            </div>
-            <div className="flex justify-end gap-2">
-                <button onClick={onCancel} className="px-3 py-1.5 text-slate-400 text-sm">取消</button>
-                <button
-                    onClick={onSave}
-                    disabled={!form.id || !form.name || !form.url || !form.columnId}
-                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-black text-sm rounded font-medium"
-                >
-                    {isEditing ? '儲存' : '新增'}
-                </button>
-            </div>
+            <div className="h-4"></div>
         </div>
     );
 };

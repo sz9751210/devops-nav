@@ -1,16 +1,19 @@
 import React from 'react';
 import { X, Keyboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface HelpModalProps {
     onClose: () => void;
 }
 
 export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
+    const { t } = useTranslation();
+
     const shortcuts = [
-        { key: '⌘K', description: 'Open quick search' },
-        { key: '⌘E', description: 'Open environment selector' },
-        { key: '⌘,', description: 'Open settings' },
-        { key: 'ESC', description: 'Close modals' },
+        { key: '⌘K', description: t('shortcuts.quick_search') },
+        { key: '⌘E', description: t('shortcuts.env_selector') },
+        { key: '⌘,', description: t('shortcuts.settings') },
+        { key: 'ESC', description: t('shortcuts.close') },
     ];
 
     return (
@@ -20,7 +23,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
                 <div className="flex items-center justify-between p-6 border-b border-white/5">
                     <div className="flex items-center gap-3">
                         <Keyboard className="w-5 h-5 text-indigo-400" />
-                        <h2 className="text-lg font-bold text-white font-display">Keyboard Shortcuts</h2>
+                        <h2 className="text-lg font-bold text-white font-display">{t('shortcuts.title')}</h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -48,7 +51,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
                 {/* Footer */}
                 <div className="p-6 border-t border-white/5 bg-slate-900/50">
                     <p className="text-xs text-slate-500 text-center">
-                        OpsBridge v1.0.0 · Built with ❤️ for DevOps teams
+                        {t('shortcuts.footer')}
                     </p>
                 </div>
             </div>

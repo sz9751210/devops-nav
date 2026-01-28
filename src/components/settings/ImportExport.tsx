@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatrixStore } from '../../store/useMatrixStore';
 import { FileCode, Upload, Download, Copy, Check, Sparkles } from 'lucide-react';
 
 export const ImportExport: React.FC = () => {
+    const { t } = useTranslation();
     const { exportConfig, parseConfig } = useMatrixStore();
     const [yamlContent, setYamlContent] = useState('');
     const [copied, setCopied] = useState(false);
@@ -56,37 +58,37 @@ export const ImportExport: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2 font-display">
-                    <FileCode className="w-5 h-5 text-indigo-400" />
-                    Import / Export Configuration
+                <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 font-mono">
+                    <FileCode className="w-5 h-5 text-amber-500" />
+                    {t('settings.import_export.title')}
                 </h2>
-                <p className="text-sm text-slate-400 mt-1">
-                    Export your configuration to YAML for version control, or import from an existing file.
+                <p className="text-sm text-slate-500 mt-1">
+                    {t('settings.import_export.subtitle')}
                 </p>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-2 flex-wrap">
                 <button
                     onClick={handleExport}
-                    className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 border border-white/5 rounded-xl font-medium transition-colors flex items-center gap-2 backdrop-blur-sm"
+                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-300 border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
                 >
                     <Download className="w-4 h-4" />
-                    Load Current Config
+                    {t('actions.load_current')}
                 </button>
                 <button
                     onClick={handleDownload}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded text-sm font-semibold transition-colors flex items-center gap-2"
                 >
                     <Download className="w-4 h-4" />
-                    Download YAML
+                    {t('actions.download')}
                 </button>
                 <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 border border-white/5 rounded-xl font-medium transition-colors flex items-center gap-2 backdrop-blur-sm"
+                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-300 border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
                 >
                     <Upload className="w-4 h-4" />
-                    Upload File
+                    {t('actions.upload')}
                 </button>
                 <input
                     ref={fileInputRef}
@@ -102,45 +104,46 @@ export const ImportExport: React.FC = () => {
                 <textarea
                     value={yamlContent}
                     onChange={(e) => setYamlContent(e.target.value)}
-                    placeholder="# Paste or load your YAML configuration here..."
-                    className="w-full h-[400px] px-6 py-4 bg-slate-900/50 border border-white/10 rounded-2xl text-slate-200 font-mono text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-none backdrop-blur-sm transition-all shadow-xl"
+                    placeholder={t('settings.import_export.editor_placeholder')}
+                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-xs placeholder-slate-700 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
                 />
                 {yamlContent && (
                     <button
                         onClick={handleCopy}
-                        className="absolute top-4 right-4 p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-colors border border-white/5 backdrop-blur-md"
+                        className="absolute top-3 right-3 p-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-500 hover:text-white rounded transition-colors border border-[var(--border)]"
                     >
-                        {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                        {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     </button>
                 )}
             </div>
 
             {/* Import Button */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 py-2">
                 <button
                     onClick={handleImport}
                     disabled={!yamlContent}
-                    className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-xl font-medium transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--surface)] disabled:text-slate-600 text-white rounded font-semibold transition-colors flex items-center gap-2"
                 >
                     <Upload className="w-4 h-4" />
-                    Apply Configuration
+                    {t('actions.apply')}
                 </button>
                 {importStatus === 'success' && (
-                    <span className="text-emerald-400 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
-                        <Check className="w-4 h-4" /> Configuration applied successfully!
+                    <span className="text-emerald-500 text-xs font-mono flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
+                        <Check className="w-4 h-4" /> CONFIG_APPLIED_SUCCESSFULLY
                     </span>
                 )}
                 {importStatus === 'error' && (
-                    <span className="text-red-400 text-sm animate-in fade-in slide-in-from-left-2">
-                        Failed to parse YAML. Please check the format.
+                    <span className="text-red-500 text-xs font-mono animate-in fade-in slide-in-from-left-2">
+                        ERR: FAILED_TO_PARSE_YAML
                     </span>
                 )}
             </div>
+
             {/* Snippets / Smart Import */}
-            <div className="pt-4 border-t border-white/5">
-                <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+            <div className="pt-6 border-t border-[var(--border)]">
+                <h3 className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
                     <Sparkles className="w-4 h-4 text-amber-500" />
-                    Quick Snippets (Smart Import)
+                    {t('settings.import_export.smart_snippets')}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     <button
@@ -158,10 +161,10 @@ services:
     tags: [infra, monitoring]
     links: []
 `)}
-                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-amber-500/50 hover:bg-slate-800 transition-all group"
+                        className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-amber-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="font-medium text-slate-200 group-hover:text-amber-400">Add Monitoring Stack</div>
-                        <div className="text-xs text-slate-500 mt-1">Adds Prometheus & Grafana services</div>
+                        <div className="text-sm font-bold text-slate-300 group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
+                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
                     </button>
 
                     <button
@@ -179,10 +182,10 @@ services:
     tags: [data, logging]
     links: []
 `)}
-                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-blue-500/50 hover:bg-slate-800 transition-all group"
+                        className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-blue-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="font-medium text-slate-200 group-hover:text-blue-400">Add EFK Stack</div>
-                        <div className="text-xs text-slate-500 mt-1">Adds Elasticsearch & Kibana</div>
+                        <div className="text-sm font-bold text-slate-300 group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
+                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
                     </button>
 
                     <button
@@ -195,15 +198,13 @@ announcement:
   level: info
   message: "Maintenance Window: Sunday 2AM - 4AM UTC"
 `)}
-                        className="p-3 text-left bg-slate-900 border border-white/10 rounded-lg hover:border-green-500/50 hover:bg-slate-800 transition-all group"
+                        className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-green-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="font-medium text-slate-200 group-hover:text-green-400">Apply Standard Config</div>
-                        <div className="text-xs text-slate-500 mt-1">Sets theme and standard announcements</div>
+                        <div className="text-sm font-bold text-slate-300 group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
+                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
                     </button>
                 </div>
             </div>
-
-            <div className="h-8"></div>
         </div>
     );
 };
