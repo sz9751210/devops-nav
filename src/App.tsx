@@ -11,7 +11,8 @@ import { ServiceCard } from './components/matrix/ServiceCard';
 import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
-import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Command } from 'lucide-react';
+import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
+import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Command, AlertCircle, AlertTriangle, Info as InfoIcon } from 'lucide-react';
 import { clsx } from 'clsx';
 
 function App() {
@@ -22,28 +23,35 @@ function App() {
   const [showServices, setShowServices] = useState(true);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isCmdKOpen, setIsCmdKOpen] = useState(false);
 
   const { config, currentEnv, isLoading } = useMatrixStore();
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + K to open Command Palette
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        const searchInput = document.getElementById('main-search');
-        searchInput?.focus();
+        setIsCmdKOpen(true);
       }
+      // Escape
       if (e.key === 'Escape') {
-        if (isConfigOpen) setIsConfigOpen(false);
+        if (isCmdKOpen) setIsCmdKOpen(false);
+        else if (isConfigOpen) setIsConfigOpen(false);
         else if (searchQuery) setSearchQuery('');
       }
-      if (!isSearchFocused && e.key === '1') setViewMode('card');
-      if (!isSearchFocused && e.key === '2') setViewMode('table');
+      // 1/2 shortcuts
+      if (!isSearchFocused && !isCmdKOpen && !isConfigOpen) {
+        if (e.key === '1') setViewMode('card');
+        if (e.key === '2') setViewMode('table');
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isConfigOpen, searchQuery, isSearchFocused]);
+  }, [isConfigOpen, searchQuery, isSearchFocused, isCmdKOpen]);
 
+  // Derived State
   const serviceGroups = useMemo(() => {
     const groups = new Set<string>();
     config.services.forEach(s => {
@@ -71,6 +79,7 @@ function App() {
         s.name.toLowerCase().includes(query) ||
         s.id.toLowerCase().includes(query) ||
         s.description?.toLowerCase().includes(query) ||
+        s.tags?.some(t => t.toLowerCase().includes(query)) ||
         s.links?.some(l => l.name.toLowerCase().includes(query))
       );
     }
@@ -117,6 +126,21 @@ function App() {
       case 'matrix':
         return (
           <div className="space-y-6">
+            {/* Announcement Banner */}
+            {config.announcement?.active && (
+              <div className={clsx(
+                "rounded-lg p-3 flex items-center gap-3 mb-4 animate-in slide-in-from-top-2",
+                config.announcement.level === 'error' ? "bg-red-500/10 border border-red-500/20 text-red-200" :
+                  config.announcement.level === 'warning' ? "bg-amber-500/10 border border-amber-500/20 text-amber-200" :
+                    "bg-blue-500/10 border border-blue-500/20 text-blue-200"
+              )}>
+                {config.announcement.level === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> :
+                  config.announcement.level === 'warning' ? <AlertTriangle className="w-5 h-5 shrink-0" /> :
+                    <InfoIcon className="w-5 h-5 shrink-0" />}
+                <div className="text-sm font-medium">{config.announcement.message}</div>
+              </div>
+            )}
+
             <div className="flex flex-col gap-4 pt-2">
               <div className="flex items-center gap-3">
                 <div className="relative flex-1 max-w-xl">
@@ -124,14 +148,14 @@ function App() {
                   <input
                     id="main-search"
                     type="text"
-                    placeholder="搜尋服務或連結..."
+                    placeholder="搜尋服務、連結或標籤..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     className="w-full bg-slate-900/60 border border-white/10 rounded-lg pl-9 pr-20 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all"
                   />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-600 text-xs">
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-600 text-xs cursor-pointer hover:text-amber-500 transition-colors" onClick={() => setIsCmdKOpen(true)}>
                     <Command className="w-3 h-3" />
                     <span>K</span>
                   </div>
@@ -145,6 +169,12 @@ function App() {
                 <span>{totalLinks} 連結</span>
                 <span className="text-slate-700">|</span>
                 <span>{config.columns.length} 分類</span>
+                {searchQuery && (
+                  <>
+                    <span className="text-slate-700">|</span>
+                    <span className="text-amber-500">篩選結果: {filteredServices.length}</span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -314,6 +344,17 @@ function App() {
         </div>
       </main>
       <QuickSearch />
+
+      {isCmdKOpen && (
+        <CommandPaletteModal
+          onClose={() => setIsCmdKOpen(false)}
+          onNavigate={(page) => {
+            setCurrentPage(page);
+            setIsCmdKOpen(false);
+          }}
+          currentEnv={currentEnv}
+        />
+      )}
     </div>
   );
 }

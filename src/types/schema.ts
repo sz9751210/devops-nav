@@ -29,6 +29,8 @@ export interface ServiceDefinition {
     name: string;
     group?: string;
     description?: string;
+    tags?: string[]; // New: For flexible filtering (e.g., "java", "critical")
+    metadata?: Record<string, string>; // New: Key-value pairs for details (e.g. SSH, Owner)
     // Links for this service, organized by column
     links?: ServiceLink[];
     // Legacy fields (kept for backwards compatibility)
@@ -61,4 +63,12 @@ export interface OpsMatrixConfig {
     favoriteServices?: string[];
     recentServices?: string[];
     envConfigs?: Record<string, EnvSpecificConfig>;
+    announcement?: { // New: System announcement
+        message: string;
+        level: 'info' | 'warning' | 'error';
+        active: boolean;
+    };
+    theme?: { // New: Visual customization
+        primaryColor: 'amber' | 'blue' | 'green' | 'purple' | 'rose' | 'cyan';
+    };
 }
