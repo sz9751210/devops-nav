@@ -12,7 +12,10 @@ import {
     FolderTree,
     TerminalSquare,
     History,
-    Zap
+    Zap,
+    Languages,
+    Sun,
+    Moon
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HelpModal } from './HelpModal';
@@ -23,6 +26,8 @@ export type PageId = 'navigation' | 'env-settings' | 'env-group-settings' | 'col
 interface SidebarProps {
     currentPage: PageId;
     onPageChange: (page: PageId) => void;
+    isDarkMode: boolean;
+    onThemeToggle: () => void;
 }
 
 interface NavItem {
@@ -41,11 +46,16 @@ const navItems: NavItem[] = [
     { id: 'import-export', labelKey: 'app.sync_backup', icon: FileCode },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
-    const { t } = useTranslation();
+export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isDarkMode, onThemeToggle }) => {
+    const { t, i18n } = useTranslation();
     const [collapsed, setCollapsed] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
     const { config } = useNavigationStore();
+
+    const toggleLanguage = () => {
+        const next = i18n.language === 'en' ? 'zh-TW' : 'en';
+        i18n.changeLanguage(next);
+    };
 
     const renderNavItem = (item: NavItem) => (
         <button
@@ -160,13 +170,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) =
 
             {/* Footer Actions */}
             <div className="border-t border-[var(--border)] bg-[var(--sidebar-bg)]">
-                <button
-                    onClick={() => setShowHelp(true)}
-                    className="w-full flex items-center gap-3 px-3 py-3 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors group"
-                >
-                    <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
-                    {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
-                </button>
+                <div className={clsx(
+                    "flex items-center",
+                    collapsed ? "flex-col py-2 gap-2" : "justify-between pr-2"
+                )}>
+                    <button
+                        onClick={() => setShowHelp(true)}
+                        className={clsx(
+                            "flex items-center gap-3 px-3 py-3 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors group",
+                            !collapsed && "flex-1"
+                        )}
+                    >
+                        <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
+                        {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
+                    </button>
+
+                    <div className={clsx(
+                        "flex items-center gap-1",
+                        collapsed ? "flex-col" : "pb-0"
+                    )}>
+                        {/* Language Switch */}
+                        <button
+                            onClick={toggleLanguage}
+                            className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-white/5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-bold"
+                            title="Switch Language"
+                        >
+                            <Languages className="w-3.5 h-3.5" />
+                            {!collapsed && <span className="w-4 text-center">{i18n.language === 'en' ? 'TW' : 'EN'}</span>}
+                        </button>
+
+                        {/* Theme Switch */}
+                        <button
+                            onClick={onThemeToggle}
+                            className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-white/5 transition-all"
+                            title="Toggle Theme"
+                        >
+                            {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}

@@ -77,7 +77,7 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-600 truncate font-mono max-w-[80px] hidden sm:block">{service.id}</span>
+                    <span className="text-[10px] text-slate-500 truncate font-mono max-w-[80px] hidden sm:block">{service.id}</span>
                     <button
                         onClick={handleCopy}
                         className="p-1 text-slate-600 hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all font-mono"

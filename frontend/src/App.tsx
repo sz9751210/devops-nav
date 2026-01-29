@@ -13,7 +13,7 @@ import { EnvSelector } from './components/matrix/EnvSelector';
 import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
 import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
-import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter, Moon, Sun, Languages } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter } from 'lucide-react';
 import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
 import { TopologyModal } from './components/matrix/TopologyModal';
@@ -21,7 +21,7 @@ import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
 import { TagFilter } from './components/matrix/TagFilter';
 
 function App() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<PageId>('navigation');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
@@ -46,10 +46,6 @@ function App() {
     }
   }, [isDarkMode]);
 
-  const toggleLanguage = () => {
-    const next = i18n.language === 'en' ? 'zh-TW' : 'en';
-    i18n.changeLanguage(next);
-  };
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -225,25 +221,6 @@ function App() {
               </div>
 
               <div className="ml-auto flex items-center gap-3">
-                {/* Language Switch */}
-                <button
-                  onClick={toggleLanguage}
-                  className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center gap-2 text-xs font-mono font-bold"
-                  title="Switch Language"
-                >
-                  <Languages className="w-4 h-4" />
-                  <span className="w-4 text-center">{i18n.language === 'en' ? 'TW' : 'EN'}</span>
-                </button>
-
-                {/* Theme Switch */}
-                <button
-                  onClick={() => setIsDarkMode(!isDarkMode)}
-                  className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all"
-                  title="Toggle Theme"
-                >
-                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
-
                 <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
                 <div className="flex items-center bg-[var(--surface)] rounded-md border border-[var(--border)] p-0.5">
@@ -379,7 +356,12 @@ function App() {
 
   return (
     <div className="flex min-h-screen selection:bg-amber-500/30 font-sans transition-colors bg-[var(--background)]">
-      <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
+      <Sidebar
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        isDarkMode={isDarkMode}
+        onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+      />
       <main className="flex-1 overflow-auto relative">
         <AnnouncementBanner />
         <div className="max-w-7xl mx-auto px-6 py-4">

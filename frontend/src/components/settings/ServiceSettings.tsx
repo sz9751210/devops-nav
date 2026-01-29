@@ -377,7 +377,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-[9px] text-slate-700 font-mono truncate mt-0.5 opacity-50">{link.url}</div>
+                                                            <div className="text-[9px] text-slate-500 font-mono truncate mt-0.5">{link.url}</div>
                                                         </div>
                                                         <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
                                                             <button
