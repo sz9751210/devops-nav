@@ -20,6 +20,9 @@ export interface ServiceDefinition {
     name: string;
     group?: string;
     description?: string;
+    tags?: string[];
+    links?: any[];
+    metadata?: Record<string, string>;
     overrides?: Record<string, string>;
     variables?: Record<string, string>;
 }
@@ -41,14 +44,19 @@ export interface IConfig {
     services: ServiceDefinition[];
     envGroups?: EnvGroup[];
     favoriteEnvs?: string[];
+    favoriteServices?: string[];
+    recentServices?: string[];
     envConfigs?: Record<string, EnvSpecificConfig>;
+    recentLinks?: any[];
+    announcement?: any;
+    theme?: any;
     updatedAt: Date;
 }
 
 const ConfigSchema = new Schema<IConfig>({
     _id: { type: String, default: 'default' },
     title: { type: String, required: true, default: 'OpsBridge Navigation' },
-    environments: [{ type: String }],
+    environments: [String],
     columns: [{
         id: String,
         title: String,
@@ -72,12 +80,14 @@ const ConfigSchema = new Schema<IConfig>({
         icon: String,
         environments: [String],
     }],
-    favoriteEnvs: [{ type: String }],
+    favoriteEnvs: [String],
     envConfigs: { type: Map, of: Object },
     updatedAt: { type: Date, default: Date.now },
 }, {
-    _id: false,
-    timestamps: { updatedAt: true, createdAt: false }
+    timestamps: { updatedAt: true, createdAt: false },
+    strict: false,
+    minimize: false,
+    collection: 'navigation'
 });
 
 export const Config = mongoose.model<IConfig>('Config', ConfigSchema);

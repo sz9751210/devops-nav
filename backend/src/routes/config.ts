@@ -24,7 +24,9 @@ router.get('/', async (_req: Request, res: Response) => {
             // Create default config if not exists
             config = new Config(DEFAULT_CONFIG);
             await config.save();
+            console.log('GET /api/config - Created new default config');
         }
+        console.log('GET /api/config - Returning config with environments:', config.environments);
 
         res.json(config);
     } catch (error) {
@@ -36,6 +38,7 @@ router.get('/', async (_req: Request, res: Response) => {
 // PUT /api/config - Update full config
 router.put('/', async (req: Request, res: Response) => {
     try {
+        console.log('PUT /api/config - Received config update:', JSON.stringify(req.body.environments));
         const configData = { ...req.body, _id: 'default' };
 
         const config = await Config.findByIdAndUpdate(

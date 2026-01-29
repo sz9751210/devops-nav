@@ -20,6 +20,7 @@ interface NavigationState {
     error: string | null;
     recentEnvs: Environment[];
     viewMode: 'list' | 'card';
+    pendingEnvs: string[];
 
     // Actions
     loadConfig: () => Promise<void>;
@@ -83,11 +84,29 @@ export const useNavigationStore = create<NavigationState>()(
         error: null,
         recentEnvs: [],
         viewMode: 'list',
+        pendingEnvs: [],
 
         loadConfig: async () => {
+            console.log('useMatrixStore: Loading config...');
             set({ isLoading: true, error: null });
             try {
                 const config = await api.getConfig();
+                console.log('useMatrixStore: Config loaded:', config.environments);
+
+                // Merge pending environments if any
+                const { pendingEnvs } = get();
+                if (pendingEnvs.length > 0) {
+                    console.log('useMatrixStore: Merging pending envs:', pendingEnvs);
+                    const uniqueNewEnvs = pendingEnvs.filter(env => !config.environments.includes(env));
+                    if (uniqueNewEnvs.length > 0) {
+                        config.environments = [...config.environments, ...uniqueNewEnvs];
+                        // If we merged pending environments and we are not in read-only mode, we should save
+                        // We use a slight delay to ensure setConfig happens first
+                        setTimeout(() => get().saveConfig(), 100);
+                    }
+                    set({ pendingEnvs: [] });
+                }
+
                 get().setConfig(config);
             } catch (err) {
                 console.error('Failed to load config from API:', err);
@@ -99,9 +118,11 @@ export const useNavigationStore = create<NavigationState>()(
 
         saveConfig: async () => {
             const { config } = get();
+            console.log('useMatrixStore: Saving config...', config.environments);
             set({ isSaving: true });
             try {
-                await api.saveConfig(config);
+                const response = await api.saveConfig(config);
+                console.log('useMatrixStore: Save successful:', response.environments);
             } catch (err) {
                 console.error('Failed to save config:', err);
                 set({ error: 'Failed to save configuration' });
@@ -156,13 +177,22 @@ export const useNavigationStore = create<NavigationState>()(
 
         // Environment CRUD
         addEnvironment: (env) => {
-            const { config } = get();
+            const { config, isLoading } = get();
+
+            // If currently loading, add to pending queue to prevent overwrite
+            if (isLoading) {
+                set(state => ({
+                    pendingEnvs: state.pendingEnvs.includes(env) ? state.pendingEnvs : [...state.pendingEnvs, env]
+                }));
+            }
+
             if (!config.environments.includes(env)) {
                 set({
                     config: { ...config, environments: [...config.environments, env] },
                     currentEnv: get().currentEnv || env,
                 });
-                debouncedSave(() => get().saveConfig());
+                // Save immediately to avoid race conditions or debounce cancellation
+                get().saveConfig();
             }
         },
         removeEnvironment: (env) => {
@@ -172,7 +202,8 @@ export const useNavigationStore = create<NavigationState>()(
                 config: { ...config, environments: newEnvs },
                 currentEnv: currentEnv === env ? (newEnvs[0] || '') : currentEnv,
             });
-            debouncedSave(() => get().saveConfig());
+            // Save immediately
+            get().saveConfig();
         },
 
         setEnvConfig: (env, envConfig) => {
