@@ -141,7 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
 
                 {!collapsed && config.recentLinks && config.recentLinks.length > 0 && (
                     <div className="space-y-1 mt-6 animate-in fade-in slide-in-from-left-2">
-                        <div className="px-3 py-1.5 text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono flex items-center gap-2">
+                        <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono flex items-center gap-2">
                             <History className="w-3 h-3" />
                             Recent Links
                         </div>
@@ -156,9 +156,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 px-2 py-1.5 text-[11px] text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded transition-all group"
+                                        className="flex items-center gap-2 px-2 py-1.5 text-[11px] text-slate-400 hover:text-amber-500 hover:bg-white/5 rounded transition-all group"
                                     >
-                                        <Zap className="w-3 h-3 text-slate-700 group-hover:text-amber-500/50" />
+                                        <Zap className="w-3 h-3 text-slate-500 group-hover:text-amber-500/50" />
                                         <span className="truncate">{service.name} / {link.name}</span>
                                     </a>
                                 );
@@ -192,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         {/* Language Switch */}
                         <button
                             onClick={toggleLanguage}
-                            className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-white/5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-bold"
+                            className="p-1.5 rounded-md text-slate-400 hover:text-[var(--foreground)] hover:bg-white/5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-bold"
                             title="Switch Language"
                         >
                             <Languages className="w-3.5 h-3.5" />
@@ -202,7 +202,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         {/* Theme Switch */}
                         <button
                             onClick={onThemeToggle}
-                            className="p-1.5 rounded-md text-slate-500 hover:text-[var(--foreground)] hover:bg-white/5 transition-all"
+                            className="p-1.5 rounded-md text-slate-400 hover:text-[var(--foreground)] hover:bg-white/5 transition-all"
                             title="Toggle Theme"
                         >
                             {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}

@@ -194,13 +194,13 @@ function App() {
               <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
               <div className="flex items-center gap-1">
-                <Filter className="w-4 h-4 text-slate-400 mr-1" />
+                <Filter className="w-4 h-4 text-slate-300 mr-1" />
                 <div className="flex items-center gap-1 bg-[var(--surface)] rounded-md p-1 border border-[var(--border)]">
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
                       "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-400 hover:text-slate-300"
+                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-300 hover:text-slate-200"
                     )}
                   >
                     {t('actions.all')}
@@ -211,7 +211,7 @@ function App() {
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
                         "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-400 hover:text-slate-300"
+                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-300 hover:text-slate-200"
                       )}
                     >
                       {group}

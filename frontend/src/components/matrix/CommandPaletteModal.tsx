@@ -79,15 +79,15 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
 
     return (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh]">
+            <div className="w-full max-w-2xl bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[60vh]">
                 {/* Search Input */}
-                <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5">
-                    <Search className="w-5 h-5 text-slate-500" />
+                <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)]/50">
+                    <Search className="w-5 h-5 text-slate-500 group-focus-within:text-amber-500 transition-colors" />
                     <input
                         autoFocus
                         type="text"
                         placeholder="Type a command or search..."
-                        className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder-slate-400"
+                        className="flex-1 bg-transparent border-none outline-none text-[var(--foreground)] text-lg placeholder-slate-500"
                         value={query}
                         onChange={(e) => {
                             setQuery(e.target.value);
@@ -100,7 +100,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                 {/* Results List */}
                 <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
                     {items.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">No results found</div>
+                        <div className="text-center py-8 text-slate-400">No results found</div>
                     ) : (
                         items.map((item, index) => {
                             const Icon = item.icon;
@@ -127,7 +127,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                                                 </span>
                                             ))}
                                         </div>
-                                        {item.sub && <div className={clsx("text-xs truncate", index === selectedIndex ? "text-slate-800" : "text-slate-500")}>{item.sub}</div>}
+                                        {item.sub && <div className={clsx("text-xs truncate", index === selectedIndex ? "text-slate-800" : "text-slate-400")}>{item.sub}</div>}
                                     </div>
                                     {index === selectedIndex && <div className="text-xs opacity-60">↵</div>}
                                 </button>
@@ -137,7 +137,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                 </div>
 
                 {/* Footer */}
-                <div className="px-4 py-2 bg-black/20 border-t border-white/5 text-[10px] text-slate-500 flex justify-end gap-3">
+                <div className="px-4 py-2 bg-[var(--background)] border-t border-[var(--border)] text-[10px] text-slate-400 flex justify-end gap-3">
                     <span><strong className="text-slate-300">↑↓</strong> to navigate</span>
                     <span><strong className="text-slate-300">↵</strong> to select</span>
                 </div>

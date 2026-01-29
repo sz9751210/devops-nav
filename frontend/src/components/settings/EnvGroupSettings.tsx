@@ -35,7 +35,7 @@ export const EnvGroupSettings: React.FC = () => {
                     <FolderTree className="w-5 h-5 text-amber-500" />
                     {t('settings.env_groups.title')}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-slate-400 mt-1">
                     {t('settings.env_groups.subtitle')}
                 </p>
             </div>
@@ -48,7 +48,7 @@ export const EnvGroupSettings: React.FC = () => {
                         value={newGroup.id}
                         onChange={(e) => setNewGroup({ ...newGroup, id: e.target.value })}
                         placeholder={t('settings.env_groups.id_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                     <input
                         type="text"
@@ -72,7 +72,7 @@ export const EnvGroupSettings: React.FC = () => {
                         value={newGroup.pattern}
                         onChange={(e) => setNewGroup({ ...newGroup, pattern: e.target.value })}
                         placeholder={t('settings.env_groups.pattern_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 <button

@@ -109,22 +109,22 @@ export const QuickSearch: React.FC = () => {
             onClick={() => setIsOpen(false)}
         >
             <div
-                className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+                className="w-full max-w-2xl bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-2xl overflow-hidden"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Search Input */}
-                <div className="flex items-center gap-3 p-4 border-b border-white/10">
-                    <Search className="w-5 h-5 text-slate-400" />
+                <div className="flex items-center gap-3 p-4 border-b border-[var(--border)] bg-[var(--header-bg)]/50">
+                    <Search className="w-5 h-5 text-slate-500 group-focus-within:text-amber-500 transition-colors" />
                     <input
                         type="text"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder="搜索服務或連結..."
-                        className="flex-1 bg-transparent text-white placeholder-slate-400 text-lg focus:outline-none"
+                        className="flex-1 bg-transparent text-[var(--foreground)] placeholder-slate-500 text-lg focus:outline-none"
                         autoFocus
                     />
-                    <kbd className="px-2 py-1 rounded bg-slate-800 text-slate-400 text-xs font-mono">
+                    <kbd className="px-2 py-1 rounded bg-[var(--background)] text-slate-400 text-xs font-mono border border-[var(--border)]">
                         ESC
                     </kbd>
                 </div>
@@ -165,7 +165,7 @@ export const QuickSearch: React.FC = () => {
                                                 {item.link.name}
                                             </div>
                                             {item.column && (
-                                                <span className="text-xs text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">
+                                                <span className="text-xs text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
                                                     {item.column.title}
                                                 </span>
                                             )}
@@ -181,10 +181,10 @@ export const QuickSearch: React.FC = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between p-3 border-t border-white/10 text-xs text-slate-500">
+                <div className="flex items-center justify-between p-3 border-t border-[var(--border)] bg-[var(--background)]/50 text-xs text-slate-400">
                     <div className="flex items-center gap-4">
-                        <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 mr-1">↑↓</kbd> 導航</span>
-                        <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 mr-1">Enter</kbd> 打開</span>
+                        <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] mr-1">↑↓</kbd> 導航</span>
+                        <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] mr-1">Enter</kbd> 打開</span>
                     </div>
                     <span>⌘K 切換搜索</span>
                 </div>

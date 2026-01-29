@@ -84,7 +84,7 @@ export const ColumnSettings: React.FC = () => {
                         <Layers className="w-5 h-5 text-amber-500" />
                         {t('settings.columns.title')}
                     </h2>
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-slate-400 mt-1">
                         {t('settings.columns.subtitle')}
                     </p>
                 </div>
@@ -144,7 +144,7 @@ export const ColumnSettings: React.FC = () => {
                                 onChange={(e) => setColumnForm({ ...columnForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                 disabled={!!editingColumnId}
                                 placeholder="monitoring"
-                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-600 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                         </div>
                         <div>
@@ -204,8 +204,8 @@ export const ColumnSettings: React.FC = () => {
                                         <Icon className="w-4 h-4 text-amber-500" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="font-bold text-slate-300 group-hover:text-[var(--foreground)] transition-colors text-sm">{column.title}</span>
-                                        <span className="text-[10px] text-slate-600 font-mono uppercase tracking-tighter">{column.id}</span>
+                                        <span className="text-xs text-slate-400 group-hover:text-[var(--foreground)] transition-colors text-sm">{column.title}</span>
+                                        <span className="text-[10px] text-slate-500 font-mono uppercase tracking-tighter">{column.id}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -229,7 +229,7 @@ export const ColumnSettings: React.FC = () => {
             </div>
 
             {/* Help Text */}
-            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-500 font-mono italic">
+            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-400 font-mono italic">
                 SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.
             </div>
         </div>
