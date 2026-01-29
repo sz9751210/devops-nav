@@ -69,7 +69,7 @@ export const EnvironmentSettings: React.FC = () => {
                     <Globe className="w-5 h-5 text-amber-500" />
                     {t('settings.envs.title')}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-[var(--foreground-muted)] mt-1">
                     {t('settings.envs.subtitle')}
                 </p>
             </div>
@@ -88,7 +88,7 @@ export const EnvironmentSettings: React.FC = () => {
                         onChange={(e) => setNewEnv(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                         placeholder={t('settings.envs.placeholder')}
-                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 {editingEnv && (
@@ -139,7 +139,7 @@ export const EnvironmentSettings: React.FC = () => {
                                             <ChevronRight className="w-4 h-4 text-slate-500" />
                                         )}
                                         <span className="font-bold text-slate-300 uppercase tracking-widest text-xs font-mono">{env}</span>
-                                        <span className="text-[10px] text-slate-600 bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
+                                        <span className="text-[10px] text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
                                             SERVICES: {visibleServices.length}/{allServices.length}
                                         </span>
                                     </button>
@@ -169,7 +169,7 @@ export const EnvironmentSettings: React.FC = () => {
                                 {isExpanded && (
                                     <div className="border-t border-[var(--border)] p-4 bg-[var(--background)]">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-xs text-slate-600 uppercase font-mono tracking-tighter">Visibility Configuration:</span>
+                                            <span className="text-xs text-[var(--foreground-muted)] uppercase font-mono tracking-tighter">Visibility Configuration:</span>
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => selectAll(env)}
@@ -179,7 +179,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => deselectAll(env)}
-                                                    className="text-[10px] text-slate-600 hover:underline font-mono"
+                                                    className="text-[10px] text-[var(--foreground-muted)] hover:underline font-mono"
                                                 >
                                                     DESELECT_ALL
                                                 </button>
@@ -202,7 +202,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                                 "flex items-center gap-2 p-2 rounded border transition-all text-left",
                                                                 isVisible
                                                                     ? "border-amber-500/30 bg-amber-500/5 text-slate-200"
-                                                                    : "border-[var(--border)] hover:border-slate-700 text-slate-600"
+                                                                    : "border-[var(--border)] hover:border-slate-700 text-[var(--foreground-muted)]"
                                                             )}
                                                         >
                                                             <div className={clsx(
@@ -214,7 +214,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                             <div className="min-w-0">
                                                                 <div className="text-[11px] font-bold truncate tracking-tight">{service.name}</div>
                                                                 {service.group && (
-                                                                    <div className="text-[9px] text-slate-700 truncate font-mono uppercase">{service.group}</div>
+                                                                    <div className="text-[9px] text-slate-500 truncate font-mono uppercase">{service.group}</div>
                                                                 )}
                                                             </div>
                                                         </button>

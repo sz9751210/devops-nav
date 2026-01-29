@@ -107,7 +107,7 @@ export const ServiceSettings: React.FC = () => {
                         <Package className="w-5 h-5 text-amber-500" />
                         {t('settings.services.title')}
                     </h2>
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-[var(--foreground-muted)] mt-1">
                         {t('settings.services.subtitle')}
                     </p>
                 </div>
@@ -130,7 +130,7 @@ export const ServiceSettings: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('settings.services.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-600 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
             </div>
 
@@ -142,7 +142,7 @@ export const ServiceSettings: React.FC = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1 font-mono">{t('form.id')}</label>
+                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.id || ''}
@@ -153,7 +153,7 @@ export const ServiceSettings: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.label')}</label>
+                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.name || ''}
@@ -163,7 +163,7 @@ export const ServiceSettings: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.group')}</label>
+                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.group')}</label>
                             <input
                                 type="text"
                                 list="groups"
@@ -177,7 +177,7 @@ export const ServiceSettings: React.FC = () => {
                             </datalist>
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.description')}</label>
+                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.description')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.description || ''}
@@ -267,28 +267,28 @@ export const ServiceSettings: React.FC = () => {
                                             <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono">
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.id')}</label>
+                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.id')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.id || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                                             disabled={!!editingLinkId}
                                                             placeholder="grafana-dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.label')}</label>
+                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.name || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
                                                             placeholder="Main Dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('app.columns')}</label>
+                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
                                                         <select
                                                             value={linkForm.columnId || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
@@ -302,17 +302,17 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[9px] font-bold text-slate-600 uppercase mb-1">{t('form.url')}</label>
+                                                    <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
                                                     <input
                                                         type="text"
                                                         value={linkForm.url || ''}
                                                         onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
                                                         placeholder="https://..."
-                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50 font-mono"
+                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50 font-mono"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[9px] font-bold text-slate-600 uppercase mb-2">{t('form.environments')}</label>
+                                                    <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
                                                     <div className="flex flex-wrap gap-1">
                                                         {config.environments.map((env: string) => (
                                                             <button
@@ -326,7 +326,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     "px-2 py-1 text-[9px] rounded transition-all uppercase tracking-tighter border",
                                                                     linkForm.environments?.includes(env)
                                                                         ? "bg-amber-500 text-black border-amber-600"
-                                                                        : "bg-[var(--background)] text-slate-600 border-[var(--border)] hover:border-slate-700"
+                                                                        : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-slate-700"
                                                                 )}
                                                             >
                                                                 {env}

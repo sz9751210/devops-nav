@@ -264,7 +264,7 @@ export const ColumnSettings: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.id')}</label>
+                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
                                 <input
                                     type="text"
                                     value={columnForm.id || ''}
@@ -275,7 +275,7 @@ export const ColumnSettings: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.label')}</label>
+                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                                 <input
                                     type="text"
                                     value={columnForm.title || ''}
@@ -285,7 +285,7 @@ export const ColumnSettings: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">Custom Icon / Emoji</label>
+                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">Custom Icon / Emoji</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
