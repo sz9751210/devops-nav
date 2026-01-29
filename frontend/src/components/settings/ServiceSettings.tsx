@@ -400,7 +400,7 @@ export const ServiceSettings: React.FC = () => {
 
                                         {linkCount === 0 && isAddingLink !== service.id && (
                                             <p className="text-center text-slate-600 text-[10px] py-4 font-mono font-bold uppercase tracking-widest">
-                                                ST_NULL: NO_LINKS_DEFINED
+                                                {t('settings.services.no_links_defined')}
                                             </p>
                                         )}
                                     </div>

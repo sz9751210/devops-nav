@@ -189,7 +189,7 @@ export const ColumnSettings: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {config.columns.length === 0 && !isAddingColumn ? (
                     <div className="col-span-full text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
-                        NO_COLUMNS_DEFINED
+                        {t('settings.columns.no_columns_defined')}
                     </div>
                 ) : (
                     config.columns.map((column: ColumnDefinition) => {

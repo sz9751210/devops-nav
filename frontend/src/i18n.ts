@@ -97,13 +97,15 @@ const resources = {
                     "title": "Column Configuration",
                     "subtitle": "Define categories for your service links.",
                     "system_info": "SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.",
-                    "quick_profiles": "QUICK_PROFILES"
+                    "quick_profiles": "QUICK_PROFILES",
+                    "no_columns_defined": "NO_COLUMNS_DEFINED"
                 },
                 "services": {
                     "title": "Service Definitions",
                     "subtitle": "Manage the core services and their metadata.",
                     "search_placeholder": "Search services by name, ID or group...",
-                    "no_services_defined": "STAT: NO_SERVICES_DEFINED"
+                    "no_services_defined": "STAT: NO_SERVICES_DEFINED",
+                    "no_links_defined": "ST_NULL: NO_LINKS_DEFINED"
                 },
                 "view_config": {
                     "title": "View Configuration",
@@ -223,13 +225,15 @@ const resources = {
                     "title": "欄位分類設定",
                     "subtitle": "定義服務連結的分類目錄。",
                     "system_info": "系統提示: 欄位定義導航分類。將連結歸類（如：監控、日誌、SSH）以保持導航整潔。",
-                    "quick_profiles": "快速設定檔"
+                    "quick_profiles": "快速設定檔",
+                    "no_columns_defined": "未定義任何欄位"
                 },
                 "services": {
                     "title": "服務清單管理",
                     "subtitle": "管理核心服務清單及其屬性。",
                     "search_placeholder": "透過名稱、ID 或群組搜尋服務...",
-                    "no_services_defined": "狀態: 未定義任何服務"
+                    "no_services_defined": "狀態: 未定義任何服務",
+                    "no_links_defined": "狀態: 未定義連結"
                 },
                 "view_config": {
                     "title": "視圖配置",
