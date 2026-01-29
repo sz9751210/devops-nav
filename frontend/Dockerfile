@@ -1,5 +1,5 @@
 # Build Stage
-FROM --platform=linux/amd64 node:22-alpine as builder
+FROM node:22-alpine as builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build
 
 # Production Stage
-FROM --platform=linux/amd64 nginx:alpine
+FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY default.conf /etc/nginx/conf.d/default.conf
