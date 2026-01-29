@@ -61,6 +61,7 @@ const resources = {
                 "load_current": "Load Current",
                 "edit": "Edit",
                 "create": "Create",
+                "add_resource_link": "Add Resource Link",
                 "commit": "Commit",
                 "update": "Update",
                 "select_all": "Select All",
@@ -110,7 +111,9 @@ const resources = {
                     "subtitle": "Manage the core services and their metadata.",
                     "search_placeholder": "Search services by name, ID or group...",
                     "no_services_defined": "STAT: NO_SERVICES_DEFINED",
-                    "no_links_defined": "ST_NULL: NO_LINKS_DEFINED"
+                    "no_links_defined": "ST_NULL: NO_LINKS_DEFINED",
+                    "select_column": "SELECT_COLUMN",
+                    "links_count": "LINKS"
                 },
                 "view_config": {
                     "title": "View Configuration",
@@ -194,6 +197,7 @@ const resources = {
                 "load_current": "載入目前配置",
                 "edit": "編輯",
                 "create": "建立",
+                "add_resource_link": "新增資源連結",
                 "commit": "確認提交",
                 "update": "更新設定",
                 "select_all": "全選",
@@ -243,7 +247,9 @@ const resources = {
                     "subtitle": "管理核心服務清單及其屬性。",
                     "search_placeholder": "透過名稱、ID 或群組搜尋服務...",
                     "no_services_defined": "狀態: 未定義任何服務",
-                    "no_links_defined": "狀態: 未定義連結"
+                    "no_links_defined": "狀態: 未定義連結",
+                    "select_column": "選擇欄位",
+                    "links_count": "連結數量"
                 },
                 "view_config": {
                     "title": "視圖配置",

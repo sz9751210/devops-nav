@@ -224,7 +224,7 @@ export const ServiceSettings: React.FC = () => {
                                         {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
                                         <div className="flex items-center gap-3">
                                             <span className="font-bold text-slate-200 text-sm tracking-tight">{service.name}</span>
-                                            <span className="text-[10px] text-slate-500 font-mono uppercase">LINKS: {linkCount}</span>
+                                            <span className="text-[10px] text-slate-500 font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
                                             {service.group && (
                                                 <span className="text-[10px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
@@ -258,7 +258,7 @@ export const ServiceSettings: React.FC = () => {
                                                 className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-slate-600 hover:text-amber-500 rounded text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
                                             >
                                                 <Plus className="w-3 h-3" />
-                                                ADD_RESOURCE_LINK
+                                                {t('actions.add_resource_link')}
                                             </button>
                                         )}
 
@@ -274,7 +274,7 @@ export const ServiceSettings: React.FC = () => {
                                                             onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                                             disabled={!!editingLinkId}
                                                             placeholder="grafana-dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
@@ -284,7 +284,7 @@ export const ServiceSettings: React.FC = () => {
                                                             value={linkForm.name || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
                                                             placeholder="Main Dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
@@ -292,9 +292,9 @@ export const ServiceSettings: React.FC = () => {
                                                         <select
                                                             value={linkForm.columnId || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
                                                         >
-                                                            <option value="">SELECT_COLUMN</option>
+                                                            <option value="">{t('settings.services.select_column')}</option>
                                                             {config.columns.map((c: any) => (
                                                                 <option key={c.id} value={c.id}>{c.title}</option>
                                                             ))}
@@ -308,7 +308,7 @@ export const ServiceSettings: React.FC = () => {
                                                         value={linkForm.url || ''}
                                                         onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
                                                         placeholder="https://..."
-                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50 font-mono"
+                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50 font-mono"
                                                     />
                                                 </div>
                                                 <div>
