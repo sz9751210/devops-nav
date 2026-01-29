@@ -63,13 +63,13 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
         return (
             <div className="group flex items-center justify-between gap-3 px-2 py-1.5 rounded hover:bg-[var(--surface-hover)] transition-colors border border-transparent hover:border-[var(--border)]">
                 <div className="flex items-center gap-2 min-w-0">
-                    <Icon className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-500 shrink-0 transition-colors" />
+                    <Icon className="w-3.5 h-3.5 text-[var(--foreground-muted)] opacity-50 group-hover:text-amber-500 group-hover:opacity-100 shrink-0 transition-colors" />
                     <a
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={handleClick}
-                        className="text-sm text-slate-400 hover:text-[var(--foreground)] truncate font-medium"
+                        className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)] truncate font-medium"
                         title={`${link.name} - ${service.name}`}
                     >
                         {link.name}
@@ -77,10 +77,10 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-500 truncate font-mono max-w-[80px] hidden sm:block">{service.id}</span>
+                    <span className="text-[10px] text-[var(--foreground-muted)] opacity-50 truncate font-mono max-w-[80px] hidden sm:block">{service.id}</span>
                     <button
                         onClick={handleCopy}
-                        className="p-1 text-slate-600 hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all font-mono"
+                        className="p-1 text-[var(--foreground-muted)] opacity-0 group-hover:opacity-50 hover:opacity-100 transition-all font-mono"
                         title={t('actions.copy_url')}
                     >
                         {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
@@ -102,10 +102,10 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
             >
                 <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                        <div className="p-1.5 rounded bg-[var(--surface-hover)] text-slate-500 group-hover:text-amber-500 transition-colors">
+                        <div className="p-1.5 rounded bg-[var(--surface-hover)] text-[var(--foreground-muted)] opacity-50 group-hover:text-amber-500 group-hover:opacity-100 transition-colors">
                             <Icon className="w-4 h-4" />
                         </div>
-                        <h3 className="text-sm font-semibold text-slate-400 group-hover:text-[var(--foreground)] truncate pr-1">
+                        <h3 className="text-sm font-semibold text-[var(--foreground-muted)] group-hover:text-[var(--foreground)] truncate pr-1">
                             {link.name}
                         </h3>
                     </div>
@@ -115,7 +115,7 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
                     <span className={clsx("text-[10px] font-mono", color.text)}>
                         {service.id}
                     </span>
-                    <span className="text-[10px] text-slate-600 truncate max-w-[80px] ml-2 italic">
+                    <span className="text-[10px] text-[var(--foreground-muted)] opacity-50 truncate max-w-[80px] ml-2 italic">
                         {service.name}
                     </span>
                 </div>
@@ -123,7 +123,7 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
 
             <button
                 onClick={handleCopy}
-                className="absolute top-2 right-2 p-1.5 text-slate-600 hover:text-white opacity-0 group-hover:opacity-100 transition-all rounded"
+                className="absolute top-2 right-2 p-1.5 text-[var(--foreground-muted)] opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-[var(--surface)]"
                 title={t('actions.copy_url')}
             >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}

@@ -31,13 +31,13 @@ export const DashboardStats: React.FC = () => {
             {stats.map((stat) => (
                 <div
                     key={stat.label}
-                    className="flex items-center justify-between p-2 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)] transition-colors"
                 >
                     <div className="flex items-center gap-2">
                         <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                        <span className="text-xs text-slate-400">{stat.label}</span>
+                        <span className="text-xs text-[var(--foreground-muted)]">{stat.label}</span>
                     </div>
-                    <span className="text-sm font-bold text-white">{stat.value}</span>
+                    <span className="text-sm font-bold text-[var(--foreground)]">{stat.value}</span>
                 </div>
             ))}
         </div>

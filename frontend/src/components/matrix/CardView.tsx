@@ -53,7 +53,7 @@ export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) 
                 return (
                     <div
                         key={service.id}
-                        className="p-5 bg-slate-900/40 border border-white/5 rounded-2xl backdrop-blur-sm hover:bg-slate-800/40 hover:border-white/10 hover:shadow-xl hover:shadow-amber-500/5 transition-all group animate-in fade-in duration-300"
+                        className="p-5 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-sm hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/30 transition-all group animate-in fade-in duration-300"
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
@@ -62,12 +62,12 @@ export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) 
                                     <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:text-amber-300 group-hover:bg-amber-500/20 transition-colors">
                                         <Globe className="w-4 h-4" />
                                     </div>
-                                    <h3 className="font-bold text-white text-lg tracking-tight group-hover:text-amber-200 transition-colors">
+                                    <h3 className="font-bold text-[var(--foreground)] text-lg tracking-tight group-hover:text-amber-600 dark:group-hover:text-amber-200 transition-colors">
                                         {service.name}
                                     </h3>
                                 </div>
                                 {service.description && (
-                                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{service.description}</p>
+                                    <p className="text-xs text-[var(--foreground-muted)] opacity-60 mt-1 line-clamp-2">{service.description}</p>
                                 )}
                             </div>
                         </div>
@@ -82,7 +82,7 @@ export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) 
 
                                 return (
                                     <div key={column.id} className="space-y-1">
-                                        <div className="flex items-center gap-2 text-slate-500 text-xs">
+                                        <div className="flex items-center gap-2 text-[var(--foreground-muted)] opacity-60 text-xs">
                                             <Icon className="w-3 h-3" />
                                             <span>{column.title}</span>
                                         </div>
@@ -113,7 +113,7 @@ export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) 
                                             href={link.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 text-slate-400 hover:bg-amber-500/20 hover:text-amber-300 transition-all text-xs"
+                                            className="flex items-center gap-1.5 px-2 py-1 rounded bg-[var(--surface-hover)] text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-300 transition-all text-xs"
                                         >
                                             {link.name}
                                             <ExternalLink className="w-3 h-3" />
@@ -123,15 +123,15 @@ export const CardView: React.FC<CardViewProps> = ({ services, visibleColumns }) 
                             )}
 
                             {allVisibleLinks.length === 0 && (
-                                <p className="text-xs text-slate-500 italic">無可用連結</p>
+                                <p className="text-xs text-[var(--foreground-muted)] opacity-50 italic">無可用連結</p>
                             )}
                         </div>
 
                         {/* Footer / Meta */}
-                        <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-500">
+                        <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--foreground-muted)]">
                             <span className="font-mono opacity-50">{service.id}</span>
                             {service.group && (
-                                <span className="px-2 py-1 rounded-full bg-slate-800 text-slate-400">
+                                <span className="px-2 py-1 rounded-full bg-[var(--surface-hover)] text-[var(--foreground-muted)]">
                                     {service.group}
                                 </span>
                             )}

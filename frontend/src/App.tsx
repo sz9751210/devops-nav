@@ -162,11 +162,11 @@ function App() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
-                    className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                    className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
                   />
                 </div>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <code className="text-[10px] text-slate-500 border border-white/10 rounded px-1 bg-white/5 font-mono">⌘K</code>
+                  <code className="text-[10px] text-[var(--foreground-muted)] border border-[var(--border)] rounded px-1 bg-[var(--surface-hover)] font-mono">⌘K</code>
                 </div>
               </div>
 
@@ -184,7 +184,7 @@ function App() {
                 </button>
                 <button
                   onClick={() => setIsNotesOpen(!isNotesOpen)}
-                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]")}
+                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]")}
                   title={t('actions.quick_notes')}
                 >
                   <StickyNote className="w-4 h-4" />
@@ -194,13 +194,13 @@ function App() {
               <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
               <div className="flex items-center gap-1">
-                <Filter className="w-4 h-4 text-slate-300 mr-1" />
+                <Filter className="w-4 h-4 text-[var(--foreground-muted)] opacity-50 mr-1" />
                 <div className="flex items-center gap-1 bg-[var(--surface)] rounded-md p-1 border border-[var(--border)]">
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
                       "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-300 hover:text-slate-200"
+                      !activeGroup ? "bg-amber-500/20 text-amber-600 dark:text-amber-500" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
                     )}
                   >
                     {t('actions.all')}
@@ -211,7 +211,7 @@ function App() {
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
                         "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-300 hover:text-slate-200"
+                        activeGroup === group ? "bg-amber-500/20 text-amber-600 dark:text-amber-500" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
                       )}
                     >
                       {group}
@@ -228,7 +228,7 @@ function App() {
                     onClick={() => setShowServices(!showServices)}
                     className={clsx(
                       "px-2 py-1 rounded-[3px] text-[10px] font-bold uppercase transition-colors mr-1",
-                      showServices ? "bg-white/10 text-[var(--foreground)]" : "text-slate-600 hover:text-slate-400"
+                      showServices ? "bg-[var(--surface-hover)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100"
                     )}
                   >
                     {t('app.services')}
@@ -236,13 +236,13 @@ function App() {
                   <div className="w-px h-3 bg-[var(--border)] mx-1" />
                   <button
                     onClick={() => setViewMode('card')}
-                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'card' ? "bg-amber-500 text-black" : "text-slate-600 hover:text-slate-400")}
+                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'card' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100")}
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => setViewMode('table')}
-                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'table' ? "bg-amber-500 text-black" : "text-slate-600 hover:text-slate-400")}
+                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'table' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100")}
                   >
                     <List className="w-3.5 h-3.5" />
                   </button>
@@ -250,7 +250,7 @@ function App() {
 
                 <button
                   onClick={() => setIsConfigOpen(true)}
-                  className="p-2 text-slate-500 hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
+                  className="p-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                 </button>
@@ -263,7 +263,7 @@ function App() {
               onClear={() => setSelectedTags([])}
             />
 
-            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-slate-500 uppercase tracking-tight border-b border-[var(--border)] pb-4">
+            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-[var(--foreground-muted)] opacity-60 uppercase tracking-tight border-b border-[var(--border)] pb-4">
               <div>{t('stats.svc')}: <span className="text-[var(--foreground)]">{filteredServices.length}</span></div>
               <div>Links: <span className="text-[var(--foreground)]">{totalLinks}</span></div>
               <div>{t('stats.col')}: <span className="text-[var(--foreground)]">{config.columns.length}</span></div>
@@ -280,7 +280,7 @@ function App() {
               <div className="space-y-8 pb-16">
                 {showServices && (
                   <section>
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <h2 className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-3 flex items-center gap-2">
                       <LayoutGrid className="w-3.5 h-3.5" />
                       {t('app.services_directory')}
                     </h2>
@@ -314,11 +314,11 @@ function App() {
                   const Icon = getIconComponent(col.icon);
                   return (
                     <section key={col.id}>
-                      <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-[var(--border)] pb-2 transition-colors">
+                      <h2 className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-[var(--border)] pb-2 transition-colors">
                         <Icon className="w-3.5 h-3.5" />
                         {col.title}
-                        <span className="text-slate-700">/</span>
-                        <span className="text-slate-400">{links.length}</span>
+                        <span className="text-[var(--border)]">/</span>
+                        <span className="text-[var(--foreground-muted)] opacity-50">{links.length}</span>
                       </h2>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                         {links.map(item => (

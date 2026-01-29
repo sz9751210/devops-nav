@@ -114,17 +114,17 @@ export const QuickSearch: React.FC = () => {
             >
                 {/* Search Input */}
                 <div className="flex items-center gap-3 p-4 border-b border-[var(--border)] bg-[var(--header-bg)]/50">
-                    <Search className="w-5 h-5 text-slate-500 group-focus-within:text-amber-500 transition-colors" />
+                    <Search className="w-5 h-5 text-[var(--foreground-muted)] group-focus-within:text-amber-500 transition-colors" />
                     <input
                         type="text"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder="搜索服務或連結..."
-                        className="flex-1 bg-transparent text-[var(--foreground)] placeholder-slate-500 text-lg focus:outline-none"
+                        className="flex-1 bg-transparent text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-lg focus:outline-none"
                         autoFocus
                     />
-                    <kbd className="px-2 py-1 rounded bg-[var(--background)] text-slate-400 text-xs font-mono border border-[var(--border)]">
+                    <kbd className="px-2 py-1 rounded bg-[var(--background)] text-[var(--foreground-muted)] text-xs font-mono border border-[var(--border)]">
                         ESC
                     </kbd>
                 </div>
@@ -132,7 +132,7 @@ export const QuickSearch: React.FC = () => {
                 {/* Results */}
                 <div className="max-h-[50vh] overflow-y-auto p-2">
                     {results.length === 0 ? (
-                        <div className="p-8 text-center text-slate-500">
+                        <div className="p-8 text-center text-[var(--foreground-muted)] opacity-50">
                             {query ? '找不到匹配的結果' : '輸入關鍵字搜索...'}
                         </div>
                     ) : (
@@ -143,7 +143,7 @@ export const QuickSearch: React.FC = () => {
                                     "flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-colors",
                                     index === selectedIndex
                                         ? "bg-amber-500/10 border border-amber-500/30"
-                                        : "hover:bg-white/5"
+                                        : "hover:bg-[var(--surface-hover)]"
                                 )}
                                 onMouseEnter={() => setSelectedIndex(index)}
                                 onClick={() => {
@@ -160,12 +160,12 @@ export const QuickSearch: React.FC = () => {
                                     </div>
                                     {item.link && (
                                         <>
-                                            <ArrowRight className="w-3 h-3 text-slate-600" />
-                                            <div className="text-slate-300 text-sm">
+                                            <ArrowRight className="w-3 h-3 text-[var(--foreground-muted)] opacity-30" />
+                                            <div className="text-[var(--foreground-muted)] text-sm">
                                                 {item.link.name}
                                             </div>
                                             {item.column && (
-                                                <span className="text-xs text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+                                                <span className="text-xs text-[var(--foreground-muted)] bg-[var(--surface-hover)] px-1.5 py-0.5 rounded">
                                                     {item.column.title}
                                                 </span>
                                             )}
@@ -173,7 +173,7 @@ export const QuickSearch: React.FC = () => {
                                     )}
                                 </div>
                                 {item.link && (
-                                    <ExternalLink className="w-4 h-4 text-slate-500" />
+                                    <ExternalLink className="w-4 h-4 text-[var(--foreground-muted)] opacity-50" />
                                 )}
                             </div>
                         ))
@@ -181,7 +181,7 @@ export const QuickSearch: React.FC = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between p-3 border-t border-[var(--border)] bg-[var(--background)]/50 text-xs text-slate-400">
+                <div className="flex items-center justify-between p-3 border-t border-[var(--border)] bg-[var(--background)]/50 text-xs text-[var(--foreground-muted)] opacity-60">
                     <div className="flex items-center gap-4">
                         <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] mr-1">↑↓</kbd> 導航</span>
                         <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] mr-1">Enter</kbd> 打開</span>

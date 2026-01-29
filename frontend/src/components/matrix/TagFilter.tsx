@@ -52,10 +52,10 @@ export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag,
                                 "flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium transition-all border",
                                 isSelected
                                     ? "bg-amber-500/10 border-amber-500/50 text-amber-500"
-                                    : "bg-white/5 border-white/5 text-[var(--foreground-muted)] hover:border-white/10 hover:text-[var(--foreground)]"
+                                    : "bg-[var(--surface)] border-[var(--border)] text-[var(--foreground-muted)] hover:border-amber-500/30 hover:text-[var(--foreground)]"
                             )}
                         >
-                            <Hash className={clsx("w-2.5 h-2.5", isSelected ? "text-amber-500" : "text-[var(--foreground-muted)] opacity-50")} />
+                            <Hash className={clsx("w-2.5 h-2.5", isSelected ? "text-amber-500" : "text-[var(--foreground-muted)] opacity-30")} />
                             {tag}
                         </button>
                     );
