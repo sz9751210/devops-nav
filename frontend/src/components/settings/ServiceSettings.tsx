@@ -124,13 +124,13 @@ export const ServiceSettings: React.FC = () => {
 
             {/* Search */}
             <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 transition-colors group-focus-within:text-amber-500/50" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 transition-colors group-focus-within:text-amber-500/50" />
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('settings.services.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-800 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-600 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
             </div>
 
@@ -142,7 +142,7 @@ export const ServiceSettings: React.FC = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1 font-mono">{t('form.id')}</label>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1 font-mono">{t('form.id')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.id || ''}
@@ -205,7 +205,7 @@ export const ServiceSettings: React.FC = () => {
             {/* Service List */}
             <div className="space-y-2">
                 {filteredServices.length === 0 ? (
-                    <div className="text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
+                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
                         {searchQuery ? 'ERR: NO_MATCHES_FOUND' : 'STAT: NO_SERVICES_DEFINED'}
                     </div>
                 ) : (
@@ -224,7 +224,7 @@ export const ServiceSettings: React.FC = () => {
                                         {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
                                         <div className="flex items-center gap-3">
                                             <span className="font-bold text-slate-200 text-sm tracking-tight">{service.name}</span>
-                                            <span className="text-[10px] text-slate-600 font-mono uppercase">LINKS: {linkCount}</span>
+                                            <span className="text-[10px] text-slate-500 font-mono uppercase">LINKS: {linkCount}</span>
                                             {service.group && (
                                                 <span className="text-[10px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
@@ -335,7 +335,7 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end gap-2 pt-1">
-                                                    <button onClick={resetLinkForm} className="text-[10px] text-slate-600 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                                    <button onClick={resetLinkForm} className="text-[10px] text-slate-500 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
                                                         {t('actions.cancel')}
                                                     </button>
                                                     <button
@@ -360,7 +360,7 @@ export const ServiceSettings: React.FC = () => {
                                                     >
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-2">
-                                                                <Link2 className="w-3 h-3 text-slate-700" />
+                                                                <Link2 className="w-3 h-3 text-slate-500" />
                                                                 <span className="font-bold text-slate-300 text-[11px] tracking-tight">{link.name}</span>
                                                                 {column && (
                                                                     <span className="text-[9px] px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
@@ -399,7 +399,7 @@ export const ServiceSettings: React.FC = () => {
                                         </div>
 
                                         {linkCount === 0 && isAddingLink !== service.id && (
-                                            <p className="text-center text-slate-800 text-[10px] py-4 font-mono font-bold uppercase tracking-widest">
+                                            <p className="text-center text-slate-600 text-[10px] py-4 font-mono font-bold uppercase tracking-widest">
                                                 ST_NULL: NO_LINKS_DEFINED
                                             </p>
                                         )}

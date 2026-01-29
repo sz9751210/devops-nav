@@ -87,7 +87,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                         autoFocus
                         type="text"
                         placeholder="Type a command or search..."
-                        className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder-slate-600"
+                        className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder-slate-400"
                         value={query}
                         onChange={(e) => {
                             setQuery(e.target.value);

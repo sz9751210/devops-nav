@@ -141,7 +141,7 @@ export const ImportExport: React.FC = () => {
 
             {/* Snippets / Smart Import */}
             <div className="pt-6 border-t border-[var(--border)]">
-                <h3 className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
                     <Sparkles className="w-4 h-4 text-amber-500" />
                     {t('settings.import_export.smart_snippets')}
                 </h3>
@@ -164,7 +164,7 @@ services:
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-amber-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
                         <div className="text-sm font-bold text-slate-300 group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
-                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
+                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
                     </button>
 
                     <button
@@ -185,7 +185,7 @@ services:
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-blue-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
                         <div className="text-sm font-bold text-slate-300 group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
-                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
+                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
                     </button>
 
                     <button
@@ -201,7 +201,7 @@ announcement:
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-green-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
                         <div className="text-sm font-bold text-slate-300 group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
-                        <div className="text-[10px] text-slate-600 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
+                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
                     </button>
                 </div>
             </div>

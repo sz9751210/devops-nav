@@ -300,7 +300,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
 
             {
                 visibleLinks.length > 5 && (
-                    <div className="text-[10px] text-center text-slate-600 mt-2 hover:text-slate-400 cursor-pointer italic font-mono">
+                    <div className="text-[10px] text-center text-slate-400 mt-2 hover:text-slate-300 cursor-pointer italic font-mono">
                         + {visibleLinks.length - 5} {t('app.more_links', { count: visibleLinks.length - 5 })}
                     </div>
                 )

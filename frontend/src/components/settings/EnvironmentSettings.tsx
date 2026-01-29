@@ -81,7 +81,7 @@ export const EnvironmentSettings: React.FC = () => {
             {/* List */}
             <div className="space-y-2">
                 {config.environments.length === 0 ? (
-                    <div className="text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         NO_ENVIRONMENTS_DEFINED
                     </div>
                 ) : (

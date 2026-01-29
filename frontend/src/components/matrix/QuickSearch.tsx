@@ -121,10 +121,10 @@ export const QuickSearch: React.FC = () => {
                         onChange={e => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder="搜索服務或連結..."
-                        className="flex-1 bg-transparent text-white placeholder-slate-500 text-lg focus:outline-none"
+                        className="flex-1 bg-transparent text-white placeholder-slate-400 text-lg focus:outline-none"
                         autoFocus
                     />
-                    <kbd className="px-2 py-1 rounded bg-slate-800 text-slate-500 text-xs font-mono">
+                    <kbd className="px-2 py-1 rounded bg-slate-800 text-slate-400 text-xs font-mono">
                         ESC
                     </kbd>
                 </div>

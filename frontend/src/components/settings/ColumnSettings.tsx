@@ -188,7 +188,7 @@ export const ColumnSettings: React.FC = () => {
             {/* Column List */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {config.columns.length === 0 && !isAddingColumn ? (
-                    <div className="col-span-full text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="col-span-full text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         NO_COLUMNS_DEFINED
                     </div>
                 ) : (
@@ -229,7 +229,7 @@ export const ColumnSettings: React.FC = () => {
             </div>
 
             {/* Help Text */}
-            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-600 font-mono italic">
+            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-500 font-mono italic">
                 SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.
             </div>
         </div>

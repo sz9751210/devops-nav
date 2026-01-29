@@ -154,7 +154,7 @@ function App() {
             <div className="sticky top-0 z-20 -mx-6 px-6 py-3 bg-[var(--header-bg)] backdrop-blur-sm border-b border-[var(--border)] flex items-center gap-4 transition-colors">
               <div className="relative flex-1 max-w-md">
                 <div className="relative group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] group-focus-within:text-amber-500 transition-colors" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-amber-500 transition-colors" />
                   <input
                     type="text"
                     placeholder={t('app.search_placeholder')}
@@ -162,11 +162,11 @@ function App() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
-                    className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder:[var(--foreground-muted)] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                    className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
                   />
                 </div>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <code className="text-[10px] text-slate-600 border border-white/5 rounded px-1 bg-white/5 font-mono">⌘K</code>
+                  <code className="text-[10px] text-slate-500 border border-white/10 rounded px-1 bg-white/5 font-mono">⌘K</code>
                 </div>
               </div>
 
@@ -194,13 +194,13 @@ function App() {
               <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
               <div className="flex items-center gap-1">
-                <Filter className="w-4 h-4 text-slate-500 mr-1" />
+                <Filter className="w-4 h-4 text-slate-400 mr-1" />
                 <div className="flex items-center gap-1 bg-[var(--surface)] rounded-md p-1 border border-[var(--border)]">
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
                       "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
+                      !activeGroup ? "bg-amber-500/10 text-amber-500" : "text-slate-400 hover:text-slate-300"
                     )}
                   >
                     {t('actions.all')}
@@ -211,7 +211,7 @@ function App() {
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
                         "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
-                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-500 hover:text-slate-300"
+                        activeGroup === group ? "bg-amber-500/10 text-amber-500" : "text-slate-400 hover:text-slate-300"
                       )}
                     >
                       {group}

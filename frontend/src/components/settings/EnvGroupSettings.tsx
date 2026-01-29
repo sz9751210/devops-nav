@@ -88,7 +88,7 @@ export const EnvGroupSettings: React.FC = () => {
             {/* List */}
             <div className="space-y-2">
                 {envGroups.length === 0 ? (
-                    <div className="text-center py-10 text-slate-600 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         {t('settings.env_groups.no_groups')}
                     </div>
                 ) : (
@@ -106,7 +106,7 @@ export const EnvGroupSettings: React.FC = () => {
                                     <div className="font-bold text-slate-300 group-hover:text-[var(--foreground)] transition-colors text-sm">
                                         {group.name}
                                     </div>
-                                    <div className="text-[10px] text-slate-600 mt-0.5 font-mono uppercase tracking-tighter">
+                                    <div className="text-[10px] text-slate-500 mt-0.5 font-mono uppercase tracking-tighter">
                                         ID: <span className="text-amber-500/70">{group.id}</span>
                                         {group.pattern && (
                                             <span className="ml-3">
@@ -130,7 +130,7 @@ export const EnvGroupSettings: React.FC = () => {
             {/* Info Snippet */}
             <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-xs">
                 <h3 className="font-bold text-amber-500/80 mb-1 font-mono uppercase tracking-widest">{t('app.documentation')}</h3>
-                <p className="text-slate-500 leading-relaxed italic">
+                <p className="text-slate-400 leading-relaxed italic">
                     {t('settings.env_groups.tips')}
                 </p>
             </div>
