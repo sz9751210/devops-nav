@@ -1,20 +1,36 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2 } from 'lucide-react';
+import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2, Pencil, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const EnvironmentSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
+    const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
     const [newEnv, setNewEnv] = useState('');
+    const [editingEnv, setEditingEnv] = useState<string | null>(null);
     const [expandedEnv, setExpandedEnv] = useState<string | null>(null);
 
-    const handleAdd = () => {
-        if (newEnv.trim() && !config.environments.includes(newEnv.trim())) {
-            addEnvironment(newEnv.trim().toLowerCase());
-            setNewEnv('');
+    const resetForm = () => {
+        setNewEnv('');
+        setEditingEnv(null);
+    };
+
+    const handleSave = () => {
+        if (newEnv.trim()) {
+            const trimmedEnv = newEnv.trim().toLowerCase();
+            if (editingEnv) {
+                updateEnvironment(editingEnv, trimmedEnv);
+            } else if (!config.environments.includes(trimmedEnv)) {
+                addEnvironment(trimmedEnv);
+            }
+            resetForm();
         }
+    };
+
+    const handleEdit = (env: string) => {
+        setEditingEnv(env);
+        setNewEnv(env);
     };
 
     const toggleService = (env: string, serviceId: string) => {
@@ -58,23 +74,39 @@ export const EnvironmentSettings: React.FC = () => {
                 </p>
             </div>
 
-            {/* Add Form */}
+            {/* Add/Edit Form */}
             <div className="flex gap-2">
-                <input
-                    type="text"
-                    value={newEnv}
-                    onChange={(e) => setNewEnv(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                    placeholder={t('settings.envs.placeholder')}
-                    className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
-                />
+                <div className="flex-1 relative">
+                    {editingEnv && (
+                        <div className="absolute -top-5 left-0 text-[10px] font-bold text-amber-500 uppercase tracking-widest font-mono">
+                            {t('actions.edit')}: {editingEnv}
+                        </div>
+                    )}
+                    <input
+                        type="text"
+                        value={newEnv}
+                        onChange={(e) => setNewEnv(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                        placeholder={t('settings.envs.placeholder')}
+                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                    />
+                </div>
+                {editingEnv && (
+                    <button
+                        onClick={resetForm}
+                        className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                        {t('actions.cancel')}
+                    </button>
+                )}
                 <button
-                    onClick={handleAdd}
+                    onClick={handleSave}
                     disabled={!newEnv.trim()}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 uppercase text-sm tracking-wide"
                 >
-                    <Plus className="w-4 h-4" />
-                    {t('actions.add_new')}
+                    {editingEnv ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {editingEnv ? t('actions.update') : t('actions.add_new')}
                 </button>
             </div>
 
@@ -117,6 +149,12 @@ export const EnvironmentSettings: React.FC = () => {
                                             className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
                                         >
                                             <Settings2 className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleEdit(env)}
+                                            className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                        >
+                                            <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => removeEnvironment(env)}

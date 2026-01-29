@@ -33,6 +33,7 @@ interface NavigationState {
 
     // Environment CRUD
     addEnvironment: (env: string) => void;
+    updateEnvironment: (oldEnv: string, newEnv: string) => void;
     removeEnvironment: (env: string) => void;
     setEnvConfig: (env: string, config: EnvSpecificConfig) => void;
 
@@ -195,6 +196,67 @@ export const useNavigationStore = create<NavigationState>()(
                 // Save immediately to avoid race conditions or debounce cancellation
                 get().saveConfig();
             }
+        },
+        updateEnvironment: (oldEnv, newEnv) => {
+            const { config, currentEnv } = get();
+            if (oldEnv === newEnv) return;
+            if (config.environments.includes(newEnv)) {
+                console.warn('Target environment name already exists');
+                return;
+            }
+
+            const newConfig = { ...config };
+
+            // 1. Update environments list
+            newConfig.environments = config.environments.map(e => e === oldEnv ? newEnv : e);
+
+            // 2. Update envConfigs keys
+            if (newConfig.envConfigs && newConfig.envConfigs[oldEnv]) {
+                newConfig.envConfigs[newEnv] = newConfig.envConfigs[oldEnv];
+                delete newConfig.envConfigs[oldEnv];
+            }
+
+            // 3. Update Service versions & links
+            newConfig.services = config.services.map(svc => {
+                const newSvc = { ...svc };
+                // Update versions
+                if (newSvc.versions && newSvc.versions[oldEnv]) {
+                    newSvc.versions[newEnv] = newSvc.versions[oldEnv];
+                    delete newSvc.versions[oldEnv];
+                }
+                // Update link scopes
+                if (newSvc.links) {
+                    newSvc.links = newSvc.links.map(link => {
+                        if (link.environments && link.environments.includes(oldEnv)) {
+                            return {
+                                ...link,
+                                environments: link.environments.map(e => e === oldEnv ? newEnv : e)
+                            };
+                        }
+                        return link;
+                    });
+                }
+                return newSvc;
+            });
+
+            // 4. Update Env Groups
+            if (newConfig.envGroups) {
+                newConfig.envGroups = newConfig.envGroups.map(group => ({
+                    ...group,
+                    environments: group.environments.map(e => e === oldEnv ? newEnv : e)
+                }));
+            }
+
+            // 5. Update Favorites
+            if (newConfig.favoriteEnvs && newConfig.favoriteEnvs.includes(oldEnv)) {
+                newConfig.favoriteEnvs = newConfig.favoriteEnvs.map(e => e === oldEnv ? newEnv : e);
+            }
+
+            set({
+                config: newConfig,
+                currentEnv: currentEnv === oldEnv ? newEnv : currentEnv
+            });
+            get().saveConfig();
         },
         removeEnvironment: (env) => {
             const { config, currentEnv } = get();
