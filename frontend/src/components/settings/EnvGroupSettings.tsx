@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { Plus, Trash2, FolderTree } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -92,7 +92,7 @@ export const EnvGroupSettings: React.FC = () => {
                         {t('settings.env_groups.no_groups')}
                     </div>
                 ) : (
-                    envGroups.map((group) => (
+                    envGroups.map((group: any) => (
                         <div
                             key={group.id}
                             className={clsx(

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check, Hammer, Hash, User, MessageCircle, MoreVertical, CopyCheck, TerminalSquare } from 'lucide-react';
 import { clsx } from 'clsx';

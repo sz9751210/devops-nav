@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { clsx } from 'clsx';
 
 export const EnvSwitcher: React.FC = () => {

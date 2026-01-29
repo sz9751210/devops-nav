@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
 import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2 } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -173,7 +173,7 @@ export const ServiceSettings: React.FC = () => {
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                             <datalist id="groups">
-                                {groups.map(g => <option key={g} value={g} />)}
+                                {groups.map((g: string) => <option key={g} value={g} />)}
                             </datalist>
                         </div>
                         <div>
@@ -209,7 +209,7 @@ export const ServiceSettings: React.FC = () => {
                         {searchQuery ? 'ERR: NO_MATCHES_FOUND' : 'STAT: NO_SERVICES_DEFINED'}
                     </div>
                 ) : (
-                    filteredServices.map(service => {
+                    filteredServices.map((service: any) => {
                         const isExpanded = expandedService === service.id;
                         const linkCount = service.links?.length || 0;
 
@@ -295,7 +295,7 @@ export const ServiceSettings: React.FC = () => {
                                                             className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-slate-300 focus:outline-none focus:border-amber-500/50"
                                                         >
                                                             <option value="">SELECT_COLUMN</option>
-                                                            {config.columns.map(c => (
+                                                            {config.columns.map((c: any) => (
                                                                 <option key={c.id} value={c.id}>{c.title}</option>
                                                             ))}
                                                         </select>
@@ -314,7 +314,7 @@ export const ServiceSettings: React.FC = () => {
                                                 <div>
                                                     <label className="block text-[9px] font-bold text-slate-600 uppercase mb-2">{t('form.environments')}</label>
                                                     <div className="flex flex-wrap gap-1">
-                                                        {config.environments.map(env => (
+                                                        {config.environments.map((env: string) => (
                                                             <button
                                                                 key={env}
                                                                 onClick={() => {
@@ -351,8 +351,8 @@ export const ServiceSettings: React.FC = () => {
 
                                         {/* Link List */}
                                         <div className="space-y-1">
-                                            {(service.links || []).map(link => {
-                                                const column = config.columns.find(c => c.id === link.columnId);
+                                            {(service.links || []).map((link: any) => {
+                                                const column = config.columns.find((c: any) => c.id === link.columnId);
                                                 return (
                                                     <div
                                                         key={link.id}
@@ -369,7 +369,7 @@ export const ServiceSettings: React.FC = () => {
                                                                 )}
                                                                 {link.environments && link.environments.length > 0 && (
                                                                     <div className="flex gap-1">
-                                                                        {link.environments.map(env => (
+                                                                        {link.environments.map((env: string) => (
                                                                             <span key={env} className="text-[8px] px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
                                                                                 {env}
                                                                             </span>

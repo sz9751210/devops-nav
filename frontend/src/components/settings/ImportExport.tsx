@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { FileCode, Upload, Download, Copy, Check, Sparkles } from 'lucide-react';
 
 export const ImportExport: React.FC = () => {

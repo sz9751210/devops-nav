@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -19,7 +19,7 @@ export const EnvironmentSettings: React.FC = () => {
 
     const toggleService = (env: string, serviceId: string) => {
         const currentConfig = config.envConfigs?.[env] || {};
-        const visibleServices = currentConfig.visibleServices || config.services.map(s => s.id);
+        const visibleServices = currentConfig.visibleServices || config.services.map((s: any) => s.id);
 
         const newServices = visibleServices.includes(serviceId)
             ? visibleServices.filter(id => id !== serviceId)
@@ -30,7 +30,7 @@ export const EnvironmentSettings: React.FC = () => {
 
     const selectAll = (env: string) => {
         const currentConfig = config.envConfigs?.[env] || {};
-        setEnvConfig(env, { ...currentConfig, visibleServices: config.services.map(s => s.id) });
+        setEnvConfig(env, { ...currentConfig, visibleServices: config.services.map((s: any) => s.id) });
     };
 
     const deselectAll = (env: string) => {
@@ -41,7 +41,7 @@ export const EnvironmentSettings: React.FC = () => {
     const getVisibleServices = (env: string) => {
         const envConfig = config.envConfigs?.[env];
         if (!envConfig?.visibleServices) {
-            return config.services.map(s => s.id);
+            return config.services.map((s: any) => s.id);
         }
         return envConfig.visibleServices;
     };
@@ -154,7 +154,7 @@ export const EnvironmentSettings: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                                                {allServices.map(service => {
+                                                {allServices.map((service: any) => {
                                                     const isVisible = visibleServices.includes(service.id);
                                                     return (
                                                         <button

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { X, Search, Check, Save } from 'lucide-react';
 import { clsx } from 'clsx';
+import type { ServiceDefinition, ColumnDefinition } from '../../types/schema';
 
 interface ViewConfigModalProps {
     onClose: () => void;
@@ -17,10 +18,10 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
     // Load current config or default to all visible
     const envConfig = config.envConfigs?.[currentEnv] || {};
     const [visibleServices, setVisibleServices] = useState<Set<string>>(
-        new Set(envConfig.visibleServices || config.services.map(s => s.id))
+        new Set(envConfig.visibleServices || config.services.map((s: ServiceDefinition) => s.id))
     );
     const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-        new Set(envConfig.visibleColumns || config.columns.map(c => c.id))
+        new Set(envConfig.visibleColumns || config.columns.map((c: ColumnDefinition) => c.id))
     );
 
     const handleSave = () => {
@@ -46,7 +47,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
         setVisibleColumns(newSet);
     };
 
-    const filteredServices = config.services.filter(s =>
+    const filteredServices = config.services.filter((s: ServiceDefinition) =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -116,7 +117,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                         ERR: NO_MATCHES_FOUND
                                     </div>
                                 ) : (
-                                    filteredServices.map(service => (
+                                    filteredServices.map((service: ServiceDefinition) => (
                                         <label
                                             key={service.id}
                                             className="flex items-center justify-between p-3 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--surface)] cursor-pointer group transition-all"
@@ -153,7 +154,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
 
                     {activeTab === 'columns' && (
                         <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 pr-2">
-                            {config.columns.map(column => (
+                            {config.columns.map((column: ColumnDefinition) => (
                                 <label
                                     key={column.id}
                                     className="flex items-center justify-between p-3 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--surface)] cursor-pointer group transition-all"
@@ -196,9 +197,9 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                         <button
                             onClick={() => {
                                 if (activeTab === 'services') {
-                                    setVisibleServices(new Set(config.services.map(s => s.id)));
+                                    setVisibleServices(new Set(config.services.map((s: ServiceDefinition) => s.id)));
                                 } else {
-                                    setVisibleColumns(new Set(config.columns.map(c => c.id)));
+                                    setVisibleColumns(new Set(config.columns.map((c: ColumnDefinition) => c.id)));
                                 }
                             }}
                             className="text-[10px] font-bold text-slate-600 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"

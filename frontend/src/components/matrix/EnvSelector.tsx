@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { ChevronDown, Search, Star, Clock, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { Environment, EnvGroup } from '../../types/schema';

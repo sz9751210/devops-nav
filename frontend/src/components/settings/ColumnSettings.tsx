@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ColumnDefinition } from '../../types/schema';
 import {
     Plus, Trash2, Layers, Pencil, X, Check,
@@ -192,7 +192,7 @@ export const ColumnSettings: React.FC = () => {
                         NO_COLUMNS_DEFINED
                     </div>
                 ) : (
-                    config.columns.map(column => {
+                    config.columns.map((column: ColumnDefinition) => {
                         const Icon = getIconComponent(column.icon || 'link');
                         return (
                             <div

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { Tag, Hash, X } from 'lucide-react';
 import { clsx } from 'clsx';
 

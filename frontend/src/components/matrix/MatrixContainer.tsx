@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
-import { NavigationTable } from './NavigationTable';
+import { useNavigationStore } from '../../store/useMatrixStore';
+import { MatrixTable } from './MatrixTable';
 import { CardView } from './CardView';
 import { ViewConfigModal } from './ViewConfigModal';
 import { LayoutList, LayoutGrid, Settings2, SlidersHorizontal } from 'lucide-react';
@@ -108,9 +108,9 @@ export const NavigationContainer: React.FC = () => {
             ) : (
                 <>
                     {viewMode === 'list' ? (
-                        <NavigationTable
+                        <MatrixTable
                             services={filteredServices}
-                            visibleColumns={visibleColumns}
+                            visibleColumns={envConfig.visibleColumns}
                         />
                     ) : (
                         <CardView

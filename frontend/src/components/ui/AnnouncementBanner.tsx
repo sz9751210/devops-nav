@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { AlertCircle, Info, AlertTriangle, CheckCircle, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -28,10 +28,10 @@ export const AnnouncementBanner: React.FC = () => {
     return (
         <div className={clsx(
             "flex items-center justify-between px-4 py-2 border-b backdrop-blur-md transition-all",
-            styles[level || 'info']
+            styles[(level as keyof typeof styles) || 'info']
         )}>
             <div className="flex items-center gap-3 max-w-4xl mx-auto">
-                {icons[level || 'info']}
+                {icons[(level as keyof typeof icons) || 'info']}
                 <span className="text-sm font-medium leading-tight">
                     {message}
                 </span>

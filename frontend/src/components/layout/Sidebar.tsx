@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HelpModal } from './HelpModal';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 
 export type PageId = 'navigation' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
 

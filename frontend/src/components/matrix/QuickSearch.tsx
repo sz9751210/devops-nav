@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';

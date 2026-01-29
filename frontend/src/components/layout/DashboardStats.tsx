@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { Server, Layers, Globe } from 'lucide-react';
 
 export const DashboardStats: React.FC = () => {

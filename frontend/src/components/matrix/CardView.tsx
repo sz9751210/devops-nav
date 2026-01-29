@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, Activity, FileText, Settings, Eye, Database, Link2 } from 'lucide-react';
 

@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { X, Network } from 'lucide-react';
+import type { ServiceDefinition } from '../../types/schema';
 
 interface TopologyModalProps {
     onClose: () => void;
@@ -12,9 +13,9 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
     const { config } = useNavigationStore();
 
     const nodes = useMemo(() => {
-        const groups = Array.from(new Set(config.services.map(s => s.group || 'Ungrouped')));
+        const groups = Array.from(new Set(config.services.map((s: ServiceDefinition) => s.group || 'Ungrouped')));
 
-        const groupNodes = groups.map((g, i) => {
+        const groupNodes = groups.map((g: string, i: number) => {
             const angle = (i / groups.length) * 2 * Math.PI;
             const r = 200;
             return {
@@ -26,7 +27,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
             };
         });
 
-        const serviceNodes = config.services.map((s) => {
+        const serviceNodes = config.services.map((s: ServiceDefinition) => {
             const groupIndex = groups.indexOf(s.group || 'Ungrouped');
             const groupNode = groupNodes[groupIndex];
 
@@ -48,7 +49,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
     }, [config.services]);
 
     const links = useMemo(() => {
-        return config.services.map(s => ({
+        return config.services.map((s: ServiceDefinition) => ({
             source: s.id,
             target: `g-${s.group || 'Ungrouped'}`
         }));
@@ -73,9 +74,9 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
 
                     <svg width="100%" height="100%" viewBox="0 0 800 700" className="pointer-events-none relative z-10">
                         {/* Links */}
-                        {links.map((link, i) => {
-                            const source = nodes.find(n => n.id === link.source);
-                            const target = nodes.find(n => n.id === link.target);
+                        {links.map((link: any, i: number) => {
+                            const source = nodes.find((n: any) => n.id === link.source);
+                            const target = nodes.find((n: any) => n.id === link.target);
                             if (!source || !target) return null;
                             return (
                                 <line
@@ -108,7 +109,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
 
                     <div className="absolute bottom-4 left-4 p-2 bg-[var(--surface)] border border-[var(--border)] rounded text-[10px] text-slate-500 font-mono">
                         <div>NODES: {nodes.length}</div>
-                        <div>GROUPS: {nodes.filter(n => n.type === 'group').length}</div>
+                        <div>GROUPS: {nodes.filter((n: any) => n.type === 'group').length}</div>
                     </div>
                 </div>
             </div>

@@ -1,24 +1,24 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigationStore } from './store/useNavigationStore';
+import { useNavigationStore } from './store/useMatrixStore';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
 import { EnvironmentSettings } from './components/settings/EnvironmentSettings';
 import { ColumnSettings } from './components/settings/ColumnSettings';
 import { ServiceSettings } from './components/settings/ServiceSettings';
 import { ImportExport } from './components/settings/ImportExport';
 import { EnvGroupSettings } from './components/settings/EnvGroupSettings';
-import { QuickSearch } from './components/navigation/QuickSearch';
-import { ServiceCard } from './components/navigation/ServiceCard';
-import { EnvSelector } from './components/navigation/EnvSelector';
-import { ViewConfigModal } from './components/navigation/ViewConfigModal';
-import { LinkCard } from './components/navigation/LinkCard';
-import { CommandPaletteModal } from './components/navigation/CommandPaletteModal';
+import { QuickSearch } from './components/matrix/QuickSearch';
+import { ServiceCard } from './components/matrix/ServiceCard';
+import { EnvSelector } from './components/matrix/EnvSelector';
+import { ViewConfigModal } from './components/matrix/ViewConfigModal';
+import { LinkCard } from './components/matrix/LinkCard';
+import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
 import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter, Moon, Sun, Languages } from 'lucide-react';
 import { clsx } from 'clsx';
-import { QuickNotes } from './components/navigation/QuickNotes';
-import { TopologyModal } from './components/navigation/TopologyModal';
+import { QuickNotes } from './components/matrix/QuickNotes';
+import { TopologyModal } from './components/matrix/TopologyModal';
 import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
-import { TagFilter } from './components/navigation/TagFilter';
+import { TagFilter } from './components/matrix/TagFilter';
 
 function App() {
   const { t, i18n } = useTranslation();

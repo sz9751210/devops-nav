@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Settings, LayoutGrid, Terminal, FileText, Moon, Database } from 'lucide-react';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { clsx } from 'clsx';
 import type { PageId } from '../layout/Sidebar';
 

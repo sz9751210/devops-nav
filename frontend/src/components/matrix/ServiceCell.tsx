@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
-import { useNavigationStore } from '../../store/useNavigationStore';
+import { useNavigationStore } from '../../store/useMatrixStore';
 import { ExternalLink, Github, Terminal, Activity, Cloud, Link2 } from 'lucide-react';
 
 interface ServiceCellProps {
