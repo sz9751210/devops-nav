@@ -114,7 +114,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 pr-2">
                                 {filteredServices.length === 0 ? (
                                     <div className="text-center py-20 text-slate-700 text-xs font-mono uppercase tracking-widest">
-                                        ERR: NO_MATCHES_FOUND
+                                        {t('app.no_matches_found')}
                                     </div>
                                 ) : (
                                     filteredServices.map((service: ServiceDefinition) => (

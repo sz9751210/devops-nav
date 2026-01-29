@@ -69,7 +69,7 @@ export const ColumnSettings: React.FC = () => {
     const applyColumnTemplate = (template: typeof COLUMN_TEMPLATES[0]) => {
         setColumnForm({
             id: template.id,
-            title: template.title,
+            title: t(`profiles.${template.id}`),
             icon: template.icon,
         });
         setIsAddingColumn(true);
@@ -102,7 +102,7 @@ export const ColumnSettings: React.FC = () => {
             {/* Quick Templates */}
             {!isAddingColumn && !editingColumnId && (
                 <div className="space-y-3">
-                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ QUICK_PROFILES</span>
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
                     <div className="flex flex-wrap gap-2">
                         {COLUMN_TEMPLATES.map(temp => {
                             const exists = config.columns.some(c => c.id === temp.id);
@@ -120,7 +120,7 @@ export const ColumnSettings: React.FC = () => {
                                     )}
                                 >
                                     <Icon className="w-3.5 h-3.5" />
-                                    {temp.title}
+                                    {t(`profiles.${temp.id}`)}
                                     {exists && <Check className="w-3 h-3 text-emerald-600" />}
                                 </button>
                             );
@@ -230,7 +230,7 @@ export const ColumnSettings: React.FC = () => {
 
             {/* Help Text */}
             <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-400 font-mono italic">
-                SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.
+                {t('settings.columns.system_info')}
             </div>
         </div>
     );

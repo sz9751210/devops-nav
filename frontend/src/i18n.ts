@@ -11,14 +11,17 @@ const resources = {
                 "configuration": "Configuration",
                 "environments": "Environments",
                 "groups": "Groups",
+
                 "columns": "Columns",
                 "services": "Services",
+                "profiles": "Profiles",
                 "sync_backup": "Sync / Backup",
                 "documentation": "Documentation",
                 "search_placeholder": "Search services...",
                 "filtered": "Filtered",
                 "services_directory": "Services Directory",
                 "no_services": "No services found matching",
+                "no_matches_found": "ERR: NO_MATCHES_FOUND",
                 "scratchpad": "SCRATCHPAD.md",
                 "topology": "Dependency Graph",
                 "more_links": "more links"
@@ -27,6 +30,14 @@ const resources = {
                 "svc": "Svc",
                 "env": "Env",
                 "col": "Col"
+            },
+            "profiles": {
+                "monitoring": "MONITORING",
+                "logs": "LOGS",
+                "config": "CONFIG",
+                "terminal": "TERMINAL",
+                "status": "STATUS",
+                "database": "DATABASE"
             },
             "actions": {
                 "all": "ALL",
@@ -78,16 +89,21 @@ const resources = {
                 },
                 "envs": {
                     "title": "Environment Management",
-                    "subtitle": "Define your deployment targets and their metadata."
+                    "subtitle": "Define your deployment targets and their metadata.",
+                    "no_environments": "NO_ENVIRONMENTS_DEFINED",
+                    "placeholder": "e.g. production, staging"
                 },
                 "columns": {
                     "title": "Column Configuration",
-                    "subtitle": "Define categories for your service links."
+                    "subtitle": "Define categories for your service links.",
+                    "system_info": "SYSTEM_INFO: Columns define navigation buckets. Categorize your links (e.g., Monitoring, Logs, SSH) to keep the navigation organized.",
+                    "quick_profiles": "QUICK_PROFILES"
                 },
                 "services": {
                     "title": "Service Definitions",
                     "subtitle": "Manage the core services and their metadata.",
-                    "search_placeholder": "Search services by name, ID or group..."
+                    "search_placeholder": "Search services by name, ID or group...",
+                    "no_services_defined": "STAT: NO_SERVICES_DEFINED"
                 },
                 "view_config": {
                     "title": "View Configuration",
@@ -131,6 +147,7 @@ const resources = {
                 "filtered": "已過濾",
                 "services_directory": "服務目錄",
                 "no_services": "找不到匹配的服務",
+                "no_matches_found": "錯誤: 找不到符合項目",
                 "scratchpad": "隨手筆記.md",
                 "topology": "依賴拓撲圖",
                 "more_links": "個連結"
@@ -139,6 +156,14 @@ const resources = {
                 "svc": "服務",
                 "env": "環境",
                 "col": "欄位"
+            },
+            "profiles": {
+                "monitoring": "監控",
+                "logs": "日誌",
+                "config": "設定",
+                "terminal": "終端機",
+                "status": "狀態",
+                "database": "資料庫"
             },
             "actions": {
                 "all": "全部",
@@ -190,16 +215,21 @@ const resources = {
                 },
                 "envs": {
                     "title": "環境管理",
-                    "subtitle": "定義您的部署目標及其相關元數據。"
+                    "subtitle": "定義您的部署目標及其相關元數據。",
+                    "no_environments": "未定義任何環境",
+                    "placeholder": "例如: production, staging"
                 },
                 "columns": {
                     "title": "欄位分類設定",
-                    "subtitle": "定義服務連結的分類目錄。"
+                    "subtitle": "定義服務連結的分類目錄。",
+                    "system_info": "系統提示: 欄位定義導航分類。將連結歸類（如：監控、日誌、SSH）以保持導航整潔。",
+                    "quick_profiles": "快速設定檔"
                 },
                 "services": {
                     "title": "服務清單管理",
                     "subtitle": "管理核心服務清單及其屬性。",
-                    "search_placeholder": "透過名稱、ID 或群組搜尋服務..."
+                    "search_placeholder": "透過名稱、ID 或群組搜尋服務...",
+                    "no_services_defined": "狀態: 未定義任何服務"
                 },
                 "view_config": {
                     "title": "視圖配置",

@@ -65,7 +65,7 @@ export const EnvironmentSettings: React.FC = () => {
                     value={newEnv}
                     onChange={(e) => setNewEnv(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                    placeholder="e.g. production, staging"
+                    placeholder={t('settings.envs.placeholder')}
                     className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
                 <button
@@ -82,7 +82,7 @@ export const EnvironmentSettings: React.FC = () => {
             <div className="space-y-2">
                 {config.environments.length === 0 ? (
                     <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
-                        NO_ENVIRONMENTS_DEFINED
+                        {t('settings.envs.no_environments')}
                     </div>
                 ) : (
                     config.environments.map((env) => {

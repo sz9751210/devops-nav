@@ -206,7 +206,7 @@ export const ServiceSettings: React.FC = () => {
             <div className="space-y-2">
                 {filteredServices.length === 0 ? (
                     <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
-                        {searchQuery ? 'ERR: NO_MATCHES_FOUND' : 'STAT: NO_SERVICES_DEFINED'}
+                        {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
                     </div>
                 ) : (
                     filteredServices.map((service: any) => {
