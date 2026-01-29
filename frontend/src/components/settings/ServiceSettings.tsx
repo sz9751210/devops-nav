@@ -142,7 +142,7 @@ export const ServiceSettings: React.FC = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
+                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.id || ''}
@@ -153,7 +153,7 @@ export const ServiceSettings: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
+                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.name || ''}
@@ -163,7 +163,7 @@ export const ServiceSettings: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.group')}</label>
+                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.group')}</label>
                             <input
                                 type="text"
                                 list="groups"
@@ -177,7 +177,7 @@ export const ServiceSettings: React.FC = () => {
                             </datalist>
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.description')}</label>
+                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.description')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.description || ''}
@@ -224,9 +224,9 @@ export const ServiceSettings: React.FC = () => {
                                         {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
                                         <div className="flex items-center gap-3">
                                             <span className="font-bold text-slate-200 text-sm tracking-tight">{service.name}</span>
-                                            <span className="text-[10px] text-slate-500 font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
+                                            <span className="text-xs text-slate-500 font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
                                             {service.group && (
-                                                <span className="text-[10px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
+                                                <span className="text-[11px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
                                                 </span>
                                             )}
@@ -255,7 +255,7 @@ export const ServiceSettings: React.FC = () => {
                                         {isAddingLink !== service.id && !editingLinkId && (
                                             <button
                                                 onClick={() => { setIsAddingLink(service.id); setLinkForm({}); }}
-                                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-slate-600 hover:text-amber-500 rounded text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
+                                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-slate-600 hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
                                             >
                                                 <Plus className="w-3 h-3" />
                                                 {t('actions.add_resource_link')}
@@ -267,32 +267,32 @@ export const ServiceSettings: React.FC = () => {
                                             <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono">
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.id')}</label>
+                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.id')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.id || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                                             disabled={!!editingLinkId}
                                                             placeholder="grafana-dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
+                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.name || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
                                                             placeholder="Main Dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
+                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
                                                         <select
                                                             value={linkForm.columnId || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
                                                         >
                                                             <option value="">{t('settings.services.select_column')}</option>
                                                             {config.columns.map((c: any) => (
@@ -302,17 +302,17 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
+                                                    <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
                                                     <input
                                                         type="text"
                                                         value={linkForm.url || ''}
                                                         onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
                                                         placeholder="https://..."
-                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-[11px] text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50 font-mono"
+                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50 font-mono"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[9px] font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
+                                                    <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
                                                     <div className="flex flex-wrap gap-1">
                                                         {config.environments.map((env: string) => (
                                                             <button
@@ -323,7 +323,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
                                                                 }}
                                                                 className={clsx(
-                                                                    "px-2 py-1 text-[9px] rounded transition-all uppercase tracking-tighter border",
+                                                                    "px-2 py-1 text-[11px] rounded transition-all uppercase tracking-tighter border",
                                                                     linkForm.environments?.includes(env)
                                                                         ? "bg-amber-500 text-black border-amber-600"
                                                                         : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-slate-700"
@@ -335,13 +335,13 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end gap-2 pt-1">
-                                                    <button onClick={resetLinkForm} className="text-[10px] text-slate-500 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                                    <button onClick={resetLinkForm} className="text-xs text-slate-500 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
                                                         {t('actions.cancel')}
                                                     </button>
                                                     <button
                                                         onClick={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
                                                         disabled={!linkForm.id || !linkForm.name || !linkForm.url || !linkForm.columnId}
-                                                        className="bg-amber-500/90 hover:bg-amber-500 text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
+                                                        className="bg-amber-500/90 hover:bg-amber-500 text-black text-xs font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
                                                     >
                                                         {editingLinkId ? t('actions.update') : t('actions.commit')}
                                                     </button>
@@ -361,23 +361,23 @@ export const ServiceSettings: React.FC = () => {
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-2">
                                                                 <Link2 className="w-3 h-3 text-slate-500" />
-                                                                <span className="font-bold text-slate-300 text-[11px] tracking-tight">{link.name}</span>
+                                                                <span className="font-bold text-slate-300 text-xs tracking-tight">{link.name}</span>
                                                                 {column && (
-                                                                    <span className="text-[9px] px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
+                                                                    <span className="text-xs px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
                                                                         {column.title}
                                                                     </span>
                                                                 )}
                                                                 {link.environments && link.environments.length > 0 && (
                                                                     <div className="flex gap-1">
                                                                         {link.environments.map((env: string) => (
-                                                                            <span key={env} className="text-[8px] px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
+                                                                            <span key={env} className="text-[11px] px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
                                                                                 {env}
                                                                             </span>
                                                                         ))}
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-[9px] text-slate-500 font-mono truncate mt-0.5">{link.url}</div>
+                                                            <div className="text-xs text-slate-500 font-mono truncate mt-0.5">{link.url}</div>
                                                         </div>
                                                         <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
                                                             <button
@@ -399,7 +399,7 @@ export const ServiceSettings: React.FC = () => {
                                         </div>
 
                                         {linkCount === 0 && isAddingLink !== service.id && (
-                                            <p className="text-center text-slate-600 text-[10px] py-4 font-mono font-bold uppercase tracking-widest">
+                                            <p className="text-center text-slate-600 text-xs py-4 font-mono font-bold uppercase tracking-widest">
                                                 {t('settings.services.no_links_defined')}
                                             </p>
                                         )}

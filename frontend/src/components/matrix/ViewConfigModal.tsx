@@ -17,11 +17,14 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
 
     // Load current config or default to all visible
     const envConfig = config.envConfigs?.[currentEnv] || {};
+    const defaultServices = config.services.map((s: ServiceDefinition) => s.id);
+    const defaultColumns = config.columns.map((c: ColumnDefinition) => c.id);
+
     const [visibleServices, setVisibleServices] = useState<Set<string>>(
-        new Set(envConfig.visibleServices || config.services.map((s: ServiceDefinition) => s.id))
+        new Set(envConfig.visibleServices?.length ? envConfig.visibleServices : defaultServices)
     );
     const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-        new Set(envConfig.visibleColumns || config.columns.map((c: ColumnDefinition) => c.id))
+        new Set(envConfig.visibleColumns?.length ? envConfig.visibleColumns : defaultColumns)
     );
 
     const handleSave = () => {
@@ -142,7 +145,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                                 />
                                                 <div>
                                                     <div className="font-bold text-slate-200 text-sm group-hover:text-amber-500 transition-colors">{service.name}</div>
-                                                    <div className="text-[10px] text-slate-600 font-mono uppercase tracking-tighter">{service.id}</div>
+                                                    <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{service.id}</div>
                                                 </div>
                                             </div>
                                         </label>
@@ -179,10 +182,10 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                         />
                                         <div>
                                             <div className="font-bold text-slate-200 text-sm group-hover:text-amber-500 transition-colors">{column.title}</div>
-                                            <div className="text-[10px] text-slate-600 font-mono uppercase tracking-tighter">{column.id}</div>
+                                            <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{column.id}</div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--background)] text-slate-500 font-mono uppercase">
+                                    <span className="text-xs px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--background)] text-slate-500 font-mono uppercase">
                                         {column.type}
                                     </span>
                                 </label>
@@ -202,7 +205,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                     setVisibleColumns(new Set(config.columns.map((c: ColumnDefinition) => c.id)));
                                 }
                             }}
-                            className="text-[10px] font-bold text-slate-600 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
+                            className="text-xs font-bold text-slate-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
                         >
                             {t('actions.select_all')}
                         </button>
@@ -214,7 +217,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                     setVisibleColumns(new Set());
                                 }
                             }}
-                            className="text-[10px] font-bold text-slate-600 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
+                            className="text-xs font-bold text-slate-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
                         >
                             {t('actions.deselect_all')}
                         </button>

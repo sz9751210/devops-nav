@@ -228,7 +228,7 @@ export const ColumnSettings: React.FC = () => {
             {/* Quick Templates */}
             {!isAddingColumn && !editingColumnId && (
                 <div className="space-y-3">
-                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
+                    <span className="text-xs font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
                     <div className="flex flex-wrap gap-2">
                         {COLUMN_TEMPLATES.map(temp => {
                             const exists = config.columns.some(c => c.id === temp.id);
@@ -264,7 +264,7 @@ export const ColumnSettings: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
                                 <input
                                     type="text"
                                     value={columnForm.id || ''}
@@ -275,7 +275,7 @@ export const ColumnSettings: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                                 <input
                                     type="text"
                                     value={columnForm.title || ''}
@@ -285,7 +285,7 @@ export const ColumnSettings: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">Custom Icon / Emoji</label>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">Custom Icon / Emoji</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
@@ -320,7 +320,7 @@ export const ColumnSettings: React.FC = () => {
                                 ) : (
                                     filteredCategories.map(cat => (
                                         <div key={cat.name}>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-2 sticky top-0 bg-[var(--background)] py-1">{cat.name}</div>
+                                            <div className="text-xs font-bold text-slate-500 uppercase mb-2 sticky top-0 bg-[var(--background)] py-1">{cat.name}</div>
                                             <div className="grid grid-cols-6 gap-2">
                                                 {cat.icons.map(({ value, Icon }) => (
                                                     <button
@@ -378,7 +378,7 @@ export const ColumnSettings: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col min-w-0">
                                     <span className="font-bold text-slate-400 group-hover:text-[var(--foreground)] transition-colors text-sm truncate">{column.title}</span>
-                                    <span className="text-[10px] text-slate-500 font-mono uppercase tracking-tighter truncate">{column.id}</span>
+                                    <span className="text-xs text-slate-500 font-mono uppercase tracking-tighter truncate">{column.id}</span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
@@ -401,7 +401,7 @@ export const ColumnSettings: React.FC = () => {
             </div>
 
             {/* Help Text */}
-            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-[10px] text-slate-400 font-mono italic">
+            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-xs text-slate-400 font-mono italic">
                 {t('settings.columns.system_info')}
             </div>
         </div>

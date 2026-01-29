@@ -78,7 +78,7 @@ export const EnvironmentSettings: React.FC = () => {
             <div className="flex gap-2">
                 <div className="flex-1 relative">
                     {editingEnv && (
-                        <div className="absolute -top-5 left-0 text-[10px] font-bold text-amber-500 uppercase tracking-widest font-mono">
+                        <div className="absolute -top-5 left-0 text-xs font-bold text-amber-500 uppercase tracking-widest font-mono">
                             {t('actions.edit')}: {editingEnv}
                         </div>
                     )}
@@ -139,7 +139,7 @@ export const EnvironmentSettings: React.FC = () => {
                                             <ChevronRight className="w-4 h-4 text-slate-500" />
                                         )}
                                         <span className="font-bold text-slate-300 uppercase tracking-widest text-xs font-mono">{env}</span>
-                                        <span className="text-[10px] text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
+                                        <span className="text-xs text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
                                             SERVICES: {visibleServices.length}/{allServices.length}
                                         </span>
                                     </button>
@@ -173,13 +173,13 @@ export const EnvironmentSettings: React.FC = () => {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => selectAll(env)}
-                                                    className="text-[10px] text-amber-500 hover:underline font-mono"
+                                                    className="text-xs text-amber-500 hover:underline font-mono"
                                                 >
                                                     SELECT_ALL
                                                 </button>
                                                 <button
                                                     onClick={() => deselectAll(env)}
-                                                    className="text-[10px] text-[var(--foreground-muted)] hover:underline font-mono"
+                                                    className="text-xs text-[var(--foreground-muted)] hover:underline font-mono"
                                                 >
                                                     DESELECT_ALL
                                                 </button>
@@ -212,9 +212,9 @@ export const EnvironmentSettings: React.FC = () => {
                                                                 {isVisible && <Check className="w-3 h-3 text-black" />}
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <div className="text-[11px] font-bold truncate tracking-tight">{service.name}</div>
+                                                                <div className="text-sm font-bold truncate tracking-tight">{service.name}</div>
                                                                 {service.group && (
-                                                                    <div className="text-[9px] text-slate-500 truncate font-mono uppercase">{service.group}</div>
+                                                                    <div className="text-[11px] text-slate-500 truncate font-mono uppercase">{service.group}</div>
                                                                 )}
                                                             </div>
                                                         </button>

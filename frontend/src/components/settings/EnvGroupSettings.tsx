@@ -146,7 +146,7 @@ export const EnvGroupSettings: React.FC = () => {
                                     <div className="font-bold text-slate-300 group-hover:text-[var(--foreground)] transition-colors text-sm">
                                         {group.name}
                                     </div>
-                                    <div className="text-[10px] text-[var(--foreground-muted)] mt-0.5 font-mono uppercase tracking-tighter">
+                                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5 font-mono uppercase tracking-tighter">
                                         ID: <span className="text-amber-500/70">{group.id}</span>
                                         {group.pattern && (
                                             <span className="ml-3">
