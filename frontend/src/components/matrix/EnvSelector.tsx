@@ -146,11 +146,11 @@ export const EnvSelector: React.FC = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--surface-hover)] transition-all backdrop-blur-sm min-w-[200px] justify-between group shadow-sm"
             >
                 <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-slate-400" />
+                    <Globe className="w-4 h-4 text-[var(--foreground-muted)]" />
                     <span className="font-medium text-[var(--foreground)]">{currentEnv.toUpperCase()}</span>
                 </div>
                 <ChevronDown className={clsx(
-                    "w-4 h-4 text-slate-300 transition-transform",
+                    "w-4 h-4 text-[var(--foreground-muted)] transition-transform",
                     isOpen && "rotate-180"
                 )} />
             </button>
@@ -161,13 +161,13 @@ export const EnvSelector: React.FC = () => {
                     {/* Search */}
                     <div className="p-3 border-b border-[var(--border)] bg-[var(--header-bg)]/50">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-amber-500 transition-colors" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] group-focus-within:text-amber-500 transition-colors" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search environments..."
-                                className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-md text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-mono"
+                                className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-md text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-mono"
                                 autoFocus
                             />
                         </div>
@@ -178,7 +178,7 @@ export const EnvSelector: React.FC = () => {
                         {/* Favorites */}
                         {favorites.length > 0 && !searchQuery && (
                             <div className="p-2 border-b border-[var(--border)]">
-                                <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                <div className="px-3 py-2 text-xs font-bold text-[var(--foreground-muted)] opacity-60 uppercase tracking-wider flex items-center gap-2">
                                     <Star className="w-3 h-3" />
                                     Favorites
                                 </div>
@@ -198,7 +198,7 @@ export const EnvSelector: React.FC = () => {
                         {/* Recent */}
                         {recent.length > 0 && !searchQuery && (
                             <div className="p-2 border-b border-[var(--border)]">
-                                <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                <div className="px-3 py-2 text-xs font-bold text-[var(--foreground-muted)] opacity-60 uppercase tracking-wider flex items-center gap-2">
                                     <Clock className="w-3 h-3" />
                                     Recent
                                 </div>
@@ -218,7 +218,7 @@ export const EnvSelector: React.FC = () => {
                         {/* Grouped Environments */}
                         {filteredGroups.map(group => (
                             <div key={group.id} className="p-2 border-b border-white/5 last:border-0">
-                                <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <div className="px-3 py-2 text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-wider flex items-center gap-2">
                                     <span>{group.icon || '📦'}</span>
                                     {group.name}
                                 </div>
@@ -236,8 +236,8 @@ export const EnvSelector: React.FC = () => {
                         ))}
 
                         {filteredGroups.length === 0 && (
-                            <div className="p-8 text-center text-slate-400 text-sm">
-                                No environments found
+                            <div className="p-8 text-center text-[var(--foreground-muted)] opacity-50 text-sm italic font-mono uppercase tracking-widest">
+                                No matches found
                             </div>
                         )}
                     </div>
@@ -274,7 +274,7 @@ function getEnvColor(env: string): { bg: string; border: string; text: string } 
     if (envLower.includes('lab')) {
         return { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-400' };
     }
-    return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' };
+    return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-[var(--foreground-muted)]' };
 }
 
 const EnvItem: React.FC<EnvItemProps> = ({ env, isActive, isFavorite, onSelect, onToggleFavorite }) => {
@@ -285,7 +285,7 @@ const EnvItem: React.FC<EnvItemProps> = ({ env, isActive, isFavorite, onSelect, 
                 "flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all group",
                 isActive
                     ? `${color.bg} ${color.text} border ${color.border}`
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
+                    : "text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
             )}
         >
             <button
@@ -305,7 +305,7 @@ const EnvItem: React.FC<EnvItemProps> = ({ env, isActive, isFavorite, onSelect, 
                 }}
                 className={clsx(
                     "p-1 rounded transition-colors opacity-0 group-hover:opacity-100",
-                    isFavorite ? "text-yellow-400 opacity-100" : "text-slate-400 hover:text-yellow-400"
+                    isFavorite ? "text-yellow-500 opacity-100" : "text-[var(--foreground-muted)] opacity-40 hover:opacity-100 hover:text-yellow-500"
                 )}
             >
                 <Star className={clsx("w-3.5 h-3.5", isFavorite && "fill-current")} />
