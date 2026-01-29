@@ -146,8 +146,8 @@ export const EnvSelector: React.FC = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--surface-hover)] transition-all backdrop-blur-sm min-w-[200px] justify-between group shadow-sm"
             >
                 <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-indigo-400" />
-                    <span className="font-medium text-white">{currentEnv.toUpperCase()}</span>
+                    <Globe className="w-4 h-4 text-slate-400" />
+                    <span className="font-medium text-[var(--foreground)]">{currentEnv.toUpperCase()}</span>
                 </div>
                 <ChevronDown className={clsx(
                     "w-4 h-4 text-slate-300 transition-transform",
@@ -272,7 +272,7 @@ function getEnvColor(env: string): { bg: string; border: string; text: string } 
         return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' };
     }
     if (envLower.includes('lab')) {
-        return { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' };
+        return { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-400' };
     }
     return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' };
 }
@@ -293,7 +293,7 @@ const EnvItem: React.FC<EnvItemProps> = ({ env, isActive, isFavorite, onSelect, 
                 className="flex items-center gap-2 flex-1 text-left"
             >
                 <span className={clsx(
-                    "w-2 h-2 rounded-full shrink-0",
+                    "w-1 h-3 rounded-full shrink-0",
                     color.bg.replace('/10', '')
                 )} />
                 <span className="font-medium text-sm uppercase tracking-wide">{env}</span>
