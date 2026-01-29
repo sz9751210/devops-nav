@@ -138,7 +138,7 @@ export const EnvironmentSettings: React.FC = () => {
                                         ) : (
                                             <ChevronRight className="w-4 h-4 text-slate-500" />
                                         )}
-                                        <span className="font-bold text-slate-300 uppercase tracking-widest text-xs font-mono">{env}</span>
+                                        <span className="font-bold text-[var(--foreground)] uppercase tracking-widest text-xs font-mono">{env}</span>
                                         <span className="text-xs text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
                                             SERVICES: {visibleServices.length}/{allServices.length}
                                         </span>
@@ -201,7 +201,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                             className={clsx(
                                                                 "flex items-center gap-2 p-2 rounded border transition-all text-left",
                                                                 isVisible
-                                                                    ? "border-amber-500/30 bg-amber-500/5 text-slate-200"
+                                                                    ? "border-amber-500/30 bg-amber-500/5 text-[var(--foreground)]"
                                                                     : "border-[var(--border)] hover:border-slate-700 text-[var(--foreground-muted)]"
                                                             )}
                                                         >

@@ -144,7 +144,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                                     className="hidden"
                                                 />
                                                 <div>
-                                                    <div className="font-bold text-slate-200 text-sm group-hover:text-amber-500 transition-colors">{service.name}</div>
+                                                    <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-500 transition-colors">{service.name}</div>
                                                     <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{service.id}</div>
                                                 </div>
                                             </div>
@@ -181,7 +181,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                             className="hidden"
                                         />
                                         <div>
-                                            <div className="font-bold text-slate-200 text-sm group-hover:text-amber-500 transition-colors">{column.title}</div>
+                                            <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-500 transition-colors">{column.title}</div>
                                             <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{column.id}</div>
                                         </div>
                                     </div>

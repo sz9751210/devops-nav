@@ -143,7 +143,7 @@ export const EnvGroupSettings: React.FC = () => {
                             <div className="flex items-center gap-3">
                                 <span className="text-xl shrink-0 grayscale group-hover:grayscale-0 transition-all">{group.icon || '📦'}</span>
                                 <div>
-                                    <div className="font-bold text-slate-300 group-hover:text-[var(--foreground)] transition-colors text-sm">
+                                    <div className="font-bold text-[var(--foreground)] group-hover:text-amber-500 transition-colors text-sm">
                                         {group.name}
                                     </div>
                                     <div className="text-xs text-[var(--foreground-muted)] mt-0.5 font-mono uppercase tracking-tighter">

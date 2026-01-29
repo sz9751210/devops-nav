@@ -223,8 +223,8 @@ export const ServiceSettings: React.FC = () => {
                                     >
                                         {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
                                         <div className="flex items-center gap-3">
-                                            <span className="font-bold text-slate-200 text-sm tracking-tight">{service.name}</span>
-                                            <span className="text-xs text-slate-500 font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
+                                            <span className="font-bold text-[var(--foreground)] text-sm tracking-tight">{service.name}</span>
+                                            <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
                                             {service.group && (
                                                 <span className="text-[11px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
@@ -255,7 +255,7 @@ export const ServiceSettings: React.FC = () => {
                                         {isAddingLink !== service.id && !editingLinkId && (
                                             <button
                                                 onClick={() => { setIsAddingLink(service.id); setLinkForm({}); }}
-                                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-slate-600 hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
+                                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-[var(--foreground-muted)] hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
                                             >
                                                 <Plus className="w-3 h-3" />
                                                 {t('actions.add_resource_link')}
@@ -360,8 +360,8 @@ export const ServiceSettings: React.FC = () => {
                                                     >
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-2">
-                                                                <Link2 className="w-3 h-3 text-slate-500" />
-                                                                <span className="font-bold text-slate-300 text-xs tracking-tight">{link.name}</span>
+                                                                <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
+                                                                <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{link.name}</span>
                                                                 {column && (
                                                                     <span className="text-xs px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
                                                                         {column.title}
@@ -377,7 +377,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-xs text-slate-500 font-mono truncate mt-0.5">{link.url}</div>
+                                                            <div className="text-xs text-[var(--foreground-muted)] font-mono truncate mt-0.5">{link.url}</div>
                                                         </div>
                                                         <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
                                                             <button

@@ -377,8 +377,8 @@ export const ColumnSettings: React.FC = () => {
                                     <IconRenderer icon={column.icon || 'link'} className="w-4 h-4 text-amber-500" />
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                    <span className="font-bold text-slate-400 group-hover:text-[var(--foreground)] transition-colors text-sm truncate">{column.title}</span>
-                                    <span className="text-xs text-slate-500 font-mono uppercase tracking-tighter truncate">{column.id}</span>
+                                    <span className="font-bold text-[var(--foreground)] group-hover:text-amber-500 transition-colors text-sm truncate">{column.title}</span>
+                                    <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase tracking-tighter truncate">{column.id}</span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">

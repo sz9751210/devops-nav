@@ -38,7 +38,7 @@ export const ServiceCell: React.FC<ServiceCellProps> = ({ service, column }) => 
     const linksForColumn = visibleLinks.filter(link => link.columnId === column.id);
 
     if (linksForColumn.length === 0) {
-        return <span className="text-slate-600/50">-</span>;
+        return <span className="text-[var(--foreground-muted)] opacity-30">-</span>;
     }
 
     const Icon = (column.icon && IconMap[column.icon]) || IconMap.default;
@@ -51,7 +51,7 @@ export const ServiceCell: React.FC<ServiceCellProps> = ({ service, column }) => 
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-slate-400 hover:text-amber-400 transition-all group p-1.5 -ml-1.5 rounded-lg hover:bg-white/5"
+                className="flex items-center gap-2 text-[var(--foreground-muted)] hover:text-amber-500 transition-all group p-1.5 -ml-1.5 rounded-lg hover:bg-[var(--surface-hover)]"
                 title={link.name}
             >
                 <Icon className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-transform" />
@@ -70,7 +70,7 @@ export const ServiceCell: React.FC<ServiceCellProps> = ({ service, column }) => 
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-xs text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-all"
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-xs text-[var(--foreground-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition-all"
                     title={link.url}
                 >
                     <Link2 className="w-3 h-3" />
