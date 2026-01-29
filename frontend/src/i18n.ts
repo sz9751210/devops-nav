@@ -37,7 +37,12 @@ const resources = {
                 "config": "CONFIG",
                 "terminal": "TERMINAL",
                 "status": "STATUS",
-                "database": "DATABASE"
+                "database": "DATABASE",
+                "cicd": "CI/CD",
+                "infrastructure": "INFRA",
+                "security": "SECURITY",
+                "documentation": "DOCS",
+                "alerts": "ALERTS"
             },
             "actions": {
                 "all": "ALL",
@@ -165,7 +170,12 @@ const resources = {
                 "config": "設定",
                 "terminal": "終端機",
                 "status": "狀態",
-                "database": "資料庫"
+                "database": "資料庫",
+                "cicd": "CI/CD 流水線",
+                "infrastructure": "基礎設施",
+                "security": "資安掃描",
+                "documentation": "文件與 Wiki",
+                "alerts": "告警通知"
             },
             "actions": {
                 "all": "全部",

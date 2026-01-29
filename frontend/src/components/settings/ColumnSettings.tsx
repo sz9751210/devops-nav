@@ -22,6 +22,21 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
+// Quick templates for common column types
+const COLUMN_TEMPLATES = [
+    { id: 'monitoring', title: 'Monitoring', icon: 'activity' },
+    { id: 'logs', title: 'Logs', icon: 'file-text' },
+    { id: 'config', title: 'Config', icon: 'settings' },
+    { id: 'cicd', title: 'CI/CD', icon: 'rocket' },
+    { id: 'infrastructure', title: 'Infrastructure', icon: 'cloud' },
+    { id: 'terminal', title: 'Terminal', icon: 'terminal' },
+    { id: 'security', title: 'Security', icon: 'shield' },
+    { id: 'documentation', title: 'Docs', icon: 'book' },
+    { id: 'alerts', title: 'Alerts', icon: 'bell' },
+    { id: 'database', title: 'Database', icon: 'database' },
+    { id: 'status', title: 'Status', icon: 'eye' },
+];
+
 // Icon categorization for the picker
 const ICON_CATEGORIES = [
     {
@@ -161,6 +176,15 @@ export const ColumnSettings: React.FC = () => {
         }
     };
 
+    const applyColumnTemplate = (template: typeof COLUMN_TEMPLATES[0]) => {
+        setColumnForm({
+            id: template.id,
+            title: t(`profiles.${template.id}`) || template.title,
+            icon: template.icon,
+        });
+        setIsAddingColumn(true);
+    };
+
     const applyIcon = (iconValue: string) => {
         setColumnForm({ ...columnForm, icon: iconValue });
     };
@@ -200,6 +224,35 @@ export const ColumnSettings: React.FC = () => {
                     </button>
                 )}
             </div>
+
+            {/* Quick Templates */}
+            {!isAddingColumn && !editingColumnId && (
+                <div className="space-y-3">
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
+                    <div className="flex flex-wrap gap-2">
+                        {COLUMN_TEMPLATES.map(temp => {
+                            const exists = config.columns.some(c => c.id === temp.id);
+                            return (
+                                <button
+                                    key={temp.id}
+                                    onClick={() => !exists && applyColumnTemplate(temp)}
+                                    disabled={exists}
+                                    className={clsx(
+                                        "flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-all border font-mono uppercase tracking-tighter",
+                                        exists
+                                            ? "bg-[var(--surface)] text-slate-700 border-transparent cursor-not-allowed"
+                                            : "bg-amber-500/5 text-amber-500/80 hover:bg-amber-500/10 border-amber-500/20"
+                                    )}
+                                >
+                                    <IconRenderer icon={temp.icon} className="w-3.5 h-3.5" />
+                                    {t(`profiles.${temp.id}`)}
+                                    {exists && <Check className="w-3 h-3 text-emerald-600" />}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* Add/Edit Column Form */}
             {(isAddingColumn || editingColumnId) && (
