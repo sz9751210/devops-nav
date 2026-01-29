@@ -62,13 +62,13 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                 <div className="flex items-center justify-between p-6 border-b border-[var(--border)] bg-[var(--surface-hover)]">
                     <div>
                         <h2 className="text-lg font-bold text-[var(--foreground)] font-mono uppercase tracking-tight">{t('settings.view_config.title')}</h2>
-                        <p className="text-sm text-slate-500">
-                            {t('settings.view_config.subtitle')} <span className="text-amber-500 font-mono font-bold tracking-widest">{currentEnv}</span>
+                        <p className="text-sm text-[var(--foreground-muted)] opacity-70">
+                            {t('settings.view_config.subtitle')} <span className="text-amber-600 dark:text-amber-500 font-mono font-bold tracking-widest">{currentEnv}</span>
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                        className="p-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface)] rounded-lg transition-colors border border-transparent hover:border-[var(--border)]"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -81,8 +81,8 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                         className={clsx(
                             "flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2 font-mono",
                             activeTab === 'services'
-                                ? "text-amber-500 border-amber-500 bg-amber-500/5 shadow-[inset_0_-4px_10px_-4px_rgba(245,158,11,0.2)]"
-                                : "text-slate-600 border-transparent hover:text-slate-400 hover:bg-white/5"
+                                ? "text-amber-600 dark:text-amber-500 border-amber-500 bg-amber-500/5 shadow-[inset_0_-4px_10px_-4px_rgba(245,158,11,0.2)]"
+                                : "text-[var(--foreground-muted)] border-transparent hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
                         )}
                     >
                         {t('settings.view_config.services_tab')} ({visibleServices.size}/{config.services.length})
@@ -92,8 +92,8 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                         className={clsx(
                             "flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2 font-mono",
                             activeTab === 'columns'
-                                ? "text-amber-500 border-amber-500 bg-amber-500/5 shadow-[inset_0_-4px_10px_-4px_rgba(245,158,11,0.2)]"
-                                : "text-slate-600 border-transparent hover:text-slate-400 hover:bg-white/5"
+                                ? "text-amber-600 dark:text-amber-500 border-amber-500 bg-amber-500/5 shadow-[inset_0_-4px_10px_-4px_rgba(245,158,11,0.2)]"
+                                : "text-[var(--foreground-muted)] border-transparent hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
                         )}
                     >
                         {t('settings.view_config.columns_tab')} ({visibleColumns.size}/{config.columns.length})
@@ -105,18 +105,18 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                     {activeTab === 'services' && (
                         <>
                             <div className="mb-4 relative group">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 transition-colors group-focus-within:text-amber-500/50" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] opacity-50 transition-colors group-focus-within:text-amber-500 group-focus-within:opacity-100" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('settings.services.search_placeholder')}
-                                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-slate-800 focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                                 />
                             </div>
                             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 pr-2">
                                 {filteredServices.length === 0 ? (
-                                    <div className="text-center py-20 text-slate-700 text-xs font-mono uppercase tracking-widest">
+                                    <div className="text-center py-20 text-[var(--foreground-muted)] opacity-50 text-xs font-mono uppercase tracking-widest">
                                         {t('app.no_matches_found')}
                                     </div>
                                 ) : (
@@ -132,7 +132,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                                         "w-5 h-5 rounded border flex items-center justify-center transition-all",
                                                         visibleServices.has(service.id)
                                                             ? "bg-amber-500 border-amber-600 shadow-[0_0_10px_rgba(245,158,11,0.3)]"
-                                                            : "border-slate-700 group-hover:border-slate-500 bg-[var(--background)]"
+                                                            : "border-[var(--border)] group-hover:border-[var(--foreground-muted)] bg-[var(--background)]"
                                                     )}
                                                 >
                                                     {visibleServices.has(service.id) && <Check className="w-3.5 h-3.5 text-black" />}
@@ -144,8 +144,8 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                                     className="hidden"
                                                 />
                                                 <div>
-                                                    <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-500 transition-colors">{service.name}</div>
-                                                    <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{service.id}</div>
+                                                    <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">{service.name}</div>
+                                                    <div className="text-xs text-[var(--foreground-muted)] opacity-60 font-mono uppercase tracking-tighter">{service.id}</div>
                                                 </div>
                                             </div>
                                         </label>
@@ -181,11 +181,11 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                             className="hidden"
                                         />
                                         <div>
-                                            <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-500 transition-colors">{column.title}</div>
-                                            <div className="text-xs text-slate-600 font-mono uppercase tracking-tighter">{column.id}</div>
+                                            <div className="font-bold text-[var(--foreground)] text-sm group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">{column.title}</div>
+                                            <div className="text-xs text-[var(--foreground-muted)] opacity-60 font-mono uppercase tracking-tighter">{column.id}</div>
                                         </div>
                                     </div>
-                                    <span className="text-xs px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--background)] text-slate-500 font-mono uppercase">
+                                    <span className="text-xs px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--surface-hover)] text-[var(--foreground-muted)] font-mono uppercase">
                                         {column.type}
                                     </span>
                                 </label>
@@ -205,7 +205,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                     setVisibleColumns(new Set(config.columns.map((c: ColumnDefinition) => c.id)));
                                 }
                             }}
-                            className="text-xs font-bold text-slate-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
+                            className="text-xs font-bold text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
                         >
                             {t('actions.select_all')}
                         </button>
@@ -217,7 +217,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                                     setVisibleColumns(new Set());
                                 }
                             }}
-                            className="text-xs font-bold text-slate-500 hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
+                            className="text-xs font-bold text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 transition-colors uppercase tracking-widest font-mono"
                         >
                             {t('actions.deselect_all')}
                         </button>
@@ -225,7 +225,7 @@ export const ViewConfigModal: React.FC<ViewConfigModalProps> = ({ onClose }) => 
                     <div className="flex items-center gap-3">
                         <button
                             onClick={onClose}
-                            className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-white transition-colors uppercase font-mono"
+                            className="px-4 py-2 text-xs font-bold text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-colors uppercase font-mono"
                         >
                             {t('actions.cancel')}
                         </button>

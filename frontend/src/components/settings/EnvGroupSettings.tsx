@@ -77,14 +77,14 @@ export const EnvGroupSettings: React.FC = () => {
                         onChange={(e) => setNewGroup({ ...newGroup, id: e.target.value })}
                         disabled={!!editingGroupId}
                         placeholder={t('settings.env_groups.id_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
                     />
                     <input
                         type="text"
                         value={newGroup.name}
                         onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                         placeholder={t('settings.env_groups.name_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                     />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -94,21 +94,21 @@ export const EnvGroupSettings: React.FC = () => {
                         onChange={(e) => setNewGroup({ ...newGroup, icon: e.target.value })}
                         placeholder={t('form.icon')}
                         maxLength={2}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all text-center"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all text-center"
                     />
                     <input
                         type="text"
                         value={newGroup.pattern}
                         onChange={(e) => setNewGroup({ ...newGroup, pattern: e.target.value })}
                         placeholder={t('settings.env_groups.pattern_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 <div className="flex gap-2">
                     {editingGroupId && (
                         <button
                             onClick={resetForm}
-                            className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
+                            className="px-4 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
                         >
                             <X className="w-3.5 h-3.5" />
                             {t('actions.cancel')}
@@ -117,7 +117,7 @@ export const EnvGroupSettings: React.FC = () => {
                     <button
                         onClick={handleSave}
                         disabled={!newGroup.id.trim() || !newGroup.name.trim()}
-                        className="flex-1 px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wide"
+                        className="flex-1 px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wide"
                     >
                         {editingGroupId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                         {editingGroupId ? t('actions.update') : t('actions.add_new')}
@@ -128,7 +128,7 @@ export const EnvGroupSettings: React.FC = () => {
             {/* List */}
             <div className="space-y-2">
                 {envGroups.length === 0 ? (
-                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         {t('settings.env_groups.no_groups')}
                     </div>
                 ) : (
@@ -159,13 +159,13 @@ export const EnvGroupSettings: React.FC = () => {
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button
                                     onClick={() => handleEdit(group)}
-                                    className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
                                 >
                                     <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                     onClick={() => removeEnvGroup(group.id)}
-                                    className="p-1.5 text-slate-600 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>

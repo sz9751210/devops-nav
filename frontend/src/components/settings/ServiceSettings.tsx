@@ -124,13 +124,13 @@ export const ServiceSettings: React.FC = () => {
 
             {/* Search */}
             <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 transition-colors group-focus-within:text-amber-500/50" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] opacity-50 transition-colors group-focus-within:text-amber-500 group-focus-within:opacity-100" />
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('settings.services.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
             </div>
 
@@ -188,13 +188,13 @@ export const ServiceSettings: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex justify-end gap-2 pt-2">
-                        <button onClick={resetServiceForm} className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono">
+                        <button onClick={resetServiceForm} className="px-4 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors">
                             <X className="w-4 h-4" />{t('actions.cancel')}
                         </button>
                         <button
                             onClick={editingServiceId ? handleUpdateService : handleAddService}
                             disabled={!serviceForm.id || !serviceForm.name}
-                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
+                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
                         >
                             <Check className="w-4 h-4" />{editingServiceId ? t('actions.save') : t('actions.add_new')}
                         </button>
@@ -205,7 +205,7 @@ export const ServiceSettings: React.FC = () => {
             {/* Service List */}
             <div className="space-y-2">
                 {filteredServices.length === 0 ? (
-                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
+                    <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
                         {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
                     </div>
                 ) : (
@@ -221,7 +221,7 @@ export const ServiceSettings: React.FC = () => {
                                         onClick={() => setExpandedService(isExpanded ? null : service.id)}
                                         className="flex-1 flex items-center gap-3 text-left"
                                     >
-                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
+                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)]" /> : <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)]" />}
                                         <div className="flex items-center gap-3">
                                             <span className="font-bold text-[var(--foreground)] text-sm tracking-tight">{service.name}</span>
                                             <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
@@ -235,13 +235,13 @@ export const ServiceSettings: React.FC = () => {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => { setEditingServiceId(service.id); setServiceForm(service); }}
-                                            className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
                                         >
                                             <Pencil className="w-3.5 h-3.5" />
                                         </button>
                                         <button
                                             onClick={() => removeService(service.id)}
-                                            className="p-1.5 text-slate-600 hover:text-red-500 rounded transition-colors"
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
                                         </button>
@@ -274,7 +274,7 @@ export const ServiceSettings: React.FC = () => {
                                                             onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                                             disabled={!!editingLinkId}
                                                             placeholder="grafana-dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
@@ -284,7 +284,7 @@ export const ServiceSettings: React.FC = () => {
                                                             value={linkForm.name || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
                                                             placeholder="Main Dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
                                                     <div>
@@ -308,7 +308,7 @@ export const ServiceSettings: React.FC = () => {
                                                         value={linkForm.url || ''}
                                                         onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
                                                         placeholder="https://..."
-                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-slate-500 focus:outline-none focus:border-amber-500/50 font-mono"
+                                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50 font-mono"
                                                     />
                                                 </div>
                                                 <div>
@@ -326,7 +326,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     "px-2 py-1 text-[11px] rounded transition-all uppercase tracking-tighter border",
                                                                     linkForm.environments?.includes(env)
                                                                         ? "bg-amber-500 text-black border-amber-600"
-                                                                        : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-slate-700"
+                                                                        : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-[var(--foreground-muted)]"
                                                                 )}
                                                             >
                                                                 {env}
@@ -335,7 +335,7 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end gap-2 pt-1">
-                                                    <button onClick={resetLinkForm} className="text-xs text-slate-500 hover:text-white uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                                    <button onClick={resetLinkForm} className="text-xs text-[var(--foreground-muted)] hover:text-[var(--foreground)] uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
                                                         {t('actions.cancel')}
                                                     </button>
                                                     <button
@@ -363,7 +363,7 @@ export const ServiceSettings: React.FC = () => {
                                                                 <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
                                                                 <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{link.name}</span>
                                                                 {column && (
-                                                                    <span className="text-xs px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-mono uppercase border border-[var(--border)]">
+                                                                    <span className="text-xs px-1.5 py-0.5 bg-[var(--surface)] text-[var(--foreground-muted)] rounded font-mono uppercase border border-[var(--border)]">
                                                                         {column.title}
                                                                     </span>
                                                                 )}
@@ -382,13 +382,13 @@ export const ServiceSettings: React.FC = () => {
                                                         <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
                                                             <button
                                                                 onClick={() => startEditLink(link)}
-                                                                className="p-1 text-slate-600 hover:text-amber-500 rounded"
+                                                                className="p-1 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded"
                                                             >
                                                                 <Pencil className="w-3 h-3" />
                                                             </button>
                                                             <button
                                                                 onClick={() => removeServiceLink(service.id, link.id)}
-                                                                className="p-1 text-slate-600 hover:text-red-500 rounded"
+                                                                className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded"
                                                             >
                                                                 <Trash2 className="w-3 h-3" />
                                                             </button>
@@ -399,7 +399,7 @@ export const ServiceSettings: React.FC = () => {
                                         </div>
 
                                         {linkCount === 0 && isAddingLink !== service.id && (
-                                            <p className="text-center text-slate-600 text-xs py-4 font-mono font-bold uppercase tracking-widest">
+                                            <p className="text-center text-[var(--foreground-muted)] opacity-50 text-xs py-4 font-mono font-bold uppercase tracking-widest">
                                                 {t('settings.services.no_links_defined')}
                                             </p>
                                         )}

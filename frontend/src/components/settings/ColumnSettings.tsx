@@ -210,7 +210,7 @@ export const ColumnSettings: React.FC = () => {
                         <Layers className="w-5 h-5 text-amber-500" />
                         {t('settings.columns.title')}
                     </h2>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="text-sm text-[var(--foreground-muted)] mt-1">
                         {t('settings.columns.subtitle')}
                     </p>
                 </div>
@@ -228,7 +228,7 @@ export const ColumnSettings: React.FC = () => {
             {/* Quick Templates */}
             {!isAddingColumn && !editingColumnId && (
                 <div className="space-y-3">
-                    <span className="text-xs font-bold text-slate-600 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
+                    <span className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest font-mono">⚡ {t('settings.columns.quick_profiles')}</span>
                     <div className="flex flex-wrap gap-2">
                         {COLUMN_TEMPLATES.map(temp => {
                             const exists = config.columns.some(c => c.id === temp.id);
@@ -240,7 +240,7 @@ export const ColumnSettings: React.FC = () => {
                                     className={clsx(
                                         "flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-all border font-mono uppercase tracking-tighter",
                                         exists
-                                            ? "bg-[var(--surface)] text-slate-700 border-transparent cursor-not-allowed"
+                                            ? "bg-[var(--surface)] text-[var(--foreground-muted)] opacity-50 border-transparent cursor-not-allowed"
                                             : "bg-amber-500/5 text-amber-500/80 hover:bg-amber-500/10 border-amber-500/20"
                                     )}
                                 >
@@ -271,7 +271,7 @@ export const ColumnSettings: React.FC = () => {
                                     onChange={(e) => setColumnForm({ ...columnForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
                                     disabled={!!editingColumnId}
                                     placeholder="monitoring"
-                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-600 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                                 />
                             </div>
                             <div>
@@ -281,7 +281,7 @@ export const ColumnSettings: React.FC = () => {
                                     value={columnForm.title || ''}
                                     onChange={(e) => setColumnForm({ ...columnForm, title: e.target.value })}
                                     placeholder="Monitoring"
-                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                                 />
                             </div>
                             <div>
@@ -292,7 +292,7 @@ export const ColumnSettings: React.FC = () => {
                                         value={columnForm.icon || ''}
                                         onChange={handleEmojiInput}
                                         placeholder="Type emoji 🚀 or icon name"
-                                        className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-700 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                                        className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                                     />
                                     <div className="w-10 h-9 rounded bg-[var(--background)] border border-[var(--border)] flex items-center justify-center shrink-0">
                                         <IconRenderer icon={columnForm.icon || 'link'} className="w-5 h-5 text-amber-500" />
@@ -304,23 +304,23 @@ export const ColumnSettings: React.FC = () => {
                         {/* Icon Picker */}
                         <div className="border border-[var(--border)] rounded bg-[var(--background)] p-3 flex flex-col h-[280px]">
                             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[var(--border)]">
-                                <Search className="w-4 h-4 text-slate-500" />
+                                <Search className="w-4 h-4 text-[var(--foreground-muted)] opacity-50" />
                                 <input
                                     type="text"
                                     placeholder="Search icons..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="bg-transparent border-none outline-none text-xs text-[var(--foreground)] placeholder-slate-600 flex-1"
+                                    className="bg-transparent border-none outline-none text-xs text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 flex-1"
                                 />
                             </div>
 
                             <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-4">
                                 {filteredCategories.length === 0 ? (
-                                    <div className="text-center text-slate-500 text-xs py-10">No icons found</div>
+                                    <div className="text-center text-[var(--foreground-muted)] opacity-50 text-xs py-10">No icons found</div>
                                 ) : (
                                     filteredCategories.map(cat => (
                                         <div key={cat.name}>
-                                            <div className="text-xs font-bold text-slate-500 uppercase mb-2 sticky top-0 bg-[var(--background)] py-1">{cat.name}</div>
+                                            <div className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase mb-2 sticky top-0 bg-[var(--background)] py-1">{cat.name}</div>
                                             <div className="grid grid-cols-6 gap-2">
                                                 {cat.icons.map(({ value, Icon }) => (
                                                     <button
@@ -346,13 +346,13 @@ export const ColumnSettings: React.FC = () => {
                     </div>
 
                     <div className="flex justify-end gap-2 pt-2 border-t border-[var(--border)] mt-4">
-                        <button onClick={resetColumnForm} className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono">
+                        <button onClick={resetColumnForm} className="px-4 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors">
                             <X className="w-4 h-4" />{t('actions.cancel')}
                         </button>
                         <button
                             onClick={editingColumnId ? handleUpdateColumn : handleAddColumn}
                             disabled={!columnForm.id || !columnForm.title}
-                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
+                            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center gap-2 text-sm"
                         >
                             <Check className="w-4 h-4" />{editingColumnId ? t('actions.save') : t('actions.add_new')}
                         </button>
@@ -363,7 +363,7 @@ export const ColumnSettings: React.FC = () => {
             {/* Column List */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {config.columns.length === 0 && !isAddingColumn ? (
-                    <div className="col-span-full text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="col-span-full text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         {t('settings.columns.no_columns_defined')}
                     </div>
                 ) : (
@@ -384,13 +384,13 @@ export const ColumnSettings: React.FC = () => {
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
                                 <button
                                     onClick={() => { setEditingColumnId(column.id); setColumnForm(column); setIsAddingColumn(false); }}
-                                    className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
                                 >
                                     <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                     onClick={() => removeColumn(column.id)}
-                                    className="p-1.5 text-slate-600 hover:text-red-500 rounded transition-colors"
+                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -401,7 +401,7 @@ export const ColumnSettings: React.FC = () => {
             </div>
 
             {/* Help Text */}
-            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-xs text-slate-400 font-mono italic">
+            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-xs text-[var(--foreground-muted)] opacity-60 font-mono italic">
                 {t('settings.columns.system_info')}
             </div>
         </div>

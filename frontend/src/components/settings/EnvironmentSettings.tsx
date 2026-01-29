@@ -88,13 +88,13 @@ export const EnvironmentSettings: React.FC = () => {
                         onChange={(e) => setNewEnv(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                         placeholder={t('settings.envs.placeholder')}
-                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 {editingEnv && (
                     <button
                         onClick={resetForm}
-                        className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
+                        className="px-4 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
                     >
                         <X className="w-4 h-4" />
                         {t('actions.cancel')}
@@ -103,7 +103,7 @@ export const EnvironmentSettings: React.FC = () => {
                 <button
                     onClick={handleSave}
                     disabled={!newEnv.trim()}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center gap-2 uppercase text-sm tracking-wide"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center gap-2 uppercase text-sm tracking-wide"
                 >
                     {editingEnv ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                     {editingEnv ? t('actions.update') : t('actions.add_new')}
@@ -113,7 +113,7 @@ export const EnvironmentSettings: React.FC = () => {
             {/* List */}
             <div className="space-y-2">
                 {config.environments.length === 0 ? (
-                    <div className="text-center py-10 text-slate-500 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                    <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         {t('settings.envs.no_environments')}
                     </div>
                 ) : (
@@ -134,9 +134,9 @@ export const EnvironmentSettings: React.FC = () => {
                                         className="flex-1 flex items-center gap-3 text-left"
                                     >
                                         {isExpanded ? (
-                                            <ChevronDown className="w-4 h-4 text-slate-500" />
+                                            <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)]" />
                                         ) : (
-                                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                                            <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)]" />
                                         )}
                                         <span className="font-bold text-[var(--foreground)] uppercase tracking-widest text-xs font-mono">{env}</span>
                                         <span className="text-xs text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
@@ -146,19 +146,19 @@ export const EnvironmentSettings: React.FC = () => {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => setExpandedEnv(isExpanded ? null : env)}
-                                            className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
                                         >
                                             <Settings2 className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => handleEdit(env)}
-                                            className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
                                         >
                                             <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => removeEnvironment(env)}
-                                            className="p-1.5 text-slate-600 hover:text-red-500 rounded transition-colors"
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
@@ -187,7 +187,7 @@ export const EnvironmentSettings: React.FC = () => {
                                         </div>
 
                                         {allServices.length === 0 ? (
-                                            <div className="text-center py-6 text-slate-700 text-xs font-mono border border-dashed border-[var(--border)] rounded">
+                                            <div className="text-center py-6 text-[var(--foreground-muted)] opacity-50 text-xs font-mono border border-dashed border-[var(--border)] rounded">
                                                 ERR: NO_SERVICES_CONFIGURED
                                             </div>
                                         ) : (
@@ -207,7 +207,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                         >
                                                             <div className={clsx(
                                                                 "w-3.5 h-3.5 rounded-sm flex items-center justify-center shrink-0 transition-colors",
-                                                                isVisible ? "bg-amber-500" : "border border-slate-700"
+                                                                isVisible ? "bg-amber-500" : "border border-[var(--border)] bg-[var(--surface)]"
                                                             )}>
                                                                 {isVisible && <Check className="w-3 h-3 text-black" />}
                                                             </div>

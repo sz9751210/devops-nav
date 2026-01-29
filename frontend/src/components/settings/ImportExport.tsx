@@ -62,7 +62,7 @@ export const ImportExport: React.FC = () => {
                     <FileCode className="w-5 h-5 text-amber-500" />
                     {t('settings.import_export.title')}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-[var(--foreground-muted)] mt-1">
                     {t('settings.import_export.subtitle')}
                 </p>
             </div>
@@ -71,9 +71,9 @@ export const ImportExport: React.FC = () => {
             <div className="flex gap-2 flex-wrap">
                 <button
                     onClick={handleExport}
-                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-300 border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
+                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--foreground)] border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
                 >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-4 h-4 text-[var(--foreground-muted)]" />
                     {t('actions.load_current')}
                 </button>
                 <button
@@ -85,9 +85,9 @@ export const ImportExport: React.FC = () => {
                 </button>
                 <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-300 border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
+                    className="px-4 py-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--foreground)] border border-[var(--border)] rounded text-sm transition-colors flex items-center gap-2 font-mono"
                 >
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-4 h-4 text-[var(--foreground-muted)]" />
                     {t('actions.upload')}
                 </button>
                 <input
@@ -105,12 +105,12 @@ export const ImportExport: React.FC = () => {
                     value={yamlContent}
                     onChange={(e) => setYamlContent(e.target.value)}
                     placeholder={t('settings.import_export.editor_placeholder')}
-                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-xs placeholder-slate-700 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
+                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-xs placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
                 />
                 {yamlContent && (
                     <button
                         onClick={handleCopy}
-                        className="absolute top-3 right-3 p-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-slate-500 hover:text-white rounded transition-colors border border-[var(--border)]"
+                        className="absolute top-3 right-3 p-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--foreground-muted)] hover:text-[var(--foreground)] rounded transition-colors border border-[var(--border)]"
                     >
                         {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     </button>
@@ -122,7 +122,7 @@ export const ImportExport: React.FC = () => {
                 <button
                     onClick={handleImport}
                     disabled={!yamlContent}
-                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--surface)] disabled:text-slate-600 text-white rounded font-semibold transition-colors flex items-center gap-2"
+                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--surface)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-white rounded font-semibold transition-colors flex items-center gap-2"
                 >
                     <Upload className="w-4 h-4" />
                     {t('actions.apply')}
@@ -141,7 +141,7 @@ export const ImportExport: React.FC = () => {
 
             {/* Snippets / Smart Import */}
             <div className="pt-6 border-t border-[var(--border)]">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
+                <h3 className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
                     <Sparkles className="w-4 h-4 text-amber-500" />
                     {t('settings.import_export.smart_snippets')}
                 </h3>
@@ -163,8 +163,8 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-amber-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-slate-300 group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
-                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-amber-600 dark:group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
+                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
                     </button>
 
                     <button
@@ -184,8 +184,8 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-blue-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-slate-300 group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
-                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
+                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
                     </button>
 
                     <button
@@ -200,8 +200,8 @@ announcement:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-green-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-slate-300 group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
-                        <div className="text-[10px] text-slate-500 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-green-600 dark:group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
+                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
                     </button>
                 </div>
             </div>
