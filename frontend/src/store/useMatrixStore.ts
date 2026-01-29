@@ -60,6 +60,7 @@ interface NavigationState {
 
     // Environment Groups
     addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
+    updateEnvGroup: (id: string, updates: Partial<Omit<EnvGroup, 'environments'>>) => void;
     removeEnvGroup: (id: string) => void;
 
     // Link Usage Tracking
@@ -358,6 +359,14 @@ export const useNavigationStore = create<NavigationState>()(
                 environments: group.environments || []
             };
             set({ config: { ...config, envGroups: [...(config.envGroups || []), newGroup] } });
+            debouncedSave(() => get().saveConfig());
+        },
+        updateEnvGroup: (id, updates) => {
+            const { config } = get();
+            const newGroups = (config.envGroups || []).map(g =>
+                g.id === id ? { ...g, ...updates } : g
+            );
+            set({ config: { ...config, envGroups: newGroups } });
             debouncedSave(() => get().saveConfig());
         },
         removeEnvGroup: (id) => {

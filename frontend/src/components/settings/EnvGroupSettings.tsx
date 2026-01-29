@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Plus, Trash2, FolderTree } from 'lucide-react';
+import { Plus, Trash2, FolderTree, Pencil, X, Check } from 'lucide-react';
 import { clsx } from 'clsx';
+import type { EnvGroup } from '../../types/schema';
 
 export const EnvGroupSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvGroup, removeEnvGroup } = useNavigationStore();
+    const { config, addEnvGroup, updateEnvGroup, removeEnvGroup } = useNavigationStore();
+    const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
     const [newGroup, setNewGroup] = useState({
         id: '',
         name: '',
@@ -14,16 +16,39 @@ export const EnvGroupSettings: React.FC = () => {
         pattern: '',
     });
 
-    const handleAdd = () => {
+    const resetForm = () => {
+        setNewGroup({ id: '', name: '', icon: '📦', pattern: '' });
+        setEditingGroupId(null);
+    };
+
+    const handleSave = () => {
         if (newGroup.id.trim() && newGroup.name.trim()) {
-            addEnvGroup({
-                id: newGroup.id.trim().toLowerCase(),
-                name: newGroup.name.trim(),
-                icon: newGroup.icon || '📦',
-                pattern: newGroup.pattern.trim() || undefined,
-            });
-            setNewGroup({ id: '', name: '', icon: '📦', pattern: '' });
+            if (editingGroupId) {
+                updateEnvGroup(editingGroupId, {
+                    name: newGroup.name.trim(),
+                    icon: newGroup.icon || '📦',
+                    pattern: newGroup.pattern.trim() || undefined,
+                });
+            } else {
+                addEnvGroup({
+                    id: newGroup.id.trim().toLowerCase(),
+                    name: newGroup.name.trim(),
+                    icon: newGroup.icon || '📦',
+                    pattern: newGroup.pattern.trim() || undefined,
+                });
+            }
+            resetForm();
         }
+    };
+
+    const handleEdit = (group: EnvGroup) => {
+        setEditingGroupId(group.id);
+        setNewGroup({
+            id: group.id,
+            name: group.name,
+            icon: group.icon || '📦',
+            pattern: group.pattern || '',
+        });
     };
 
     const envGroups = config.envGroups || [];
@@ -40,15 +65,19 @@ export const EnvGroupSettings: React.FC = () => {
                 </p>
             </div>
 
-            {/* Add Form */}
-            <div className="space-y-3 p-4 bg-[var(--surface)] border border-[var(--border)] rounded backdrop-blur-sm">
+            {/* Add/Edit Form */}
+            <div className="space-y-3 p-4 bg-[var(--surface)] border border-[var(--border)] rounded backdrop-blur-sm shadow-xl">
+                <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest font-mono mb-2">
+                    {editingGroupId ? `${t('actions.edit')}: GROUP` : `${t('actions.create')}: GROUP`}
+                </h3>
                 <div className="grid grid-cols-2 gap-3">
                     <input
                         type="text"
                         value={newGroup.id}
                         onChange={(e) => setNewGroup({ ...newGroup, id: e.target.value })}
+                        disabled={!!editingGroupId}
                         placeholder={t('settings.env_groups.id_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
                     />
                     <input
                         type="text"
@@ -75,14 +104,25 @@ export const EnvGroupSettings: React.FC = () => {
                         className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
-                <button
-                    onClick={handleAdd}
-                    disabled={!newGroup.id.trim() || !newGroup.name.trim()}
-                    className="w-full px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center justify-center gap-2"
-                >
-                    <Plus className="w-4 h-4" />
-                    {t('actions.add_new')}
-                </button>
+                <div className="flex gap-2">
+                    {editingGroupId && (
+                        <button
+                            onClick={resetForm}
+                            className="px-4 py-2 text-slate-500 hover:text-white flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            {t('actions.cancel')}
+                        </button>
+                    )}
+                    <button
+                        onClick={handleSave}
+                        disabled={!newGroup.id.trim() || !newGroup.name.trim()}
+                        className="flex-1 px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-slate-600 text-black rounded font-bold transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wide"
+                    >
+                        {editingGroupId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                        {editingGroupId ? t('actions.update') : t('actions.add_new')}
+                    </button>
+                </div>
             </div>
 
             {/* List */}
@@ -116,12 +156,20 @@ export const EnvGroupSettings: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => removeEnvGroup(group.id)}
-                                className="p-1.5 text-slate-600 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors opacity-0 group-hover:opacity-100"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    onClick={() => handleEdit(group)}
+                                    className="p-1.5 text-slate-600 hover:text-amber-500 rounded transition-colors"
+                                >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                    onClick={() => removeEnvGroup(group.id)}
+                                    className="p-1.5 text-slate-600 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
                         </div>
                     ))
                 )}
