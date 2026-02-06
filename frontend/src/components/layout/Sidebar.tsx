@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
             key={item.id}
             onClick={() => onPageChange(item.id)}
             className={clsx(
-                "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium transition-colors group border-l-2",
+                "w-full flex items-center gap-3 px-3 py-2 text-[15px] font-medium transition-colors group border-l-2",
                 currentPage === item.id
                     ? "border-amber-500 bg-white/5 text-[var(--foreground)]"
                     : "border-transparent text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/[0.02]"
@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
             title={collapsed ? t(item.labelKey) : undefined}
         >
             <item.icon className={clsx(
-                "w-4 h-4 shrink-0 transition-colors",
+                "w-5 h-5 shrink-0 transition-colors",
                 currentPage === item.id ? "text-amber-500" : "text-[var(--foreground-muted)] group-hover:text-[var(--foreground)]"
             )} />
             {!collapsed && <span>{t(item.labelKey)}</span>}
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         <div className="w-6 h-6 bg-amber-500/10 rounded flex items-center justify-center border border-amber-500/20">
                             <TerminalSquare className="w-4 h-4 text-amber-500" />
                         </div>
-                        <span className="font-semibold text-[var(--foreground)] text-sm tracking-wide font-mono">{t('app.title')}</span>
+                        <span className="font-semibold text-[var(--foreground)] text-base tracking-wide font-mono">{t('app.title')}</span>
                     </div>
                 )}
                 <button
@@ -117,8 +117,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         { label: t('stats.col'), val: config.columns.length }
                     ].map(stat => (
                         <div key={stat.label} className="py-2 bg-[var(--sidebar-bg)] text-center hover:bg-[var(--surface-hover)] transition-colors">
-                            <div className="font-mono text-xs font-medium text-[var(--foreground)]">{stat.val}</div>
-                            <div className="text-[9px] text-[var(--foreground-muted)] uppercase font-semibold tracking-wider italic">{stat.label}</div>
+                            <div className="font-mono text-sm font-medium text-[var(--foreground)]">{stat.val}</div>
+                            <div className="text-xs text-[var(--foreground-muted)] uppercase font-semibold tracking-wider italic">{stat.label}</div>
                         </div>
                     ))}
                 </div>
@@ -132,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
 
                 <div className="space-y-0.5">
                     {!collapsed && (
-                        <div className="px-3 py-1.5 text-[10px] font-bold text-[var(--foreground-muted)] opacity-50 uppercase tracking-widest font-mono">
+                        <div className="px-3 py-1.5 text-xs font-bold text-[var(--foreground-muted)] opacity-50 uppercase tracking-widest font-mono">
                             {t('app.configuration')}
                         </div>
                     )}
@@ -141,7 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
 
                 {!collapsed && config.recentLinks && config.recentLinks.length > 0 && (
                     <div className="space-y-1 mt-6 animate-in fade-in slide-in-from-left-2">
-                        <div className="px-3 py-1.5 text-[10px] font-bold text-[var(--foreground-muted)] uppercase tracking-widest font-mono flex items-center gap-2">
+                        <div className="px-3 py-1.5 text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-widest font-mono flex items-center gap-2">
                             <History className="w-3 h-3" />
                             Recent Links
                         </div>
@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 px-2 py-1.5 text-[11px] text-[var(--foreground-muted)] hover:text-amber-500 hover:bg-[var(--surface-hover)] rounded transition-all group"
+                                        className="flex items-center gap-2 px-2 py-1.5 text-xs text-[var(--foreground-muted)] hover:text-amber-500 hover:bg-[var(--surface-hover)] rounded transition-all group"
                                     >
                                         <Zap className="w-3 h-3 text-[var(--foreground-muted)] group-hover:text-amber-500/50" />
                                         <span className="truncate">{service.name} / {link.name}</span>
@@ -182,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         )}
                     >
                         <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
-                        {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
+                        {!collapsed && <span className="text-[15px] font-medium">{t('app.documentation')}</span>}
                     </button>
 
                     <div className={clsx(
@@ -192,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         {/* Language Switch */}
                         <button
                             onClick={toggleLanguage}
-                            className="p-1.5 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center gap-1.5 text-[10px] font-mono font-bold"
+                            className="p-1.5 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center gap-1.5 text-xs font-mono font-bold"
                             title="Switch Language"
                         >
                             <Languages className="w-3.5 h-3.5" />

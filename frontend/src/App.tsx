@@ -166,7 +166,7 @@ function App() {
                   />
                 </div>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <code className="text-[10px] text-[var(--foreground-muted)] border border-[var(--border)] rounded px-1 bg-[var(--surface-hover)] font-mono">⌘K</code>
+                  <code className="text-xs text-[var(--foreground-muted)] border border-[var(--border)] rounded px-1.5 py-0.5 bg-[var(--surface-hover)] font-mono">⌘K</code>
                 </div>
               </div>
 
@@ -199,7 +199,7 @@ function App() {
                   <button
                     onClick={() => setActiveGroup(null)}
                     className={clsx(
-                      "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
+                      "px-2.5 py-1 rounded text-xs font-medium transition-colors uppercase",
                       !activeGroup ? "bg-amber-500/20 text-amber-600 dark:text-amber-500" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
                     )}
                   >
@@ -210,7 +210,7 @@ function App() {
                       key={group}
                       onClick={() => setActiveGroup(group)}
                       className={clsx(
-                        "px-2 py-0.5 rounded text-[11px] font-medium transition-colors uppercase",
+                        "px-2.5 py-1 rounded text-xs font-medium transition-colors uppercase",
                         activeGroup === group ? "bg-amber-500/20 text-amber-600 dark:text-amber-500" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
                       )}
                     >
@@ -227,7 +227,7 @@ function App() {
                   <button
                     onClick={() => setShowServices(!showServices)}
                     className={clsx(
-                      "px-2 py-1 rounded-[3px] text-[10px] font-bold uppercase transition-colors mr-1",
+                      "px-3 py-1.5 rounded-[3px] text-xs font-bold uppercase transition-colors mr-1",
                       showServices ? "bg-[var(--surface-hover)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100"
                     )}
                   >
@@ -263,7 +263,9 @@ function App() {
               onClear={() => setSelectedTags([])}
             />
 
-            <div className="flex items-center gap-6 px-1 text-[11px] font-mono text-[var(--foreground-muted)] opacity-60 uppercase tracking-tight border-b border-[var(--border)] pb-4">
+
+            {/* Stats Bar */}
+            <div className="flex items-center gap-6 px-1 text-xs font-mono text-[var(--foreground-muted)] opacity-60 uppercase tracking-tight border-b border-[var(--border)] pb-4">
               <div>{t('stats.svc')}: <span className="text-[var(--foreground)]">{filteredServices.length}</span></div>
               <div>Links: <span className="text-[var(--foreground)]">{totalLinks}</span></div>
               <div>{t('stats.col')}: <span className="text-[var(--foreground)]">{config.columns.length}</span></div>

@@ -40,7 +40,7 @@ export const MatrixTable: React.FC<MatrixTableProps> = ({ services, visibleColum
                 <div className="flex flex-col">
                     <span className="font-semibold text-[var(--foreground)]">{info.getValue()}</span>
                     {info.row.original.description && (
-                        <span className="text-xs text-[var(--foreground-muted)] truncate max-w-[200px]">{info.row.original.description}</span>
+                        <span className="text-sm text-[var(--foreground-muted)] truncate max-w-[200px]">{info.row.original.description}</span>
                     )}
                 </div>
             ),
@@ -77,7 +77,7 @@ export const MatrixTable: React.FC<MatrixTableProps> = ({ services, visibleColum
                                 {headerGroup.headers.map(header => (
                                     <th
                                         key={header.id}
-                                        className="p-4 border-b border-[var(--border)] text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider whitespace-nowrap first:pl-6"
+                                        className="p-4 border-b border-[var(--border)] text-sm font-bold text-[var(--foreground-muted)] uppercase tracking-wider whitespace-nowrap first:pl-6"
                                         style={{ width: header.getSize() }}
                                     >
                                         {header.isPlaceholder

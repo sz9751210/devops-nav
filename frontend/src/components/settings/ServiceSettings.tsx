@@ -141,23 +141,20 @@ export const ServiceSettings: React.FC = () => {
                         {editingServiceId ? `${t('actions.edit')}: SERVICE` : `${t('actions.create')}: SERVICE`}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
-                            <input
-                                type="text"
-                                value={serviceForm.id || ''}
-                                onChange={(e) => setServiceForm({ ...serviceForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                                disabled={!!editingServiceId}
-                                placeholder="e.g. auth-service"
-                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
-                            />
-                        </div>
+
                         <div>
                             <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                             <input
                                 type="text"
                                 value={serviceForm.name || ''}
-                                onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
+                                onChange={(e) => {
+                                    const name = e.target.value;
+                                    setServiceForm(prev => ({
+                                        ...prev,
+                                        name,
+                                        id: editingServiceId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                    }));
+                                }}
                                 placeholder="Service Name"
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
@@ -266,23 +263,20 @@ export const ServiceSettings: React.FC = () => {
                                         {(isAddingLink === service.id || editingLinkId) && (
                                             <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono">
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                    <div>
-                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.id')}</label>
-                                                        <input
-                                                            type="text"
-                                                            value={linkForm.id || ''}
-                                                            onChange={(e) => setLinkForm({ ...linkForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                                                            disabled={!!editingLinkId}
-                                                            placeholder="grafana-dashboard"
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] disabled:text-[var(--foreground-muted)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
-                                                        />
-                                                    </div>
+
                                                     <div>
                                                         <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.name || ''}
-                                                            onChange={(e) => setLinkForm({ ...linkForm, name: e.target.value })}
+                                                            onChange={(e) => {
+                                                                const name = e.target.value;
+                                                                setLinkForm(prev => ({
+                                                                    ...prev,
+                                                                    name,
+                                                                    id: editingLinkId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                                                }));
+                                                            }}
                                                             placeholder="Main Dashboard"
                                                             className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
                                                         />

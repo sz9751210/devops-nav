@@ -105,7 +105,7 @@ export const ImportExport: React.FC = () => {
                     value={yamlContent}
                     onChange={(e) => setYamlContent(e.target.value)}
                     placeholder={t('settings.import_export.editor_placeholder')}
-                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-xs placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
+                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-sm placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
                 />
                 {yamlContent && (
                     <button
@@ -128,12 +128,12 @@ export const ImportExport: React.FC = () => {
                     {t('actions.apply')}
                 </button>
                 {importStatus === 'success' && (
-                    <span className="text-emerald-500 text-xs font-mono flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
+                    <span className="text-emerald-500 text-sm font-mono flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
                         <Check className="w-4 h-4" /> CONFIG_APPLIED_SUCCESSFULLY
                     </span>
                 )}
                 {importStatus === 'error' && (
-                    <span className="text-red-500 text-xs font-mono animate-in fade-in slide-in-from-left-2">
+                    <span className="text-red-500 text-sm font-mono animate-in fade-in slide-in-from-left-2">
                         ERR: FAILED_TO_PARSE_YAML
                     </span>
                 )}
@@ -141,7 +141,7 @@ export const ImportExport: React.FC = () => {
 
             {/* Snippets / Smart Import */}
             <div className="pt-6 border-t border-[var(--border)]">
-                <h3 className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
+                <h3 className="text-sm font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
                     <Sparkles className="w-4 h-4 text-amber-500" />
                     {t('settings.import_export.smart_snippets')}
                 </h3>
@@ -163,8 +163,8 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-amber-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-amber-600 dark:group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
-                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
+                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-amber-600 dark:group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
+                        <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
                     </button>
 
                     <button
@@ -184,8 +184,8 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-blue-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
-                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
+                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
+                        <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
                     </button>
 
                     <button
@@ -200,8 +200,8 @@ announcement:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-green-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-green-600 dark:group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
-                        <div className="text-[10px] text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
+                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-green-600 dark:group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
+                        <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
                     </button>
                 </div>
             </div>

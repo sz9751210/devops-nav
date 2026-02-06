@@ -112,11 +112,8 @@ export const LinkCard: React.FC<LinkCardProps> = ({ service, link, column, compa
                 </div>
 
                 <div className="mt-auto pt-2 border-t border-[var(--border)] flex items-center justify-between">
-                    <span className={clsx("text-[10px] font-mono", color.text)}>
+                    <span className={clsx("text-xs font-mono", color.text)}>
                         {service.id}
-                    </span>
-                    <span className="text-[10px] text-[var(--foreground-muted)] opacity-50 truncate max-w-[80px] ml-2 italic">
-                        {service.name}
                     </span>
                 </div>
             </a>

@@ -263,23 +263,20 @@ export const ColumnSettings: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.id')}</label>
-                                <input
-                                    type="text"
-                                    value={columnForm.id || ''}
-                                    onChange={(e) => setColumnForm({ ...columnForm, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                                    disabled={!!editingColumnId}
-                                    placeholder="monitoring"
-                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
-                                />
-                            </div>
+
                             <div>
                                 <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label')}</label>
                                 <input
                                     type="text"
                                     value={columnForm.title || ''}
-                                    onChange={(e) => setColumnForm({ ...columnForm, title: e.target.value })}
+                                    onChange={(e) => {
+                                        const title = e.target.value;
+                                        setColumnForm(prev => ({
+                                            ...prev,
+                                            title,
+                                            id: editingColumnId ? prev.id : title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                        }));
+                                    }}
                                     placeholder="Monitoring"
                                     className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                                 />
