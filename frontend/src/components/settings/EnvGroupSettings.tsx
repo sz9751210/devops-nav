@@ -132,7 +132,7 @@ export const EnvGroupSettings: React.FC = () => {
                         {t('settings.env_groups.no_groups')}
                     </div>
                 ) : (
-                    envGroups.map((group: any) => (
+                    envGroups.map((group) => (
                         <div
                             key={group.id}
                             className={clsx(

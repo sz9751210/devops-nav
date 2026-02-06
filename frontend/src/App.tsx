@@ -1,24 +1,33 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from './store/useMatrixStore';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
-import { EnvironmentSettings } from './components/settings/EnvironmentSettings';
-import { ColumnSettings } from './components/settings/ColumnSettings';
-import { ServiceSettings } from './components/settings/ServiceSettings';
-import { ImportExport } from './components/settings/ImportExport';
-import { EnvGroupSettings } from './components/settings/EnvGroupSettings';
 import { QuickSearch } from './components/matrix/QuickSearch';
 import { ServiceCard } from './components/matrix/ServiceCard';
 import { EnvSelector } from './components/matrix/EnvSelector';
-import { ViewConfigModal } from './components/matrix/ViewConfigModal';
 import { LinkCard } from './components/matrix/LinkCard';
-import { CommandPaletteModal } from './components/matrix/CommandPaletteModal';
 import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter } from 'lucide-react';
 import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
-import { TopologyModal } from './components/matrix/TopologyModal';
 import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
 import { TagFilter } from './components/matrix/TagFilter';
+
+// Lazy load heavy components
+const EnvironmentSettings = lazy(() => import('./components/settings/EnvironmentSettings').then(m => ({ default: m.EnvironmentSettings })));
+const ColumnSettings = lazy(() => import('./components/settings/ColumnSettings').then(m => ({ default: m.ColumnSettings })));
+const ServiceSettings = lazy(() => import('./components/settings/ServiceSettings').then(m => ({ default: m.ServiceSettings })));
+const ImportExport = lazy(() => import('./components/settings/ImportExport').then(m => ({ default: m.ImportExport })));
+const EnvGroupSettings = lazy(() => import('./components/settings/EnvGroupSettings').then(m => ({ default: m.EnvGroupSettings })));
+const ViewConfigModal = lazy(() => import('./components/matrix/ViewConfigModal').then(m => ({ default: m.ViewConfigModal })));
+const CommandPaletteModal = lazy(() => import('./components/matrix/CommandPaletteModal').then(m => ({ default: m.CommandPaletteModal })));
+const TopologyModal = lazy(() => import('./components/matrix/TopologyModal').then(m => ({ default: m.TopologyModal })));
+
+// Loading fallback
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center py-16">
+    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500" />
+  </div>
+);
 
 function App() {
   const { t } = useTranslation();
@@ -338,19 +347,19 @@ function App() {
               </div>
             )}
 
-            {isConfigOpen && <ViewConfigModal onClose={() => setIsConfigOpen(false)} />}
+            {isConfigOpen && <Suspense fallback={<LoadingFallback />}><ViewConfigModal onClose={() => setIsConfigOpen(false)} /></Suspense>}
           </div>
         );
       case 'env-settings':
-        return <EnvironmentSettings />;
+        return <Suspense fallback={<LoadingFallback />}><EnvironmentSettings /></Suspense>;
       case 'env-group-settings':
-        return <EnvGroupSettings />;
+        return <Suspense fallback={<LoadingFallback />}><EnvGroupSettings /></Suspense>;
       case 'column-settings':
-        return <ColumnSettings />;
+        return <Suspense fallback={<LoadingFallback />}><ColumnSettings /></Suspense>;
       case 'service-settings':
-        return <ServiceSettings />;
+        return <Suspense fallback={<LoadingFallback />}><ServiceSettings /></Suspense>;
       case 'import-export':
-        return <ImportExport />;
+        return <Suspense fallback={<LoadingFallback />}><ImportExport /></Suspense>;
       default:
         return null;
     }
@@ -373,17 +382,19 @@ function App() {
       <QuickSearch />
 
       <QuickNotes isOpen={isNotesOpen} onClose={() => setIsNotesOpen(false)} />
-      {isTopologyOpen && <TopologyModal onClose={() => setIsTopologyOpen(false)} />}
+      {isTopologyOpen && <Suspense fallback={null}><TopologyModal onClose={() => setIsTopologyOpen(false)} /></Suspense>}
 
       {isCmdKOpen && (
-        <CommandPaletteModal
-          onClose={() => setIsCmdKOpen(false)}
-          onNavigate={(page) => {
-            setCurrentPage(page);
-            setIsCmdKOpen(false);
-          }}
-          currentEnv={currentEnv}
-        />
+        <Suspense fallback={null}>
+          <CommandPaletteModal
+            onClose={() => setIsCmdKOpen(false)}
+            onNavigate={(page) => {
+              setCurrentPage(page);
+              setIsCmdKOpen(false);
+            }}
+            currentEnv={currentEnv}
+          />
+        </Suspense>
       )}
     </div>
   );

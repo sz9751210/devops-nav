@@ -35,7 +35,7 @@ export const EnvironmentSettings: React.FC = () => {
 
     const toggleService = (env: string, serviceId: string) => {
         const currentConfig = config.envConfigs?.[env] || {};
-        const visibleServices = currentConfig.visibleServices || config.services.map((s: any) => s.id);
+        const visibleServices = currentConfig.visibleServices || config.services.map((s) => s.id);
 
         const newServices = visibleServices.includes(serviceId)
             ? visibleServices.filter(id => id !== serviceId)
@@ -46,7 +46,7 @@ export const EnvironmentSettings: React.FC = () => {
 
     const selectAll = (env: string) => {
         const currentConfig = config.envConfigs?.[env] || {};
-        setEnvConfig(env, { ...currentConfig, visibleServices: config.services.map((s: any) => s.id) });
+        setEnvConfig(env, { ...currentConfig, visibleServices: config.services.map((s) => s.id) });
     };
 
     const deselectAll = (env: string) => {
@@ -57,7 +57,7 @@ export const EnvironmentSettings: React.FC = () => {
     const getVisibleServices = (env: string) => {
         const envConfig = config.envConfigs?.[env];
         if (!envConfig?.visibleServices) {
-            return config.services.map((s: any) => s.id);
+            return config.services.map((s) => s.id);
         }
         return envConfig.visibleServices;
     };
@@ -192,7 +192,7 @@ export const EnvironmentSettings: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                                                {allServices.map((service: any) => {
+                                                {allServices.map((service) => {
                                                     const isVisible = visibleServices.includes(service.id);
                                                     return (
                                                         <button

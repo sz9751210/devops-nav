@@ -206,7 +206,7 @@ export const ServiceSettings: React.FC = () => {
                         {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
                     </div>
                 ) : (
-                    filteredServices.map((service: any) => {
+                    filteredServices.map((service) => {
                         const isExpanded = expandedService === service.id;
                         const linkCount = service.links?.length || 0;
 
@@ -289,7 +289,7 @@ export const ServiceSettings: React.FC = () => {
                                                             className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
                                                         >
                                                             <option value="">{t('settings.services.select_column')}</option>
-                                                            {config.columns.map((c: any) => (
+                                                            {config.columns.map((c) => (
                                                                 <option key={c.id} value={c.id}>{c.title}</option>
                                                             ))}
                                                         </select>
@@ -345,8 +345,8 @@ export const ServiceSettings: React.FC = () => {
 
                                         {/* Link List */}
                                         <div className="space-y-1">
-                                            {(service.links || []).map((link: any) => {
-                                                const column = config.columns.find((c: any) => c.id === link.columnId);
+                                            {(service.links || []).map((link) => {
+                                                const column = config.columns.find((c) => c.id === link.columnId);
                                                 return (
                                                     <div
                                                         key={link.id}

@@ -8,26 +8,40 @@ interface TopologyModalProps {
     onClose: () => void;
 }
 
+interface TopologyNode {
+    id: string;
+    label: string;
+    type: 'group' | 'service';
+    x: number;
+    y: number;
+    group?: string;
+}
+
+interface TopologyLink {
+    source: string;
+    target: string;
+}
+
 export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
     const { t } = useTranslation();
     const { config } = useNavigationStore();
 
-    const nodes = useMemo(() => {
+    const nodes = useMemo((): TopologyNode[] => {
         const groups = Array.from(new Set(config.services.map((s: ServiceDefinition) => s.group || 'Ungrouped')));
 
-        const groupNodes = groups.map((g: string, i: number) => {
+        const groupNodes: TopologyNode[] = groups.map((g: string, i: number) => {
             const angle = (i / groups.length) * 2 * Math.PI;
             const r = 200;
             return {
                 id: `g-${g}`,
                 label: g,
-                type: 'group',
+                type: 'group' as const,
                 x: 400 + r * Math.cos(angle),
                 y: 350 + r * Math.sin(angle)
             };
         });
 
-        const serviceNodes = config.services.map((s: ServiceDefinition) => {
+        const serviceNodes: TopologyNode[] = config.services.map((s: ServiceDefinition) => {
             const groupIndex = groups.indexOf(s.group || 'Ungrouped');
             const groupNode = groupNodes[groupIndex];
 
@@ -38,7 +52,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
             return {
                 id: s.id,
                 label: s.name,
-                type: 'service',
+                type: 'service' as const,
                 x: groupNode.x + r * Math.cos(angle),
                 y: groupNode.y + r * Math.sin(angle),
                 group: s.group
@@ -48,7 +62,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
         return [...groupNodes, ...serviceNodes];
     }, [config.services]);
 
-    const links = useMemo(() => {
+    const links = useMemo((): TopologyLink[] => {
         return config.services.map((s: ServiceDefinition) => ({
             source: s.id,
             target: `g-${s.group || 'Ungrouped'}`
@@ -74,9 +88,9 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
 
                     <svg width="100%" height="100%" viewBox="0 0 800 700" className="pointer-events-none relative z-10">
                         {/* Links */}
-                        {links.map((link: any, i: number) => {
-                            const source = nodes.find((n: any) => n.id === link.source);
-                            const target = nodes.find((n: any) => n.id === link.target);
+                        {links.map((link, i) => {
+                            const source = nodes.find((n) => n.id === link.source);
+                            const target = nodes.find((n) => n.id === link.target);
                             if (!source || !target) return null;
                             return (
                                 <line
@@ -109,7 +123,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
 
                     <div className="absolute bottom-4 left-4 p-2 bg-[var(--surface)] border border-[var(--border)] rounded text-[10px] text-slate-500 font-mono">
                         <div>NODES: {nodes.length}</div>
-                        <div>GROUPS: {nodes.filter((n: any) => n.type === 'group').length}</div>
+                        <div>GROUPS: {nodes.filter((n) => n.type === 'group').length}</div>
                     </div>
                 </div>
             </div>
