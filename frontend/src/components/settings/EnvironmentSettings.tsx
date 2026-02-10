@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2, Pencil, X, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2, Pencil, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const EnvironmentSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig, moveEnvironment } = useNavigationStore();
+    const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
     const [newEnv, setNewEnv] = useState('');
     const [editingEnv, setEditingEnv] = useState<string | null>(null);
     const [expandedEnv, setExpandedEnv] = useState<string | null>(null);
@@ -170,23 +170,6 @@ export const EnvironmentSettings: React.FC = () => {
                                         </span>
                                     </button>
                                     <div className="flex items-center gap-1">
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); moveEnvironment(env, 'up'); }}
-                                            disabled={config.environments.indexOf(env) === 0}
-                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors disabled:opacity-30 disabled:hover:text-[var(--foreground-muted)]"
-                                            title={t('actions.move_up')}
-                                        >
-                                            <ArrowUp className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); moveEnvironment(env, 'down'); }}
-                                            disabled={config.environments.indexOf(env) === config.environments.length - 1}
-                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors disabled:opacity-30 disabled:hover:text-[var(--foreground-muted)]"
-                                            title={t('actions.move_down')}
-                                        >
-                                            <ArrowDown className="w-4 h-4" />
-                                        </button>
-                                        <div className="w-px h-4 bg-[var(--border)] mx-1"></div>
                                         <button
                                             onClick={() => setExpandedEnv(isExpanded ? null : env)}
                                             className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
