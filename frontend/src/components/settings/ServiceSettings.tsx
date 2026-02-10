@@ -155,7 +155,7 @@ export const ServiceSettings: React.FC = () => {
                                         id: editingServiceId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
                                     }));
                                 }}
-                                placeholder="Service Name"
+                                placeholder={t('form.placeholders.service_name')}
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
@@ -166,7 +166,7 @@ export const ServiceSettings: React.FC = () => {
                                 list="groups"
                                 value={serviceForm.group || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, group: e.target.value })}
-                                placeholder="e.g. Core, Payment"
+                                placeholder={t('form.placeholders.group_example')}
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                             />
                             <datalist id="groups">
@@ -179,7 +179,7 @@ export const ServiceSettings: React.FC = () => {
                                 type="text"
                                 value={serviceForm.description || ''}
                                 onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
-                                placeholder="Optional brief"
+                                placeholder={t('form.placeholders.description_optional')}
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
@@ -277,7 +277,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     id: editingLinkId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
                                                                 }));
                                                             }}
-                                                            placeholder="Main Dashboard"
+                                                            placeholder={t('form.placeholders.link_name_example')}
                                                             className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
                                                         />
                                                     </div>
@@ -301,7 +301,7 @@ export const ServiceSettings: React.FC = () => {
                                                         type="text"
                                                         value={linkForm.url || ''}
                                                         onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
-                                                        placeholder="https://..."
+                                                        placeholder={t('form.placeholders.url_example')}
                                                         className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50 font-mono"
                                                     />
                                                 </div>

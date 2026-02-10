@@ -75,10 +75,10 @@ export const EnvironmentSettings: React.FC = () => {
             </div>
 
             {/* Add/Edit Form */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-end">
                 <div className="flex-1 relative">
                     {editingEnv && (
-                        <div className="absolute -top-5 left-0 text-sm font-bold text-amber-500 uppercase tracking-widest font-mono">
+                        <div className="mb-1.5 text-sm font-bold text-amber-500 uppercase tracking-widest font-mono">
                             {t('actions.edit')}: {editingEnv}
                         </div>
                     )}
@@ -94,7 +94,7 @@ export const EnvironmentSettings: React.FC = () => {
                 {editingEnv && (
                     <button
                         onClick={resetForm}
-                        className="px-4 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
+                        className="px-3 py-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-widest transition-colors"
                     >
                         <X className="w-4 h-4" />
                         {t('actions.cancel')}
@@ -103,7 +103,7 @@ export const EnvironmentSettings: React.FC = () => {
                 <button
                     onClick={handleSave}
                     disabled={!newEnv.trim()}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center gap-2 uppercase text-sm tracking-wide"
+                    className="px-3 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center gap-2 uppercase text-sm tracking-wide"
                 >
                     {editingEnv ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                     {editingEnv ? t('actions.update') : t('actions.add_new')}
@@ -140,7 +140,7 @@ export const EnvironmentSettings: React.FC = () => {
                                         )}
                                         <span className="font-bold text-[var(--foreground)] uppercase tracking-widest text-sm font-mono">{env}</span>
                                         <span className="text-xs text-[var(--foreground-muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] font-mono">
-                                            SERVICES: {visibleServices.length}/{allServices.length}
+                                            {t('settings.envs.services_count')}: {visibleServices.length}/{allServices.length}
                                         </span>
                                     </button>
                                     <div className="flex items-center gap-1">
@@ -169,26 +169,26 @@ export const EnvironmentSettings: React.FC = () => {
                                 {isExpanded && (
                                     <div className="border-t border-[var(--border)] p-4 bg-[var(--background)]">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-sm text-[var(--foreground-muted)] uppercase font-mono tracking-tighter">Visibility Configuration:</span>
+                                            <span className="text-sm text-[var(--foreground-muted)] uppercase font-mono tracking-tighter">{t('settings.envs.visibility_config')}:</span>
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => selectAll(env)}
                                                     className="text-sm text-amber-500 hover:underline font-mono"
                                                 >
-                                                    SELECT_ALL
+                                                    {t('actions.select_all')}
                                                 </button>
                                                 <button
                                                     onClick={() => deselectAll(env)}
                                                     className="text-sm text-[var(--foreground-muted)] hover:underline font-mono"
                                                 >
-                                                    DESELECT_ALL
+                                                    {t('actions.deselect_all')}
                                                 </button>
                                             </div>
                                         </div>
 
                                         {allServices.length === 0 ? (
                                             <div className="text-center py-6 text-[var(--foreground-muted)] opacity-50 text-sm font-mono border border-dashed border-[var(--border)] rounded">
-                                                ERR: NO_SERVICES_CONFIGURED
+                                                {t('settings.envs.no_services_configured')}
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">

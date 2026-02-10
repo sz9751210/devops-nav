@@ -98,7 +98,10 @@ const resources = {
                     "title": "Environment Management",
                     "subtitle": "Define your deployment targets and their metadata.",
                     "no_environments": "NO_ENVIRONMENTS_DEFINED",
-                    "placeholder": "e.g. production, staging"
+                    "placeholder": "e.g. production, staging",
+                    "services_count": "SERVICES",
+                    "visibility_config": "Visibility Configuration",
+                    "no_services_configured": "ERR: NO_SERVICES_CONFIGURED"
                 },
                 "columns": {
                     "title": "Column Configuration",
@@ -130,7 +133,14 @@ const resources = {
                 "description": "Description",
                 "url": "Source URL",
                 "environments": "Scope Environments",
-                "icon": "Icon (emoji)"
+                "icon": "Icon (emoji)",
+                "placeholders": {
+                    "service_name": "Service Name",
+                    "group_example": "e.g. Core, Payment",
+                    "description_optional": "Optional brief",
+                    "link_name_example": "Main Dashboard",
+                    "url_example": "https://..."
+                }
             },
             "shortcuts": {
                 "title": "Keyboard Shortcuts",
@@ -261,7 +271,10 @@ const resources = {
                     "title": "環境管理",
                     "subtitle": "定義您的部署目標及其相關元數據。",
                     "no_environments": "未定義任何環境",
-                    "placeholder": "例如: production, staging"
+                    "placeholder": "例如: production, staging",
+                    "services_count": "服務數量",
+                    "visibility_config": "能見度設定",
+                    "no_services_configured": "錯誤: 未配置任何服務"
                 },
                 "columns": {
                     "title": "欄位分類設定",
@@ -293,7 +306,14 @@ const resources = {
                 "description": "描述說明",
                 "url": "來源連結 URL",
                 "environments": "適用環境範圍",
-                "icon": "圖標 (Emoji 表情)"
+                "icon": "圖標 (Emoji 表情)",
+                "placeholders": {
+                    "service_name": "服務名稱",
+                    "group_example": "例如: Core, Payment",
+                    "description_optional": "選填: 簡短說明",
+                    "link_name_example": "例如: 主儀表板",
+                    "url_example": "https://..."
+                }
             },
             "shortcuts": {
                 "title": "鍵盤快速鍵",
