@@ -5,10 +5,11 @@ import {
     Layers,
     Server,
     Globe,
+    BookOpen,
     FileCode,
     ChevronLeft,
     ChevronRight,
-    HelpCircle,
+
     FolderTree,
     TerminalSquare,
     History,
@@ -18,10 +19,10 @@ import {
     Moon
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { HelpModal } from './HelpModal';
+
 import { useNavigationStore } from '../../store/useMatrixStore';
 
-export type PageId = 'navigation' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
+export type PageId = 'navigation' | 'tutorial' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
 
 interface SidebarProps {
     currentPage: PageId;
@@ -39,6 +40,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { id: 'navigation', labelKey: 'app.dashboard', icon: LayoutGrid },
+    { id: 'tutorial', labelKey: 'app.tutorial', icon: BookOpen },
     { id: 'env-settings', labelKey: 'app.environments', icon: Globe, groupKey: 'app.configuration' },
     { id: 'env-group-settings', labelKey: 'app.groups', icon: FolderTree, groupKey: 'app.configuration' },
     { id: 'column-settings', labelKey: 'app.columns', icon: Layers, groupKey: 'app.configuration' },
@@ -49,7 +51,6 @@ const navItems: NavItem[] = [
 export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isDarkMode, onThemeToggle }) => {
     const { t, i18n } = useTranslation();
     const [collapsed, setCollapsed] = useState(false);
-    const [showHelp, setShowHelp] = useState(false);
     const { config } = useNavigationStore();
 
     const toggleLanguage = () => {
@@ -169,49 +170,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
             </nav>
 
             {/* Footer Actions */}
-            <div className="border-t border-[var(--border)] bg-[var(--sidebar-bg)]">
+            <div className="border-t border-[var(--border)] bg-[var(--sidebar-bg)] p-2">
                 <div className={clsx(
-                    "flex items-center",
-                    collapsed ? "flex-col py-2 gap-2" : "justify-between pr-2"
+                    "grid gap-2",
+                    collapsed ? "grid-cols-1" : "grid-cols-2"
                 )}>
+                    {/* Language Switch */}
                     <button
-                        onClick={() => setShowHelp(true)}
+                        onClick={toggleLanguage}
                         className={clsx(
-                            "flex items-center gap-3 px-3 py-3 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-colors group",
-                            !collapsed && "flex-1"
+                            "p-2 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center justify-center gap-2 text-xs font-mono font-bold border border-transparent hover:border-[var(--border)]",
+                            !collapsed && "w-full"
                         )}
+                        title="Switch Language"
                     >
-                        <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
-                        {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
+                        <Languages className="w-4 h-4" />
+                        {!collapsed && <span>{i18n.language === 'en' ? 'TW' : 'EN'}</span>}
                     </button>
 
-                    <div className={clsx(
-                        "flex items-center gap-1",
-                        collapsed ? "flex-col" : "pb-0"
-                    )}>
-                        {/* Language Switch */}
-                        <button
-                            onClick={toggleLanguage}
-                            className="p-1.5 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center gap-1.5 text-xs font-mono font-bold"
-                            title="Switch Language"
-                        >
-                            <Languages className="w-3.5 h-3.5" />
-                            {!collapsed && <span className="w-4 text-center">{i18n.language === 'en' ? 'TW' : 'EN'}</span>}
-                        </button>
-
-                        {/* Theme Switch */}
-                        <button
-                            onClick={onThemeToggle}
-                            className="p-1.5 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all"
-                            title="Toggle Theme"
-                        >
-                            {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-                        </button>
-                    </div>
+                    {/* Theme Switch */}
+                    <button
+                        onClick={onThemeToggle}
+                        className={clsx(
+                            "p-2 rounded-md text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all flex items-center justify-center border border-transparent hover:border-[var(--border)]",
+                            !collapsed && "w-full"
+                        )}
+                        title="Toggle Theme"
+                    >
+                        {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </button>
                 </div>
             </div>
 
-            {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+
         </aside>
     );
 };

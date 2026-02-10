@@ -11,6 +11,7 @@ import { clsx } from 'clsx';
 import { QuickNotes } from './components/matrix/QuickNotes';
 import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
 import { TagFilter } from './components/matrix/TagFilter';
+import { TutorialPage } from './components/tutorial/TutorialPage';
 
 // Lazy load heavy components
 const EnvironmentSettings = lazy(() => import('./components/settings/EnvironmentSettings').then(m => ({ default: m.EnvironmentSettings })));
@@ -19,7 +20,7 @@ const ServiceSettings = lazy(() => import('./components/settings/ServiceSettings
 const ImportExport = lazy(() => import('./components/settings/ImportExport').then(m => ({ default: m.ImportExport })));
 const EnvGroupSettings = lazy(() => import('./components/settings/EnvGroupSettings').then(m => ({ default: m.EnvGroupSettings })));
 const ViewConfigModal = lazy(() => import('./components/matrix/ViewConfigModal').then(m => ({ default: m.ViewConfigModal })));
-const CommandPaletteModal = lazy(() => import('./components/matrix/CommandPaletteModal').then(m => ({ default: m.CommandPaletteModal })));
+
 const TopologyModal = lazy(() => import('./components/matrix/TopologyModal').then(m => ({ default: m.TopologyModal })));
 
 // Loading fallback
@@ -38,8 +39,8 @@ function App() {
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [showServices, setShowServices] = useState(false); // Default to CLOSED
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isCmdKOpen, setIsCmdKOpen] = useState(false);
+
+
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isTopologyOpen, setIsTopologyOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -56,28 +57,7 @@ function App() {
   }, [isDarkMode]);
 
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsCmdKOpen(true);
-      }
-      if (e.key === 'Escape') {
-        if (isCmdKOpen) setIsCmdKOpen(false);
-        else if (isConfigOpen) setIsConfigOpen(false);
-        else if (isNotesOpen) setIsNotesOpen(false);
-        else if (isTopologyOpen) setIsTopologyOpen(false);
-        else if (searchQuery) setSearchQuery('');
-      }
-      if (!isSearchFocused && !isCmdKOpen && !isConfigOpen && !isNotesOpen && !isTopologyOpen) {
-        if (e.key === '1') setViewMode('card');
-        if (e.key === '2') setViewMode('table');
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isConfigOpen, searchQuery, isSearchFocused, isCmdKOpen, isNotesOpen, isTopologyOpen]);
+
 
   // Derived State
   const serviceGroups = useMemo(() => {
@@ -169,14 +149,11 @@ function App() {
                     placeholder={t('app.search_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
+
                     className="w-full h-10 pl-10 pr-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
                   />
                 </div>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <code className="text-xs text-[var(--foreground-muted)] border border-[var(--border)] rounded px-1.5 py-0.5 bg-[var(--surface-hover)] font-mono">⌘K</code>
-                </div>
+
               </div>
 
               <EnvSelector />
@@ -360,6 +337,8 @@ function App() {
         return <Suspense fallback={<LoadingFallback />}><ServiceSettings /></Suspense>;
       case 'import-export':
         return <Suspense fallback={<LoadingFallback />}><ImportExport /></Suspense>;
+      case 'tutorial':
+        return <TutorialPage />;
       default:
         return null;
     }
@@ -384,18 +363,7 @@ function App() {
       <QuickNotes isOpen={isNotesOpen} onClose={() => setIsNotesOpen(false)} />
       {isTopologyOpen && <Suspense fallback={null}><TopologyModal onClose={() => setIsTopologyOpen(false)} /></Suspense>}
 
-      {isCmdKOpen && (
-        <Suspense fallback={null}>
-          <CommandPaletteModal
-            onClose={() => setIsCmdKOpen(false)}
-            onNavigate={(page) => {
-              setCurrentPage(page);
-              setIsCmdKOpen(false);
-            }}
-            currentEnv={currentEnv}
-          />
-        </Suspense>
-      )}
+
     </div>
   );
 }

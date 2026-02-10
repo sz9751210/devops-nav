@@ -8,6 +8,7 @@ const resources = {
             "app": {
                 "title": "OPS_NAV",
                 "dashboard": "Dashboard",
+                "tutorial": "Tutorial",
                 "configuration": "Configuration",
                 "environments": "Environments",
                 "groups": "Groups",
@@ -138,6 +139,32 @@ const resources = {
                 "settings": "Open settings",
                 "close": "Close modals",
                 "footer": "OpsBridge v1.0.0 · Built with ❤️ for DevOps teams"
+            },
+            "tutorial": {
+                "welcome_title": "Welcome to OpsBridge",
+                "welcome_desc": "Your mission control for navigating complex service architectures. Here is how to get the most out of it.",
+                "environments": {
+                    "title": "Contextual Environments",
+                    "desc": "Switch between Development, Staging, and Production instantly. All links update dynamically based on your selected context."
+                },
+                "columns": {
+                    "title": "Service Categories",
+                    "desc": "Services are organized by functional columns (e.g., Monitoring, Logs, Infra). Use Settings to customize these categories."
+                },
+                "services": {
+                    "title": "Service Directory",
+                    "desc": "A unified catalog of all your microservices. Filter by tags, owners, or groups to find what you need quickly."
+                },
+                "filtering": {
+                    "title": "Smart Filtering",
+                    "desc": "Use the search bar or tag filters to narrow down the view. Type 'payment' to see only payment-related services and links."
+                },
+                "pro_tips": {
+                    "title": "Pro Tips",
+                    "tip1": "Click the environment selector in the top bar to switch contexts.",
+                    "tip2": "Use the import/export feature to back up your configuration.",
+                    "tip3": "Group your environments (e.g., lab-*) in Settings for better organization."
+                }
             }
         }
     },
@@ -146,6 +173,7 @@ const resources = {
             "app": {
                 "title": "運維導航",
                 "dashboard": "控制面板",
+                "tutorial": "使用教學",
                 "configuration": "系統設定",
                 "environments": "環境管理",
                 "groups": "群組分類",
@@ -274,6 +302,32 @@ const resources = {
                 "settings": "進入系統設定",
                 "close": "關閉彈窗",
                 "footer": "運維導航 v1.0.0 · 為 DevOps 團隊量身打造 ❤️"
+            },
+            "tutorial": {
+                "welcome_title": "歡迎使用運維導航",
+                "welcome_desc": "您的微服務架構導航中心。以下是使用本系統的最佳實踐指南。",
+                "environments": {
+                    "title": "環境上下文切換",
+                    "desc": "在開發 (Dev)、測試 (Staging) 與生產 (Prod) 環境間快速切換。所有服務連結將根據當前環境自動更新。"
+                },
+                "columns": {
+                    "title": "服務分類目錄",
+                    "desc": "服務連結依據功能欄位（如：監控、日誌、基礎設施）進行分類。您可以隨時在設定中自定義這些欄位。"
+                },
+                "services": {
+                    "title": "服務資源目錄",
+                    "desc": "所有微服務的統一目錄。透過標籤、負責人或群組篩選，快速找到您需要的資源。"
+                },
+                "filtering": {
+                    "title": "智慧篩選",
+                    "desc": "使用搜尋列或標籤過濾器來縮小範圍。例如輸入 'payment' 即可查看相關支付服務的所有連結。"
+                },
+                "pro_tips": {
+                    "title": "使用技巧",
+                    "tip1": "點擊頂部欄的環境選擇器可快速切換操作環境。",
+                    "tip2": "使用匯入/匯出功能備份您的 YAML 配置。",
+                    "tip3": "在設定中將環境進行分組（如 lab-*）以獲得更整潔的選單。"
+                }
             }
         }
     }

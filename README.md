@@ -15,7 +15,7 @@
 
 **OpsBridge Navigation** is a schema-driven navigation hub designed for complex microservice architectures. Instead of maintaining hundreds of static bookmarks, it provides a dynamic grid where **Services (Rows)** meet **Categories (Columns)** across multiple **Environments**.
 
-It is built with an "Engineer-First" aesthetic, prioritizing density, keyboard shortcuts, and dark mode excellence.
+It is built with an "Engineer-First" aesthetic, prioritizing density and dark mode excellence.
 
 ### ✨ Key Features
 
@@ -26,12 +26,12 @@ It is built with an "Engineer-First" aesthetic, prioritizing density, keyboard s
 - 🚧 **Maintenance Mode**: Mark services as under maintenance with dedicated UI flags.
 - � **Recent Links History**: Automatically tracks your most visited links for one-click access in the sidebar.
 - ⚡ **Bulk Actions**: Open all environment links at once or copy them formatted to your clipboard.
-- ⌨️ **Quick Commands**: Direct clipboard access to `kubectl`, `ssh`, or custom terminal commands from service metadata.
 - 👤 **Ownership Integration**: Link services to owners and Slack channels for faster team communication.
-- 🔍 **Quick Search (Cmd+K)**: Instant access to any service or resource.
+- 🔍 **Quick Search**: Instant access to any service or resource.
 - 📝 **Scratchpad**: A built-in markdown editor for temporary notes and snippets.
-- � **Announcement System**: Top-level banner for system-wide site maintenance or incident alerts.
+-  **Announcement System**: Top-level banner for system-wide site maintenance or incident alerts.
 - 💾 **YAML Sync/Backup**: Version-control your configuration with ease.
+- 📚 **Interactive Tutorial**: Built-in guide to help new engineers get up to speed quickly.
 
 ---
 
@@ -55,32 +55,24 @@ Open [http://localhost:8080](http://localhost:8080)
 
 ---
 
-## 🛠️ Operating Instructions
+## 📚 How to Use
 
-### 1. Set Up Environments
+### 1. Interactive Tutorial
+Click the **Tutorial** tab in the sidebar for a visual guide on using the navigation hub.
+
+### 2. Set Up Environments
 Go to **Settings > Environments**. Add your targets (e.g., `dev`, `stage`, `prod`). Use **Environment Groups** to cluster them (e.g., `lab-envs` pattern matches `lab-*`).
 
-### 2. Define Columns (Categories)
+### 3. Define Columns (Categories)
 Go to **Settings > Columns**. Create categories like `Monitoring`, `Logs`, `CI/CD`. These will appear as columns in your navigation.
 
-### 3. Add Services
+### 4. Add Services
 Go to **Settings > Services**. Register your microservices.
 - **Metadata**: Add owners, descriptions, or SSH info.
 - **Direct Links**: Manually add a link that only applies to specific environments.
 
-### 4. Configuration via YAML (Optional)
+### 5. Configuration via YAML (Optional)
 For power users, go to **Settings > Sync / Backup**. You can paste a full YAML configuration or use **Smart Snippets** to quickly inject common toolsets (Prometheus, ELK, etc.).
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-| Shortcut | Action |
-| :--- | :--- |
-| `Cmd + K` | Open Quick Search |
-| `1` | Card View Mode |
-| `2` | Navigation (Table) Mode |
-| `Esc` | Close any modal |
 
 ---
 

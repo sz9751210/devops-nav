@@ -174,13 +174,7 @@ export const EnvGroupSettings: React.FC = () => {
                 )}
             </div>
 
-            {/* Info Snippet */}
-            <div className="p-3 bg-[var(--surface)] border-l-2 border-amber-500/50 rounded-r text-xs">
-                <h3 className="font-bold text-amber-500/80 mb-1 font-mono uppercase tracking-widest">{t('app.documentation')}</h3>
-                <p className="text-[var(--foreground-muted)] leading-relaxed italic">
-                    {t('settings.env_groups.tips')}
-                </p>
-            </div>
+
         </div>
     );
 };
