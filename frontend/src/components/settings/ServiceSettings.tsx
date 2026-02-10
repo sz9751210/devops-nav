@@ -130,7 +130,7 @@ export const ServiceSettings: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('settings.services.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                 />
             </div>
 

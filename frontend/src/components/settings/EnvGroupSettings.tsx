@@ -77,14 +77,14 @@ export const EnvGroupSettings: React.FC = () => {
                         onChange={(e) => setNewGroup({ ...newGroup, id: e.target.value })}
                         disabled={!!editingGroupId}
                         placeholder={t('settings.env_groups.id_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
                     />
                     <input
                         type="text"
                         value={newGroup.name}
                         onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                         placeholder={t('settings.env_groups.name_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                     />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -94,14 +94,14 @@ export const EnvGroupSettings: React.FC = () => {
                         onChange={(e) => setNewGroup({ ...newGroup, icon: e.target.value })}
                         placeholder={t('form.icon')}
                         maxLength={2}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all text-center"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all text-center"
                     />
                     <input
                         type="text"
                         value={newGroup.pattern}
                         onChange={(e) => setNewGroup({ ...newGroup, pattern: e.target.value })}
                         placeholder={t('settings.env_groups.pattern_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 <div className="flex gap-2">
