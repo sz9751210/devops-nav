@@ -124,22 +124,46 @@ export const EnvGroupSettings: React.FC = () => {
                 </div>
             </div>
 
-            {/* List */}
             <div className="space-y-2">
                 {envGroups.length === 0 ? (
                     <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
                         {t('settings.env_groups.no_groups')}
                     </div>
                 ) : (
-                    envGroups.map((group) => (
+                    envGroups.map((group, index) => (
                         <div
                             key={group.id}
+                            draggable
+                            onDragStart={(e) => {
+                                e.dataTransfer.setData('text/plain', index.toString());
+                                e.dataTransfer.effectAllowed = 'move';
+                                // Add a ghost class or style if needed
+                                // (e.target as HTMLElement).classList.add('opacity-50'); 
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault(); // Necessary to allow dropping
+                                e.dataTransfer.dropEffect = 'move';
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const sourceIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                                const targetIndex = index;
+
+                                if (sourceIndex === targetIndex) return;
+
+                                const newGroups = [...envGroups];
+                                const [movedGroup] = newGroups.splice(sourceIndex, 1);
+                                newGroups.splice(targetIndex, 0, movedGroup);
+
+                                // Call store action to update order
+                                useNavigationStore.getState().reorderEnvGroups(newGroups);
+                            }}
                             className={clsx(
-                                "flex items-center justify-between px-4 py-3 rounded border transition-all group",
-                                "bg-[var(--surface)] border-[var(--border)] hover:border-amber-500/30 hover:bg-[var(--surface-hover)]"
+                                "flex items-center justify-between px-4 py-3 rounded border transition-all group cursor-move",
+                                "bg-[var(--surface)] border-[var(--border)] hover:border-amber-500/30 hover:bg-[var(--surface-hover)] hover:shadow-md"
                             )}
                         >
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pointer-events-none">
                                 <span className="text-xl shrink-0 grayscale group-hover:grayscale-0 transition-all">{group.icon || '📦'}</span>
                                 <div>
                                     <div className="font-bold text-[var(--foreground)] group-hover:text-amber-500 transition-colors text-sm">
@@ -155,7 +179,7 @@ export const EnvGroupSettings: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
                                 <button
                                     onClick={() => handleEdit(group)}
                                     className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"

@@ -271,14 +271,48 @@ export const ColumnSettings: React.FC = () => {
                                     value={columnForm.title || ''}
                                     onChange={(e) => {
                                         const title = e.target.value;
-                                        setColumnForm(prev => ({
-                                            ...prev,
-                                            title,
-                                            id: editingColumnId ? prev.id : title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-                                        }));
+                                        setColumnForm(prev => {
+                                            // Only auto-generate ID if we are creating a new column and the ID field is empty or matches previous auto-gen
+                                            // Simplification: identifying "matches previous" is hard without prev state.
+                                            // Just auto-gen if creating and user hasn't typed in ID field?
+                                            // Let's just do: if creating, simple auto-gen based on title IF id is empty or simple.
+                                            // Actually, simplest UX: Title updates Title. ID updates ID.
+                                            // BUT for convenience, let's pre-fill ID if it's empty when typing title?
+                                            const newId = !editingColumnId && (!prev.id || prev.id === prev.title?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))
+                                                ? title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                                : prev.id;
+
+                                            return {
+                                                ...prev,
+                                                title,
+                                                id: newId
+                                            };
+                                        });
                                     }}
-                                    placeholder="Monitoring"
-                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                                    placeholder="Monitoring (可輸入中文)"
+                                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">
+                                    {t('form.column_id_en.label')}
+                                    {editingColumnId && <span className="ml-2 text-xs font-normal text-amber-500 opacity-70">(Read-only)</span>}
+                                </label>
+                                <input
+                                    type="text"
+                                    value={columnForm.id || ''}
+                                    onChange={(e) => {
+                                        if (!editingColumnId) {
+                                            setColumnForm(prev => ({ ...prev, id: e.target.value }));
+                                        }
+                                    }}
+                                    disabled={!!editingColumnId}
+                                    placeholder={t('form.column_id_en.placeholder')}
+                                    className={clsx(
+                                        "w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono",
+                                        editingColumnId ? "opacity-50 cursor-not-allowed bg-[var(--surface-hover)]" : "placeholder-[var(--foreground-muted)] placeholder:opacity-50"
+                                    )}
                                 />
                             </div>
                             <div>

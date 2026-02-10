@@ -59,9 +59,14 @@ interface NavigationState {
     updateServiceLink: (serviceId: string, linkId: string, updates: Partial<ServiceLink>) => void;
     removeServiceLink: (serviceId: string, linkId: string) => void;
 
+    // Environment Reordering
+    moveEnvironment: (env: string, direction: 'up' | 'down') => void;
+    reorderEnvironments: (newOrder: string[]) => void;
+
     // Environment Groups
     addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
     updateEnvGroup: (id: string, updates: Partial<Omit<EnvGroup, 'environments'>>) => void;
+    reorderEnvGroups: (newOrder: EnvGroup[]) => void;
     removeEnvGroup: (id: string) => void;
 
     // Link Usage Tracking
@@ -376,6 +381,30 @@ export const useNavigationStore = create<NavigationState>()(
             debouncedSave(() => get().saveConfig());
         },
 
+        moveEnvironment: (env, direction) => {
+            const { config } = get();
+            const envs = [...config.environments];
+            const index = envs.indexOf(env);
+            if (index === -1) return;
+
+            if (direction === 'up' && index > 0) {
+                [envs[index - 1], envs[index]] = [envs[index], envs[index - 1]];
+            } else if (direction === 'down' && index < envs.length - 1) {
+                [envs[index], envs[index + 1]] = [envs[index + 1], envs[index]];
+            } else {
+                return;
+            }
+
+            set({ config: { ...config, environments: envs } });
+            get().saveConfig();
+        },
+
+        reorderEnvironments: (newOrder) => {
+            const { config } = get();
+            set({ config: { ...config, environments: newOrder } });
+            get().saveConfig();
+        },
+
         // Favorites - Environments
         toggleFavoriteEnv: (env) => {
             const { config } = get();
@@ -429,6 +458,11 @@ export const useNavigationStore = create<NavigationState>()(
                 g.id === id ? { ...g, ...updates } : g
             );
             set({ config: { ...config, envGroups: newGroups } });
+            debouncedSave(() => get().saveConfig());
+        },
+        reorderEnvGroups: (newOrder) => {
+            const { config } = get();
+            set({ config: { ...config, envGroups: newOrder } });
             debouncedSave(() => get().saveConfig());
         },
         removeEnvGroup: (id) => {

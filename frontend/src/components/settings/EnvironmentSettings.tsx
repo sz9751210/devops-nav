@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2, Pencil, X } from 'lucide-react';
+import { Plus, Trash2, Globe, ChevronDown, ChevronRight, Check, Settings2, Pencil, X, ArrowUp, ArrowDown } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const EnvironmentSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
+    const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig, moveEnvironment } = useNavigationStore();
     const [newEnv, setNewEnv] = useState('');
     const [editingEnv, setEditingEnv] = useState<string | null>(null);
     const [expandedEnv, setExpandedEnv] = useState<string | null>(null);
@@ -125,12 +125,38 @@ export const EnvironmentSettings: React.FC = () => {
                         return (
                             <div
                                 key={env}
-                                className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden"
+                                draggable
+                                onDragStart={(e) => {
+                                    e.dataTransfer.setData('text/plain', config.environments.indexOf(env).toString());
+                                    e.dataTransfer.effectAllowed = 'move';
+                                }}
+                                onDragOver={(e) => {
+                                    e.preventDefault();
+                                    e.dataTransfer.dropEffect = 'move';
+                                }}
+                                onDrop={(e) => {
+                                    e.preventDefault();
+                                    const sourceIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                                    const targetIndex = config.environments.indexOf(env);
+
+                                    if (sourceIndex === targetIndex) return;
+
+                                    const newEnvs = [...config.environments];
+                                    const [movedEnv] = newEnvs.splice(sourceIndex, 1);
+                                    newEnvs.splice(targetIndex, 0, movedEnv);
+
+                                    useNavigationStore.getState().reorderEnvironments(newEnvs);
+                                }}
+                                className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden cursor-move hover:shadow-md transition-shadow"
                             >
                                 {/* Header */}
                                 <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)] transition-colors">
                                     <button
-                                        onClick={() => setExpandedEnv(isExpanded ? null : env)}
+                                        onClick={(e) => {
+                                            // Prevent expanding when dragging might trigger click
+                                            if (e.detail === 0) return;
+                                            setExpandedEnv(isExpanded ? null : env);
+                                        }}
                                         className="flex-1 flex items-center gap-3 text-left"
                                     >
                                         {isExpanded ? (
@@ -144,6 +170,23 @@ export const EnvironmentSettings: React.FC = () => {
                                         </span>
                                     </button>
                                     <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); moveEnvironment(env, 'up'); }}
+                                            disabled={config.environments.indexOf(env) === 0}
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors disabled:opacity-30 disabled:hover:text-[var(--foreground-muted)]"
+                                            title={t('actions.move_up')}
+                                        >
+                                            <ArrowUp className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); moveEnvironment(env, 'down'); }}
+                                            disabled={config.environments.indexOf(env) === config.environments.length - 1}
+                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors disabled:opacity-30 disabled:hover:text-[var(--foreground-muted)]"
+                                            title={t('actions.move_down')}
+                                        >
+                                            <ArrowDown className="w-4 h-4" />
+                                        </button>
+                                        <div className="w-px h-4 bg-[var(--border)] mx-1"></div>
                                         <button
                                             onClick={() => setExpandedEnv(isExpanded ? null : env)}
                                             className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"

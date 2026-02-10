@@ -90,8 +90,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                     healthStatus === 'warning' ? "bg-amber-500" : "bg-[var(--foreground-muted)] opacity-30"
                     )} />
                     <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                            <div className="font-medium text-[var(--foreground)] text-sm truncate uppercase tracking-tighter">{service.name}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <div className="font-medium text-[var(--foreground)] text-sm uppercase tracking-tighter break-words">{service.name}</div>
                             {isMaintenance && <Hammer className="w-3 h-3 text-amber-500" />}
                             {version && <span className="text-xs px-1 bg-[var(--surface-hover)] border border-[var(--border)] rounded text-[var(--foreground-muted)] font-mono">{version}</span>}
                             {isFavorite && <Star className="w-3 h-3 text-amber-500 fill-amber-500" />}
@@ -141,15 +141,15 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                         {initial}
                     </div>
                     <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-[var(--foreground)] text-base truncate uppercase tracking-tight">{service.name}</h3>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold text-[var(--foreground)] text-base uppercase tracking-tight break-words pr-2">{service.name}</h3>
                             <div className={clsx(
-                                "w-1.5 h-1.5 rounded-full",
+                                "w-1.5 h-1.5 rounded-full shrink-0",
                                 isMaintenance ? "bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" :
                                     healthStatus === 'warning' ? "bg-amber-500" : "bg-[var(--foreground-muted)] opacity-30"
                             )} />
                         </div>
-                        <div className="text-xs text-[var(--foreground-muted)] font-mono mt-0.5 truncate max-w-[140px]" title={service.id}>
+                        <div className="text-xs text-[var(--foreground-muted)] font-mono mt-0.5 break-all opacity-70" title={service.id}>
                             {service.id}
                         </div>
                     </div>

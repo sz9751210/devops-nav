@@ -222,15 +222,17 @@ function App() {
                   <div className="w-px h-3 bg-[var(--border)] mx-1" />
                   <button
                     onClick={() => setViewMode('card')}
-                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'card' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100")}
+                    className={clsx("p-1.5 rounded-md transition-all", viewMode === 'card' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]")}
+                    title={t('actions.view_card')}
                   >
-                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <LayoutGrid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('table')}
-                    className={clsx("p-1 rounded-[3px] transition-colors", viewMode === 'table' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100")}
+                    className={clsx("p-1.5 rounded-md transition-all", viewMode === 'table' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]")}
+                    title={t('actions.view_list')}
                   >
-                    <List className="w-3.5 h-3.5" />
+                    <List className="w-4 h-4" />
                   </button>
                 </div>
 
@@ -279,7 +281,7 @@ function App() {
                     ) : (
                       <div className={clsx(
                         viewMode === 'card'
-                          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"
+                          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4"
                           : "space-y-px"
                       )}>
                         {filteredServices.map(service => (
@@ -308,7 +310,7 @@ function App() {
                         <span className="text-[var(--border)]">/</span>
                         <span className="text-[var(--foreground-muted)] opacity-50">{links.length}</span>
                       </h2>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
                         {links.map(item => (
                           <LinkCard
                             key={`${item.service.id}-${item.link.id}`}

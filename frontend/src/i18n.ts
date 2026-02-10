@@ -67,7 +67,11 @@ const resources = {
                 "update": "Update",
                 "select_all": "Select All",
                 "deselect_all": "Deselect All",
-                "save_config": "Save Config"
+                "save_config": "Save Config",
+                "move_up": "Move Up",
+                "move_down": "Move Down",
+                "view_card": "Card View",
+                "view_list": "List View"
             },
             "settings": {
                 "env_groups": {
@@ -134,6 +138,10 @@ const resources = {
                 "url": "Source URL",
                 "environments": "Scope Environments",
                 "icon": "Icon (emoji)",
+                "column_id_en": {
+                    "label": "Column ID (English)",
+                    "placeholder": "e.g. monitoring"
+                },
                 "placeholders": {
                     "service_name": "Service Name",
                     "group_example": "e.g. Core, Payment",
@@ -240,7 +248,11 @@ const resources = {
                 "update": "更新設定",
                 "select_all": "全選",
                 "deselect_all": "全不選",
-                "save_config": "儲存配置"
+                "save_config": "儲存配置",
+                "move_up": "上移",
+                "move_down": "下移",
+                "view_card": "卡片視圖",
+                "view_list": "列表視圖"
             },
             "settings": {
                 "env_groups": {
