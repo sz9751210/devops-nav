@@ -163,7 +163,7 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-amber-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-amber-600 dark:group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-amber-600 dark:group-hover:text-amber-500 font-mono">{t('settings.import_export.snippets.monitoring_title')}</div>
                         <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.monitoring_desc')}</div>
                     </button>
 
@@ -184,7 +184,7 @@ services:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-blue-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-500 font-mono">{t('settings.import_export.snippets.logging_title')}</div>
                         <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.logging_desc')}</div>
                     </button>
 
@@ -200,7 +200,7 @@ announcement:
 `)}
                         className="p-3 text-left bg-[var(--surface)] border border-[var(--border)] rounded hover:border-green-500/50 hover:bg-[var(--surface-hover)] transition-all group"
                     >
-                        <div className="text-[15px] font-bold text-[var(--foreground)] group-hover:text-green-600 dark:group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
+                        <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-green-600 dark:group-hover:text-green-500 font-mono">{t('settings.import_export.snippets.standard_title')}</div>
                         <div className="text-sm text-[var(--foreground-muted)] opacity-60 mt-1 font-mono">{t('settings.import_export.snippets.standard_desc')}</div>
                     </button>
                 </div>

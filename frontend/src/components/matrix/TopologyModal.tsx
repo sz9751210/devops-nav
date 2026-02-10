@@ -121,7 +121,7 @@ export const TopologyModal: React.FC<TopologyModalProps> = ({ onClose }) => {
                         ))}
                     </svg>
 
-                    <div className="absolute bottom-4 left-4 p-2 bg-[var(--surface)] border border-[var(--border)] rounded text-[10px] text-slate-500 font-mono">
+                    <div className="absolute bottom-4 left-4 p-2 bg-[var(--surface)] border border-[var(--border)] rounded text-xs text-slate-500 font-mono">
                         <div>NODES: {nodes.length}</div>
                         <div>GROUPS: {nodes.filter((n) => n.type === 'group').length}</div>
                     </div>

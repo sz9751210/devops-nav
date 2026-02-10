@@ -212,7 +212,7 @@ export const EnvironmentSettings: React.FC = () => {
                                                                 {isVisible && <Check className="w-3 h-3 text-black" />}
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <div className="text-[15px] font-bold truncate tracking-tight">{service.name}</div>
+                                                                <div className="text-sm font-bold truncate tracking-tight">{service.name}</div>
                                                                 {service.group && (
                                                                     <div className="text-xs text-slate-500 truncate font-mono uppercase">{service.group}</div>
                                                                 )}

@@ -223,7 +223,7 @@ export const ServiceSettings: React.FC = () => {
                                             <span className="font-bold text-[var(--foreground)] text-sm tracking-tight">{service.name}</span>
                                             <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase">{t('settings.services.links_count')}: {linkCount}</span>
                                             {service.group && (
-                                                <span className="text-[11px] text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
+                                                <span className="text-xs text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
                                                     {service.group}
                                                 </span>
                                             )}
@@ -265,7 +265,7 @@ export const ServiceSettings: React.FC = () => {
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 
                                                     <div>
-                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
+                                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
                                                         <input
                                                             type="text"
                                                             value={linkForm.name || ''}
@@ -282,7 +282,7 @@ export const ServiceSettings: React.FC = () => {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
+                                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
                                                         <select
                                                             value={linkForm.columnId || ''}
                                                             onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
@@ -296,7 +296,7 @@ export const ServiceSettings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
+                                                    <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
                                                     <input
                                                         type="text"
                                                         value={linkForm.url || ''}
@@ -306,7 +306,7 @@ export const ServiceSettings: React.FC = () => {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-[11px] font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
+                                                    <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
                                                     <div className="flex flex-wrap gap-1">
                                                         {config.environments.map((env: string) => (
                                                             <button
@@ -317,7 +317,7 @@ export const ServiceSettings: React.FC = () => {
                                                                     setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
                                                                 }}
                                                                 className={clsx(
-                                                                    "px-2 py-1 text-[11px] rounded transition-all uppercase tracking-tighter border",
+                                                                    "px-2 py-1 text-xs rounded transition-all uppercase tracking-tighter border",
                                                                     linkForm.environments?.includes(env)
                                                                         ? "bg-amber-500 text-black border-amber-600"
                                                                         : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-[var(--foreground-muted)]"
@@ -364,7 +364,7 @@ export const ServiceSettings: React.FC = () => {
                                                                 {link.environments && link.environments.length > 0 && (
                                                                     <div className="flex gap-1">
                                                                         {link.environments.map((env: string) => (
-                                                                            <span key={env} className="text-[11px] px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
+                                                                            <span key={env} className="text-xs px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
                                                                                 {env}
                                                                             </span>
                                                                         ))}

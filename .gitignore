@@ -113,3 +113,4 @@ dist
 docker-compose.override.yml
 build.sh
 k8s/*
+.env

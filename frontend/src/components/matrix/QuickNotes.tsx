@@ -42,7 +42,7 @@ export const QuickNotes: React.FC<QuickNotesProps> = ({ isOpen, onClose }) => {
                 placeholder="// Type your temporary notes here..."
                 className="w-full h-80 p-3 bg-[var(--surface)] text-[var(--foreground)] text-xs font-mono resize-none focus:outline-none placeholder-slate-600 leading-relaxed"
             />
-            <div className="px-3 py-1 bg-[var(--background)] border-t border-[var(--border)] text-[10px] text-slate-500 font-mono flex justify-between">
+            <div className="px-3 py-1 bg-[var(--background)] border-t border-[var(--border)] text-xs text-slate-500 font-mono flex justify-between">
                 <span>Markdown (Simple)</span>
                 <span>Auto-saved</span>
             </div>

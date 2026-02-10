@@ -1,11 +1,14 @@
 # Build Stage
-FROM node:22-alpine as builder
+FROM node:22-slim as builder
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
+
+# Increase memory limit for node to prevent OOM
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 # Production Stage

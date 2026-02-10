@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
             key={item.id}
             onClick={() => onPageChange(item.id)}
             className={clsx(
-                "w-full flex items-center gap-3 px-3 py-2 text-[15px] font-medium transition-colors group border-l-2",
+                "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium transition-colors group border-l-2",
                 currentPage === item.id
                     ? "border-amber-500 bg-white/5 text-[var(--foreground)]"
                     : "border-transparent text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-white/[0.02]"
@@ -182,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isD
                         )}
                     >
                         <HelpCircle className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
-                        {!collapsed && <span className="text-[15px] font-medium">{t('app.documentation')}</span>}
+                        {!collapsed && <span className="text-sm font-medium">{t('app.documentation')}</span>}
                     </button>
 
                     <div className={clsx(

@@ -122,7 +122,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                                         <div className="font-medium text-sm flex items-center gap-2">
                                             {item.title}
                                             {item.tags?.map(t => (
-                                                <span key={t} className={clsx("text-[10px] px-1 rounded border", index === selectedIndex ? "border-black/20 bg-black/10" : "border-white/10 bg-white/5")}>
+                                                <span key={t} className={clsx("text-xs px-1 rounded border", index === selectedIndex ? "border-black/20 bg-black/10" : "border-white/10 bg-white/5")}>
                                                     {t}
                                                 </span>
                                             ))}
@@ -137,7 +137,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ onClos
                 </div>
 
                 {/* Footer */}
-                <div className="px-4 py-2 bg-[var(--background)] border-t border-[var(--border)] text-[10px] text-slate-400 flex justify-end gap-3">
+                <div className="px-4 py-2 bg-[var(--background)] border-t border-[var(--border)] text-xs text-slate-400 flex justify-end gap-3">
                     <span><strong className="text-slate-300">↑↓</strong> to navigate</span>
                     <span><strong className="text-slate-300">↵</strong> to select</span>
                 </div>

@@ -26,14 +26,14 @@ export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag,
     return (
         <div className="flex flex-col gap-2 p-1">
             <div className="flex items-center justify-between px-2 mb-1">
-                <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--foreground-muted)] uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider">
                     <Tag className="w-3 h-3" />
                     Filter by Tags
                 </div>
                 {selectedTags.length > 0 && (
                     <button
                         onClick={onClear}
-                        className="text-[9px] text-amber-500 hover:text-amber-400 font-medium flex items-center gap-1"
+                        className="text-xs text-amber-500 hover:text-amber-400 font-medium flex items-center gap-1"
                     >
                         Clear
                         <X className="w-2.5 h-2.5" />
@@ -49,7 +49,7 @@ export const TagFilter: React.FC<TagFilterProps> = ({ selectedTags, onToggleTag,
                             key={tag}
                             onClick={() => onToggleTag(tag)}
                             className={clsx(
-                                "flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium transition-all border",
+                                "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-all border",
                                 isSelected
                                     ? "bg-amber-500/10 border-amber-500/50 text-amber-500"
                                     : "bg-[var(--surface)] border-[var(--border)] text-[var(--foreground-muted)] hover:border-amber-500/30 hover:text-[var(--foreground)]"

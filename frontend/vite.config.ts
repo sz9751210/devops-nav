@@ -8,13 +8,13 @@ export default defineConfig({
     // Optimize chunk splitting
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunks
-          'react-vendor': ['react', 'react-dom'],
-          'ui-vendor': ['lucide-react', 'clsx', 'tailwind-merge'],
-          'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
-          'state-vendor': ['zustand'],
-        },
+        // manualChunks: {
+        //   // Vendor chunks
+        //   'react-vendor': ['react', 'react-dom'],
+        //   'ui-vendor': ['lucide-react', 'clsx', 'tailwind-merge'],
+        //   'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+        //   'state-vendor': ['zustand'],
+        // },
       },
     },
     // Reduce chunk size warnings threshold
