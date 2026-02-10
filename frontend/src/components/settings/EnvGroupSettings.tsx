@@ -22,7 +22,7 @@ export const EnvGroupSettings: React.FC = () => {
     };
 
     const handleSave = () => {
-        if (newGroup.id.trim() && newGroup.name.trim()) {
+        if (newGroup.name.trim()) {
             if (editingGroupId) {
                 updateEnvGroup(editingGroupId, {
                     name: newGroup.name.trim(),
@@ -30,12 +30,19 @@ export const EnvGroupSettings: React.FC = () => {
                     pattern: newGroup.pattern.trim() || undefined,
                 });
             } else {
-                addEnvGroup({
-                    id: newGroup.id.trim().toLowerCase(),
-                    name: newGroup.name.trim(),
-                    icon: newGroup.icon || '📦',
-                    pattern: newGroup.pattern.trim() || undefined,
-                });
+                // Auto-generate ID from name
+                const generatedId = newGroup.name.trim().toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '');
+
+                if (generatedId) {
+                    addEnvGroup({
+                        id: generatedId,
+                        name: newGroup.name.trim(),
+                        icon: newGroup.icon || '📦',
+                        pattern: newGroup.pattern.trim() || undefined,
+                    });
+                }
             }
             resetForm();
         }
@@ -70,21 +77,13 @@ export const EnvGroupSettings: React.FC = () => {
                 <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest font-mono mb-2">
                     {editingGroupId ? `${t('actions.edit')}: GROUP` : `${t('actions.create')}: GROUP`}
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
-                    <input
-                        type="text"
-                        value={newGroup.id}
-                        onChange={(e) => setNewGroup({ ...newGroup, id: e.target.value })}
-                        disabled={!!editingGroupId}
-                        placeholder={t('settings.env_groups.id_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono disabled:opacity-50"
-                    />
+                <div className="grid grid-cols-1 gap-3">
                     <input
                         type="text"
                         value={newGroup.name}
                         onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                         placeholder={t('settings.env_groups.name_placeholder')}
-                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
+                        className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -116,7 +115,7 @@ export const EnvGroupSettings: React.FC = () => {
                     )}
                     <button
                         onClick={handleSave}
-                        disabled={!newGroup.id.trim() || !newGroup.name.trim()}
+                        disabled={!newGroup.name.trim()}
                         className="flex-1 px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-[var(--surface-hover)] disabled:text-[var(--foreground-muted)] disabled:opacity-50 text-black rounded font-bold transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wide"
                     >
                         {editingGroupId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
