@@ -88,7 +88,7 @@ export const EnvironmentSettings: React.FC = () => {
                         onChange={(e) => setNewEnv(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                         placeholder={t('settings.envs.placeholder')}
-                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
                 {editingEnv && (
