@@ -61,6 +61,7 @@ export interface EnvSpecificConfig {
 export interface Application {
     id: string;
     name: string;
+    group?: string; // Logical grouping (e.g., "Finance", "Internal Tools")
     description?: string;
     owner?: string;
     tags?: string[];

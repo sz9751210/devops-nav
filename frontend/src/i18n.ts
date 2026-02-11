@@ -92,7 +92,9 @@ const resources = {
             "applications": {
                 "subtitle": "Manage your business applications and their infrastructure dependencies",
                 "search_placeholder": "Search applications...",
-                "no_results": "No applications found. Create one to get started."
+                "no_results": "No applications found. Create one to get started.",
+                "group": "Group",
+                "ungrouped": "Ungrouped"
             },
             "app_detail": {
                 "owned_by": "Owned by",
@@ -313,7 +315,9 @@ const resources = {
             "applications": {
                 "subtitle": "管理您的業務應用程式及其基礎設施依賴",
                 "search_placeholder": "搜尋應用程式...",
-                "no_results": "找不到應用程式。請建立一個新的應用程式。"
+                "no_results": "找不到應用程式。請建立一個新的應用程式。",
+                "group": "應用程式群組",
+                "ungrouped": "未分類"
             },
             "app_detail": {
                 "owned_by": "負責人",

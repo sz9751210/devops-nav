@@ -23,8 +23,6 @@ export const ApplicationsPage: React.FC = () => {
         let apps = applications;
 
         // Filter by Environment
-        // If app has NO environments defined, it shows in ALL.
-        // If app HAS environments, it must include currentEnv.
         apps = apps.filter(app => {
             if (!app.environments || app.environments.length === 0) return true;
             return app.environments.includes(currentEnv);
@@ -38,6 +36,29 @@ export const ApplicationsPage: React.FC = () => {
             app.tags?.some(tag => tag.toLowerCase().includes(lowerQ))
         );
     }, [applications, searchQuery, currentEnv]);
+
+    const groupedApps = useMemo(() => {
+        const groups: Record<string, typeof filteredApps> = {};
+
+        filteredApps.forEach(app => {
+            const groupName = app.group || t('applications.ungrouped', 'Ungrouped');
+            if (!groups[groupName]) {
+                groups[groupName] = [];
+            }
+            groups[groupName].push(app);
+        });
+
+        const sortedGroups = Object.keys(groups).sort((a, b) => {
+            if (a === t('applications.ungrouped', 'Ungrouped')) return 1;
+            if (b === t('applications.ungrouped', 'Ungrouped')) return -1;
+            return a.localeCompare(b);
+        });
+
+        return sortedGroups.map(group => ({
+            name: group,
+            apps: groups[group]
+        }));
+    }, [filteredApps, t]);
 
     const handleSaveApplication = async (app: Application) => {
         try {
@@ -117,59 +138,75 @@ export const ApplicationsPage: React.FC = () => {
                 />
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredApps.map(app => (
-                    <div
-                        key={app.id}
-                        onClick={() => handleCardClick(app)}
-                        className="group bg-[var(--surface)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all cursor-pointer flex flex-col"
-                    >
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-500">
-                                    <Layers className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-[var(--foreground)]">{app.name}</h3>
-                                    {app.owner && (
-                                        <div className="text-xs text-[var(--foreground-muted)]">{app.owner}</div>
-                                    )}
-                                </div>
-                            </div>
-                            <button
-                                onClick={(e) => handleEdit(e, app)}
-                                className="p-1 text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                                <Edit className="w-4 h-4" />
-                            </button>
-                        </div>
-
-                        {app.description && (
-                            <p className="text-sm text-[var(--foreground-muted)] line-clamp-2 mb-4 flex-1">
-                                {app.description}
-                            </p>
+            {/* Content */}
+            <div className="space-y-8">
+                {groupedApps.map(group => (
+                    <div key={group.name} className="space-y-3">
+                        {(groupedApps.length > 1 || group.name !== t('applications.ungrouped', 'Ungrouped')) && (
+                            <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2 pb-2 border-b border-[var(--border)]">
+                                <Layers className="w-5 h-5 text-amber-500" />
+                                {group.name}
+                                <span className="text-xs font-normal text-[var(--foreground-muted)] ml-2 bg-[var(--surface-hover)] px-2 py-0.5 rounded-full">
+                                    {group.apps.length}
+                                </span>
+                            </h2>
                         )}
 
-                        <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--foreground-muted)]">
-                            <div className="flex items-center gap-1.5">
-                                <Box className="w-3.5 h-3.5" />
-                                <span>{app.serviceIds?.length || 0} Services</span>
-                            </div>
-                            {app.tags && app.tags.length > 0 && (
-                                <div className="flex gap-1">
-                                    {app.tags.slice(0, 2).map(tag => (
-                                        <span key={tag} className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
-                                            #{tag}
-                                        </span>
-                                    ))}
-                                    {app.tags.length > 2 && (
-                                        <span className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
-                                            +{app.tags.length - 2}
-                                        </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {group.apps.map(app => (
+                                <div
+                                    key={app.id}
+                                    onClick={() => handleCardClick(app)}
+                                    className="group bg-[var(--surface)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all cursor-pointer flex flex-col"
+                                >
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-500">
+                                                <Layers className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-[var(--foreground)]">{app.name}</h3>
+                                                {app.owner && (
+                                                    <div className="text-xs text-[var(--foreground-muted)]">{app.owner}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={(e) => handleEdit(e, app)}
+                                            className="p-1 text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <Edit className="w-4 h-4" />
+                                        </button>
+                                    </div>
+
+                                    {app.description && (
+                                        <p className="text-sm text-[var(--foreground-muted)] line-clamp-2 mb-4 flex-1">
+                                            {app.description}
+                                        </p>
                                     )}
+
+                                    <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--foreground-muted)]">
+                                        <div className="flex items-center gap-1.5">
+                                            <Box className="w-3.5 h-3.5" />
+                                            <span>{app.serviceIds?.length || 0} Services</span>
+                                        </div>
+                                        {app.tags && app.tags.length > 0 && (
+                                            <div className="flex gap-1">
+                                                {app.tags.slice(0, 2).map(tag => (
+                                                    <span key={tag} className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                                                        #{tag}
+                                                    </span>
+                                                ))}
+                                                {app.tags.length > 2 && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                                                        +{app.tags.length - 2}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
+                            ))}
                         </div>
                     </div>
                 ))}

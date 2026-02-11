@@ -20,6 +20,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
 
     const [formData, setFormData] = useState<Partial<Application>>(initialData || {
         name: '',
+        group: '',
         description: '',
         owner: '',
         tags: [],
@@ -168,6 +169,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
         const app: Application = {
             id: initialData?.id || uuidv4(),
             name: formData.name,
+            group: formData.group,
             description: formData.description,
             owner: formData.owner,
             tags: formData.tags,
@@ -192,18 +194,36 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Basic Info */}
                     <div className="grid gap-4">
-                        <div>
-                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">
-                                {t('form.label', 'Name')} <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full h-9 px-3 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
-                                placeholder="e.g. Payment Gateway"
-                                autoFocus
-                            />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">
+                                    {t('form.label', 'Name')} <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full h-9 px-3 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+                                    placeholder="e.g. Payment Gateway"
+                                    autoFocus
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">
+                                    {t('applications.group', 'Group')}
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.group || ''}
+                                    onChange={e => setFormData({ ...formData, group: e.target.value })}
+                                    className="w-full h-9 px-3 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+                                    placeholder={t('form.placeholders.group_example', 'e.g. Finance')}
+                                    list="existing-groups"
+                                />
+                                <datalist id="existing-groups">
+                                    {/* Ideally populate from existing groups */}
+                                </datalist>
+                            </div>
                         </div>
 
                         <div>
