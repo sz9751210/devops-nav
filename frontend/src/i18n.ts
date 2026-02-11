@@ -15,6 +15,7 @@ const resources = {
 
                 "columns": "Columns",
                 "services": "Services",
+                "applications": "Applications",
                 "profiles": "Profiles",
                 "sync_backup": "Sync / Backup",
                 "documentation": "Documentation",
@@ -48,6 +49,7 @@ const resources = {
             "actions": {
                 "all": "ALL",
                 "services": "SERVICES",
+                "all_groups": "All Groups",
                 "navigation": "NAVIGATION",
                 "copy_url": "Copy URL",
                 "view_topology": "View Topology",
@@ -62,6 +64,8 @@ const resources = {
                 "load_current": "Load Current",
                 "edit": "Edit",
                 "create": "Create",
+                "create_application": "Create Application",
+                "edit_application": "Edit Application",
                 "add_resource_link": "Add Resource Link",
                 "commit": "Commit",
                 "update": "Update",
@@ -72,6 +76,31 @@ const resources = {
                 "move_down": "Move Down",
                 "view_card": "Card View",
                 "view_list": "List View"
+            },
+            "service_page": {
+                "subtitle": "Manage and view all service definitions and detailed dependencies",
+                "count_badge": "SERVICES",
+                "maintenance": "MAINTENANCE",
+                "maintenance_mode": "MAINTENANCE MODE",
+                "detail_view": "Service Detail",
+                "common_resources": "Common Resources",
+                "environment": "Environment",
+                "resource_fallback": "Resource",
+                "no_resources": "No infrastructure resources defined for this service.",
+                "no_results": "No services found matching your criteria."
+            },
+            "applications": {
+                "subtitle": "Manage your business applications and their infrastructure dependencies",
+                "search_placeholder": "Search applications...",
+                "no_results": "No applications found. Create one to get started."
+            },
+            "app_detail": {
+                "owned_by": "Owned by",
+                "services": "Services",
+                "tags": "Tags",
+                "infrastructure_dependencies": "Infrastructure Dependencies",
+                "no_links": "No links defined",
+                "no_services": "No services linked to this application."
             },
             "settings": {
                 "env_groups": {
@@ -125,6 +154,7 @@ const resources = {
                     "select_column": "SELECT_COLUMN",
                     "links_count": "LINKS"
                 },
+
                 "view_config": {
                     "title": "View Configuration",
                     "subtitle": "Customize what you see for",
@@ -135,6 +165,8 @@ const resources = {
             "form": {
                 "id": "ID",
                 "label": "Label",
+                "tags": "Tags",
+                "metadata": "Metadata",
                 "group": "Namespace / Group",
                 "description": "Description",
                 "url": "Source URL",
@@ -149,8 +181,14 @@ const resources = {
                     "group_example": "e.g. Core, Payment",
                     "description_optional": "Optional brief",
                     "link_name_example": "Main Dashboard",
-                    "url_example": "https://..."
-                }
+                    "url_example": "https://...",
+                    "owner_placeholder": "Team or Individual",
+                    "environments_placeholder": "Select environments..."
+                },
+                "owner": "Owner",
+                "associated_services": "Associated Services",
+                "search_services_to_link": "Search services to link...",
+                "no_services_found": "No services found matching"
             },
             "shortcuts": {
                 "title": "Keyboard Shortcuts",
@@ -199,6 +237,7 @@ const resources = {
                 "groups": "群組分類",
                 "columns": "欄位設定",
                 "services": "服務清單",
+                "applications": "應用程式",
                 "sync_backup": "同步與備份",
                 "documentation": "技術文件",
                 "search_placeholder": "搜尋服務...",
@@ -231,6 +270,7 @@ const resources = {
             "actions": {
                 "all": "全部",
                 "services": "服務列表",
+                "all_groups": "所有群組",
                 "navigation": "導航檢視",
                 "copy_url": "複製連結",
                 "view_topology": "檢視拓撲",
@@ -245,6 +285,8 @@ const resources = {
                 "load_current": "載入目前配置",
                 "edit": "編輯",
                 "create": "建立",
+                "create_application": "建立應用程式",
+                "edit_application": "編輯應用程式",
                 "add_resource_link": "新增資源連結",
                 "commit": "確認提交",
                 "update": "更新設定",
@@ -255,6 +297,31 @@ const resources = {
                 "move_down": "下移",
                 "view_card": "卡片視圖",
                 "view_list": "列表視圖"
+            },
+            "service_page": {
+                "subtitle": "管理並檢視所有服務定義及其詳細依賴關係",
+                "count_badge": "服務數量",
+                "maintenance": "維護中",
+                "maintenance_mode": "維護模式",
+                "detail_view": "服務詳情",
+                "common_resources": "共用資源",
+                "environment": "環境",
+                "resource_fallback": "資源",
+                "no_resources": "此服務未定義任何基礎設施資源。",
+                "no_results": "找不到符合條件的服務。"
+            },
+            "applications": {
+                "subtitle": "管理您的業務應用程式及其基礎設施依賴",
+                "search_placeholder": "搜尋應用程式...",
+                "no_results": "找不到應用程式。請建立一個新的應用程式。"
+            },
+            "app_detail": {
+                "owned_by": "負責人",
+                "services": "服務數量",
+                "tags": "標籤",
+                "infrastructure_dependencies": "基礎設施依賴",
+                "no_links": "未定義連結",
+                "no_services": "此應用程式未關聯任何服務。"
             },
             "settings": {
                 "env_groups": {
@@ -308,6 +375,7 @@ const resources = {
                     "select_column": "選擇欄位",
                     "links_count": "連結數量"
                 },
+
                 "view_config": {
                     "title": "視圖配置",
                     "subtitle": "自定義顯示內容：",
@@ -318,6 +386,8 @@ const resources = {
             "form": {
                 "id": "識別碼 ID",
                 "label": "顯示名稱",
+                "tags": "標籤",
+                "metadata": "元數據",
                 "group": "命名空間 / 群組",
                 "description": "描述說明",
                 "url": "來源連結 URL",
@@ -328,8 +398,14 @@ const resources = {
                     "group_example": "例如: Core, Payment",
                     "description_optional": "選填: 簡短說明",
                     "link_name_example": "例如: 主儀表板",
-                    "url_example": "https://..."
-                }
+                    "url_example": "https://...",
+                    "owner_placeholder": "團隊或個人名稱",
+                    "environments_placeholder": "選擇環境..."
+                },
+                "owner": "負責人 (Owner)",
+                "associated_services": "關聯服務",
+                "search_services_to_link": "搜尋欲關聯的服務...",
+                "no_services_found": "找不到符合的服務:"
             },
             "shortcuts": {
                 "title": "鍵盤快速鍵",

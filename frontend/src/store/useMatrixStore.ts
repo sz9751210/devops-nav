@@ -55,7 +55,7 @@ interface NavigationState {
     removeService: (id: string) => void;
 
     // Service Link CRUD
-    addServiceLink: (serviceId: string, link: ServiceLink) => void;
+    addServiceLink: (serviceId: string, link: ServiceLink, parentLinkId?: string) => void;
     updateServiceLink: (serviceId: string, linkId: string, updates: Partial<ServiceLink>) => void;
     removeServiceLink: (serviceId: string, linkId: string) => void;
 
@@ -333,14 +333,30 @@ export const useNavigationStore = create<NavigationState>()(
         },
 
         // Service Link CRUD
-        addServiceLink: (serviceId, link) => {
+        addServiceLink: (serviceId, link, parentLinkId) => {
             const { config } = get();
+
+            // Helper to recursively add link
+            const addLinkRecursive = (links: ServiceLink[]): ServiceLink[] => {
+                if (!parentLinkId) return [...links, link];
+
+                return links.map(l => {
+                    if (l.id === parentLinkId) {
+                        return { ...l, children: [...(l.children || []), link] };
+                    }
+                    if (l.children) {
+                        return { ...l, children: addLinkRecursive(l.children) };
+                    }
+                    return l;
+                });
+            };
+
             set({
                 config: {
                     ...config,
                     services: config.services.map(s =>
                         s.id === serviceId
-                            ? { ...s, links: [...(s.links || []), link] }
+                            ? { ...s, links: addLinkRecursive(s.links || []) }
                             : s
                     ),
                 },
@@ -349,6 +365,20 @@ export const useNavigationStore = create<NavigationState>()(
         },
         updateServiceLink: (serviceId, linkId, updates) => {
             const { config } = get();
+
+            // Helper to recursively update link
+            const updateLinkRecursive = (links: ServiceLink[]): ServiceLink[] => {
+                return links.map(l => {
+                    if (l.id === linkId) {
+                        return { ...l, ...updates };
+                    }
+                    if (l.children) {
+                        return { ...l, children: updateLinkRecursive(l.children) };
+                    }
+                    return l;
+                });
+            };
+
             set({
                 config: {
                     ...config,
@@ -356,9 +386,7 @@ export const useNavigationStore = create<NavigationState>()(
                         s.id === serviceId
                             ? {
                                 ...s,
-                                links: (s.links || []).map(link =>
-                                    link.id === linkId ? { ...link, ...updates } : link
-                                )
+                                links: updateLinkRecursive(s.links || [])
                             }
                             : s
                     ),
@@ -368,12 +396,23 @@ export const useNavigationStore = create<NavigationState>()(
         },
         removeServiceLink: (serviceId, linkId) => {
             const { config } = get();
+
+            // Helper to recursively remove link
+            const removeLinkRecursive = (links: ServiceLink[]): ServiceLink[] => {
+                return links
+                    .filter(l => l.id !== linkId)
+                    .map(l => ({
+                        ...l,
+                        children: l.children ? removeLinkRecursive(l.children) : undefined
+                    }));
+            };
+
             set({
                 config: {
                     ...config,
                     services: config.services.map(s =>
                         s.id === serviceId
-                            ? { ...s, links: (s.links || []).filter(link => link.id !== linkId) }
+                            ? { ...s, links: removeLinkRecursive(s.links || []) }
                             : s
                     ),
                 },

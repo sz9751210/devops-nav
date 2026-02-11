@@ -20,6 +20,8 @@ const ColumnSettings = lazy(() => import('./components/settings/ColumnSettings')
 const ServiceSettings = lazy(() => import('./components/settings/ServiceSettings').then(m => ({ default: m.ServiceSettings })));
 const ImportExport = lazy(() => import('./components/settings/ImportExport').then(m => ({ default: m.ImportExport })));
 const EnvGroupSettings = lazy(() => import('./components/settings/EnvGroupSettings').then(m => ({ default: m.EnvGroupSettings })));
+const ServicesPage = lazy(() => import('./components/services/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const ApplicationsPage = lazy(() => import('./components/applications/ApplicationsPage').then(m => ({ default: m.ApplicationsPage })));
 
 
 const TopologyModal = lazy(() => import('./components/matrix/TopologyModal').then(m => ({ default: m.TopologyModal })));
@@ -298,6 +300,10 @@ function App() {
         return <Suspense fallback={<LoadingFallback />}><ImportExport /></Suspense>;
       case 'tutorial':
         return <TutorialPage />;
+      case 'services':
+        return <Suspense fallback={<LoadingFallback />}><ServicesPage /></Suspense>;
+      case 'applications':
+        return <Suspense fallback={<LoadingFallback />}><ApplicationsPage /></Suspense>;
       default:
         return null;
     }

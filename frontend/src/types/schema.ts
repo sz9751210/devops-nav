@@ -11,6 +11,7 @@ export interface ServiceLink {
     name: string;            // Display name (e.g., 'Grafana Dashboard')
     url: string;             // Direct URL (no template, user enters full URL)
     environments?: string[]; // Limit to specific envs (empty = all)
+    children?: ServiceLink[]; // Nested links
 }
 
 /**
@@ -39,6 +40,7 @@ export interface ServiceDefinition {
     // Legacy fields (kept for backwards compatibility)
     overrides?: Record<string, string>;
     variables?: Record<string, string>;
+    parentId?: string; // Reference to parent ServiceDefinition.id
 }
 
 export interface EnvGroup {
@@ -56,11 +58,22 @@ export interface EnvSpecificConfig {
     viewMode?: 'list' | 'card';
 }
 
+export interface Application {
+    id: string;
+    name: string;
+    description?: string;
+    owner?: string;
+    tags?: string[];
+    serviceIds: string[]; // References ServiceDefinition.id
+    environments?: Environment[];
+}
+
 export interface OpsNavigationConfig {
     title: string;
     environments: Environment[];
     columns: ColumnDefinition[];
     services: ServiceDefinition[];
+    applications?: Application[];
     envGroups?: EnvGroup[];
     favoriteEnvs?: Environment[];
     favoriteServices?: string[];

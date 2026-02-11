@@ -10,6 +10,15 @@ export interface ColumnDefinition {
     icon?: string;
 }
 
+export interface Application {
+    id: string;
+    name: string;
+    description?: string;
+    owner?: string;
+    tags?: string[];
+    serviceIds: string[]; // References ServiceDefinition.id
+}
+
 export interface ServiceDefinition {
     id: string;
     name: string;
@@ -20,6 +29,7 @@ export interface ServiceDefinition {
     metadata?: Record<string, string>;
     overrides?: Record<string, string>;
     variables?: Record<string, string>;
+    parentId?: string; // Reference to parent ServiceDefinition.id
 }
 
 export interface EnvGroup {
@@ -37,6 +47,7 @@ export interface IConfig {
     environments: string[];
     columns: ColumnDefinition[];
     services: ServiceDefinition[];
+    applications?: Application[];
     envGroups?: EnvGroup[];
     favoriteEnvs?: string[];
     favoriteServices?: string[];
@@ -64,8 +75,19 @@ const ConfigSchema = new Schema<IConfig>({
         name: String,
         group: String,
         description: String,
+        tags: [String],
+        links: [Schema.Types.Mixed],
+        metadata: { type: Map, of: String },
         overrides: { type: Map, of: String },
         variables: { type: Map, of: String },
+    }],
+    applications: [{
+        id: String,
+        name: String,
+        description: String,
+        owner: String,
+        tags: [String],
+        serviceIds: [String],
     }],
     envGroups: [{
         id: String,

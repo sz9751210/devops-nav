@@ -5,14 +5,15 @@ import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../typ
 import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check, Hammer, Hash, User, MessageCircle, MoreVertical, CopyCheck, TerminalSquare } from 'lucide-react';
 import { clsx } from 'clsx';
 
-interface ServiceCardProps {
+export interface ServiceCardProps {
     service: ServiceDefinition;
     columns: ColumnDefinition[];
     currentEnv: string;
     viewMode: 'card' | 'table';
+    overrideLinks?: ServiceLink[];
 }
 
-export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, currentEnv, viewMode }) => {
+export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, currentEnv, viewMode, overrideLinks }) => {
     const { t } = useTranslation();
     const { toggleFavoriteService, isFavoriteService, addRecentService, trackLinkUsage } = useNavigationStore();
     const [isHovered, setIsHovered] = useState(false);
@@ -32,7 +33,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
     const version = service.versions?.[currentEnv];
 
     // Helper to get links visible in current env
-    const visibleLinks = (service.links || []).filter(link => {
+    // Use overrideLinks if provided, otherwise default to service.links
+    const visibleLinks = (overrideLinks || service.links || []).filter(link => {
         return !link.environments || link.environments.length === 0 || link.environments.includes(currentEnv);
     });
 

@@ -22,7 +22,7 @@ import { clsx } from 'clsx';
 
 import { useNavigationStore } from '../../store/useMatrixStore';
 
-export type PageId = 'navigation' | 'tutorial' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
+export type PageId = 'navigation' | 'tutorial' | 'services' | 'applications' | 'env-settings' | 'env-group-settings' | 'column-settings' | 'service-settings' | 'import-export';
 
 interface SidebarProps {
     currentPage: PageId;
@@ -40,6 +40,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { id: 'navigation', labelKey: 'app.dashboard', icon: LayoutGrid },
+    { id: 'services', labelKey: 'app.services', icon: Server },
+    { id: 'applications', labelKey: 'app.applications', icon: Layers },
     { id: 'tutorial', labelKey: 'app.tutorial', icon: BookOpen },
     { id: 'env-settings', labelKey: 'app.environments', icon: Globe, groupKey: 'app.configuration' },
     { id: 'env-group-settings', labelKey: 'app.groups', icon: FolderTree, groupKey: 'app.configuration' },
