@@ -1,11 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-// Match the frontend schema types
-export interface EnvSpecificConfig {
-    visibleServices?: string[];
-    visibleColumns?: string[];
-    viewMode?: 'list' | 'card';
-}
+
 
 export interface ColumnDefinition {
     id: string;
@@ -46,7 +41,7 @@ export interface IConfig {
     favoriteEnvs?: string[];
     favoriteServices?: string[];
     recentServices?: string[];
-    envConfigs?: Record<string, EnvSpecificConfig>;
+
     recentLinks?: any[];
     announcement?: any;
     theme?: any;
@@ -81,7 +76,7 @@ const ConfigSchema = new Schema<IConfig>({
         environments: [String],
     }],
     favoriteEnvs: [String],
-    envConfigs: { type: Map, of: Object },
+
     updatedAt: { type: Date, default: Date.now },
 }, {
     timestamps: { updatedAt: true, createdAt: false },

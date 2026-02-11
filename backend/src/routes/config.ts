@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = {
     services: [],
     envGroups: [],
     favoriteEnvs: [],
-    envConfigs: {},
+
 };
 
 // GET /api/config - Get current config
@@ -54,28 +54,6 @@ router.put('/', async (req: Request, res: Response) => {
     }
 });
 
-// PATCH /api/config/env/:env - Update env-specific config
-router.patch('/env/:env', async (req: Request, res: Response) => {
-    try {
-        const { env } = req.params;
-        const envConfig = req.body;
 
-        const config = await Config.findById('default');
-        if (!config) {
-            return res.status(404).json({ error: 'Configuration not found' });
-        }
-
-        // Update the specific environment config
-        const envConfigs = config.envConfigs || {};
-        envConfigs[env] = envConfig;
-        config.envConfigs = envConfigs;
-        await config.save();
-
-        res.json(config);
-    } catch (error) {
-        console.error('Error updating env config:', error);
-        res.status(500).json({ error: 'Failed to update environment configuration' });
-    }
-});
 
 export default router;

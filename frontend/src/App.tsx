@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from './store/useMatrixStore';
 import { Sidebar, type PageId } from './components/layout/Sidebar';
 import { QuickSearch } from './components/matrix/QuickSearch';
-import { ServiceCard } from './components/matrix/ServiceCard';
+
 import { EnvSelector } from './components/matrix/EnvSelector';
 import { LinkCard } from './components/matrix/LinkCard';
-import { Search, SlidersHorizontal, LayoutGrid, List, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, StickyNote, Filter } from 'lucide-react';
+import { LinkListItem } from './components/matrix/LinkListItem';
+import { Search, ExternalLink, Activity, FileText, Settings, Terminal, Eye, Database, Link2, Globe, Network, Filter, LayoutGrid, List } from 'lucide-react';
 import { clsx } from 'clsx';
-import { QuickNotes } from './components/matrix/QuickNotes';
+
 import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
 import { TagFilter } from './components/matrix/TagFilter';
 import { TutorialPage } from './components/tutorial/TutorialPage';
@@ -19,7 +20,7 @@ const ColumnSettings = lazy(() => import('./components/settings/ColumnSettings')
 const ServiceSettings = lazy(() => import('./components/settings/ServiceSettings').then(m => ({ default: m.ServiceSettings })));
 const ImportExport = lazy(() => import('./components/settings/ImportExport').then(m => ({ default: m.ImportExport })));
 const EnvGroupSettings = lazy(() => import('./components/settings/EnvGroupSettings').then(m => ({ default: m.EnvGroupSettings })));
-const ViewConfigModal = lazy(() => import('./components/matrix/ViewConfigModal').then(m => ({ default: m.ViewConfigModal })));
+
 
 const TopologyModal = lazy(() => import('./components/matrix/TopologyModal').then(m => ({ default: m.TopologyModal })));
 
@@ -36,12 +37,12 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
-  const [showServices, setShowServices] = useState(false); // Default to CLOSED
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
 
 
-  const [isNotesOpen, setIsNotesOpen] = useState(false);
+
+
+
   const [isTopologyOpen, setIsTopologyOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
@@ -68,19 +69,10 @@ function App() {
     return Array.from(groups);
   }, [config.services]);
 
-  const envVisibleServices = useMemo(() => {
-    const envConfig = config.envConfigs?.[currentEnv];
-    if (envConfig?.visibleServices && envConfig.visibleServices.length > 0) {
-      return envConfig.visibleServices;
-    }
-    return null;
-  }, [config.envConfigs, currentEnv]);
+
 
   const filteredServices = useMemo(() => {
     let services = config.services;
-    if (envVisibleServices) {
-      services = services.filter(s => envVisibleServices.includes(s.id));
-    }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       services = services.filter(s =>
@@ -100,7 +92,8 @@ function App() {
       );
     }
     return services;
-  }, [config.services, envVisibleServices, searchQuery, activeGroup, selectedTags]);
+    return services;
+  }, [config.services, searchQuery, activeGroup, selectedTags]);
 
   const getLinksForCategory = useCallback((columnId: string) => {
     const links: Array<{ service: import('./types/schema').ServiceDefinition, link: import('./types/schema').ServiceLink }> = [];
@@ -168,13 +161,7 @@ function App() {
                 >
                   <Network className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={() => setIsNotesOpen(!isNotesOpen)}
-                  className={clsx("p-1.5 rounded-md transition-all", isNotesOpen ? "text-amber-500 bg-amber-500/10" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]")}
-                  title={t('actions.quick_notes')}
-                >
-                  <StickyNote className="w-4 h-4" />
-                </button>
+
               </div>
 
               <div className="h-6 w-px bg-[var(--border)] mx-1" />
@@ -209,17 +196,9 @@ function App() {
               <div className="ml-auto flex items-center gap-3">
                 <div className="h-6 w-px bg-[var(--border)] mx-1" />
 
+
+
                 <div className="flex items-center bg-[var(--surface)] rounded-md border border-[var(--border)] p-0.5">
-                  <button
-                    onClick={() => setShowServices(!showServices)}
-                    className={clsx(
-                      "px-3 py-1.5 rounded-[3px] text-xs font-bold uppercase transition-colors mr-1",
-                      showServices ? "bg-[var(--surface-hover)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100"
-                    )}
-                  >
-                    {t('app.services')}
-                  </button>
-                  <div className="w-px h-3 bg-[var(--border)] mx-1" />
                   <button
                     onClick={() => setViewMode('card')}
                     className={clsx("p-1.5 rounded-md transition-all", viewMode === 'card' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]")}
@@ -228,20 +207,15 @@ function App() {
                     <LayoutGrid className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => setViewMode('table')}
-                    className={clsx("p-1.5 rounded-md transition-all", viewMode === 'table' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]")}
+                    onClick={() => setViewMode('list')}
+                    className={clsx("p-1.5 rounded-md transition-all", viewMode === 'list' ? "bg-amber-500 text-black shadow-sm" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]")}
                     title={t('actions.view_list')}
                   >
                     <List className="w-4 h-4" />
                   </button>
                 </div>
 
-                <button
-                  onClick={() => setIsConfigOpen(true)}
-                  className="p-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                </button>
+
               </div>
             </div>
 
@@ -268,36 +242,6 @@ function App() {
               </div>
             ) : (
               <div className="space-y-8 pb-16">
-                {showServices && (
-                  <section>
-                    <h2 className="text-xs font-bold text-[var(--foreground-muted)] opacity-70 uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <LayoutGrid className="w-3.5 h-3.5" />
-                      {t('app.services_directory')}
-                    </h2>
-                    {filteredServices.length === 0 ? (
-                      <div className="text-center py-12 border border-dashed border-[var(--border)] rounded-lg">
-                        <p className="text-slate-500 text-sm">{t('app.no_services')} "{searchQuery}"</p>
-                      </div>
-                    ) : (
-                      <div className={clsx(
-                        viewMode === 'card'
-                          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4"
-                          : "space-y-px"
-                      )}>
-                        {filteredServices.map(service => (
-                          <ServiceCard
-                            key={service.id}
-                            service={service}
-                            columns={config.columns}
-                            currentEnv={currentEnv}
-                            viewMode={viewMode}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </section>
-                )}
-
                 {config.columns.map(col => {
                   const links = getLinksForCategory(col.id);
                   if (links.length === 0) return null;
@@ -310,14 +254,27 @@ function App() {
                         <span className="text-[var(--border)]">/</span>
                         <span className="text-[var(--foreground-muted)] opacity-50">{links.length}</span>
                       </h2>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
+                      <div className={clsx(
+                        viewMode === 'card'
+                          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3"
+                          : "grid grid-cols-1 lg:grid-cols-2 gap-3"
+                      )}>
                         {links.map(item => (
-                          <LinkCard
-                            key={`${item.service.id}-${item.link.id}`}
-                            service={item.service}
-                            link={item.link}
-                            column={col}
-                          />
+                          viewMode === 'card' ? (
+                            <LinkCard
+                              key={`${item.service.id}-${item.link.id}`}
+                              service={item.service}
+                              link={item.link}
+                              column={col}
+                            />
+                          ) : (
+                            <LinkListItem
+                              key={`${item.service.id}-${item.link.id}`}
+                              service={item.service}
+                              link={item.link}
+                              column={col}
+                            />
+                          )
                         ))}
                       </div>
                     </section>
@@ -326,7 +283,7 @@ function App() {
               </div>
             )}
 
-            {isConfigOpen && <Suspense fallback={<LoadingFallback />}><ViewConfigModal onClose={() => setIsConfigOpen(false)} /></Suspense>}
+
           </div>
         );
       case 'env-settings':
@@ -362,7 +319,7 @@ function App() {
       </main>
       <QuickSearch />
 
-      <QuickNotes isOpen={isNotesOpen} onClose={() => setIsNotesOpen(false)} />
+
       {isTopologyOpen && <Suspense fallback={null}><TopologyModal onClose={() => setIsTopologyOpen(false)} /></Suspense>}
 
 
