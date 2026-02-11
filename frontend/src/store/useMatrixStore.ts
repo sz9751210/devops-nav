@@ -65,7 +65,7 @@ interface NavigationState {
 
     // Environment Groups
     addEnvGroup: (group: Omit<EnvGroup, 'environments'> & { environments?: Environment[] }) => void;
-    updateEnvGroup: (id: string, updates: Partial<Omit<EnvGroup, 'environments'>>) => void;
+    updateEnvGroup: (id: string, updates: Partial<EnvGroup>) => void;
     reorderEnvGroups: (newOrder: EnvGroup[]) => void;
     removeEnvGroup: (id: string) => void;
 

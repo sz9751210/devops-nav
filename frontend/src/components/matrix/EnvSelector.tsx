@@ -34,6 +34,7 @@ export const EnvSelector: React.FC = () => {
             manualGroups.forEach(group => {
                 const groupEnvs: Environment[] = [];
 
+                // 1. Match by Pattern
                 if (group.pattern) {
                     // Convert glob pattern to regex (e.g., "brpp-*" -> /^brpp-.*$/)
                     const regexPattern = group.pattern
@@ -47,8 +48,10 @@ export const EnvSelector: React.FC = () => {
                             matchedEnvs.add(env);
                         }
                     });
-                } else {
-                    // Use manually assigned environments
+                }
+
+                // 2. Add Manual Assignments
+                if (group.environments) {
                     group.environments.forEach(env => {
                         if (envs.includes(env) && !matchedEnvs.has(env)) {
                             groupEnvs.push(env);

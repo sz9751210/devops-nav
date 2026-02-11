@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { Plus, Trash2, FolderTree, Pencil, X, Check } from 'lucide-react';
@@ -14,10 +14,11 @@ export const EnvGroupSettings: React.FC = () => {
         name: '',
         icon: '📦',
         pattern: '',
+        environments: [] as string[],
     });
 
     const resetForm = () => {
-        setNewGroup({ id: '', name: '', icon: '📦', pattern: '' });
+        setNewGroup({ id: '', name: '', icon: '📦', pattern: '', environments: [] });
         setEditingGroupId(null);
     };
 
@@ -28,6 +29,7 @@ export const EnvGroupSettings: React.FC = () => {
                     name: newGroup.name.trim(),
                     icon: newGroup.icon || '📦',
                     pattern: newGroup.pattern.trim() || undefined,
+                    environments: newGroup.environments,
                 });
             } else {
                 // Auto-generate ID from name
@@ -41,6 +43,7 @@ export const EnvGroupSettings: React.FC = () => {
                         name: newGroup.name.trim(),
                         icon: newGroup.icon || '📦',
                         pattern: newGroup.pattern.trim() || undefined,
+                        environments: newGroup.environments,
                     });
                 }
             }
@@ -55,10 +58,27 @@ export const EnvGroupSettings: React.FC = () => {
             name: group.name,
             icon: group.icon || '📦',
             pattern: group.pattern || '',
+            environments: group.environments || [],
         });
     };
 
     const envGroups = config.envGroups || [];
+
+    // Calculate pattern matches for the current form
+    const patternMatchedEnvs = useMemo(() => {
+        if (!newGroup.pattern) return new Set<string>();
+
+        try {
+            const regexPattern = newGroup.pattern
+                .replace(/\*/g, '.*')
+                .replace(/\?/g, '.');
+            const regex = new RegExp(`^${regexPattern}$`);
+
+            return new Set(config.environments.filter(env => regex.test(env)));
+        } catch (e) {
+            return new Set<string>();
+        }
+    }, [newGroup.pattern, config.environments]);
 
     return (
         <div className="space-y-6">
@@ -103,6 +123,65 @@ export const EnvGroupSettings: React.FC = () => {
                         className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
                 </div>
+
+                {/* Manual Environment Selection */}
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-widest font-mono">
+                        {t('settings.env_groups.assigned_envs')}
+                    </label>
+                    <div className="bg-[var(--background)] border border-[var(--border)] rounded p-2 max-h-[150px] overflow-y-auto grid grid-cols-2 gap-2">
+                        {config.environments.map(env => {
+                            const isPatternMatched = patternMatchedEnvs.has(env);
+                            const isChecked = isPatternMatched || newGroup.environments.includes(env);
+
+                            return (
+                                <label
+                                    key={env}
+                                    className={clsx(
+                                        "flex items-center gap-2 p-1.5 rounded transition-colors",
+                                        isPatternMatched ? "opacity-70 cursor-not-allowed bg-[var(--surface-hover)]" : "hover:bg-[var(--surface-hover)] cursor-pointer"
+                                    )}
+                                    title={isPatternMatched ? t('settings.env_groups.auto_matched') : ''}
+                                >
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            disabled={isPatternMatched}
+                                            onChange={(e) => {
+                                                if (isPatternMatched) return;
+
+                                                if (e.target.checked) {
+                                                    setNewGroup({ ...newGroup, environments: [...newGroup.environments, env] });
+                                                } else {
+                                                    setNewGroup({ ...newGroup, environments: newGroup.environments.filter(e => e !== env) });
+                                                }
+                                            }}
+                                            className={clsx(
+                                                "rounded border-[var(--border)] bg-[var(--surface)] text-amber-500 focus:ring-amber-500/20",
+                                                isPatternMatched && "cursor-not-allowed"
+                                            )}
+                                        />
+                                    </div>
+                                    <span className="text-sm text-[var(--foreground)] font-mono flex items-center gap-2">
+                                        {env}
+                                        {isPatternMatched && (
+                                            <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-1 rounded border border-emerald-500/20">
+                                                AUTO
+                                            </span>
+                                        )}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                        {config.environments.length === 0 && (
+                            <div className="text-xs text-[var(--foreground-muted)] col-span-2 text-center py-2 italic">
+                                {t('settings.env_groups.no_envs_available')}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="flex gap-2">
                     {editingGroupId && (
                         <button
@@ -174,6 +253,11 @@ export const EnvGroupSettings: React.FC = () => {
                                         {group.pattern && (
                                             <span className="ml-3">
                                                 PTRN: <span className="text-emerald-500/70">{group.pattern}</span>
+                                            </span>
+                                        )}
+                                        {group.environments && group.environments.length > 0 && (
+                                            <span className="ml-3">
+                                                MANUAL: <span className="text-blue-500/70">{group.environments.length}</span>
                                             </span>
                                         )}
                                     </div>

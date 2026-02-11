@@ -81,7 +81,9 @@ const resources = {
                     "name_placeholder": "Display Name (e.g., Lab Environments)",
                     "pattern_placeholder": "Pattern (e.g., lab-*) - optional",
                     "no_groups": "No environment groups defined. Environments will be auto-grouped by prefix.",
-                    "tips": "Use patterns like 'lab-*' to automatically group environments. Groups appear in the dropdown."
+                    "tips": "Use patterns like 'lab-*' to automatically group environments. Groups appear in the dropdown.",
+                    "assigned_envs": "Assigned Environments",
+                    "auto_matched": "Matched by Pattern"
                 },
                 "import_export": {
                     "title": "Import / Export Configuration",
@@ -262,7 +264,9 @@ const resources = {
                     "name_placeholder": "顯示名稱 (例如: 實驗室環境)",
                     "pattern_placeholder": "識別規則 (例如: lab-*) - 選填",
                     "no_groups": "目前無手動定義的群組。系統將依據字首自動分組。",
-                    "tips": "使用 'lab-*' 等規則可自動將符合的環境歸類。群組會顯示在環境切換下拉選單中。"
+                    "tips": "使用 'lab-*' 等規則可自動將符合的環境歸類。群組會顯示在環境切換下拉選單中。",
+                    "assigned_envs": "指定環境",
+                    "auto_matched": "自動匹配"
                 },
                 "import_export": {
                     "title": "同步與備份設定",
