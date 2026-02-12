@@ -13,6 +13,7 @@ import { clsx } from 'clsx';
 import { AnnouncementBanner } from './components/ui/AnnouncementBanner';
 import { TagFilter } from './components/matrix/TagFilter';
 import { TutorialPage } from './components/tutorial/TutorialPage';
+import { ToastContainer } from './components/ui/ToastContainer';
 
 // Lazy load heavy components
 const EnvironmentSettings = lazy(() => import('./components/settings/EnvironmentSettings').then(m => ({ default: m.EnvironmentSettings })));
@@ -324,6 +325,7 @@ function App() {
         </div>
       </main>
       <QuickSearch />
+      <ToastContainer />
 
 
       {isTopologyOpen && <Suspense fallback={null}><TopologyModal onClose={() => setIsTopologyOpen(false)} /></Suspense>}

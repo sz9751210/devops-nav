@@ -14,7 +14,7 @@ export interface ServiceCardProps {
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, currentEnv, viewMode, overrideLinks }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { toggleFavoriteService, isFavoriteService, addRecentService, trackLinkUsage } = useNavigationStore();
     const [isHovered, setIsHovered] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
@@ -63,7 +63,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
     };
 
     const handleCopyAll = () => {
-        const text = visibleLinks.map(l => `${l.name}: ${l.url}`).join('\n');
+        const text = visibleLinks.map(l => {
+            const isZh = i18n.language.startsWith('zh');
+            const name = (isZh && l.nameZh) ? l.nameZh : l.name;
+            return `${name}: ${l.url}`;
+        }).join('\n');
         navigator.clipboard.writeText(text);
         setCopiedAll(true);
         setTimeout(() => setCopiedAll(false), 2000);
@@ -105,6 +109,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                     {visibleLinks.slice(0, 4).map(link => {
                         const col = columns.find(c => c.id === link.columnId);
                         const Icon = getIconComponent(col?.icon);
+                        const isZh = i18n.language.startsWith('zh');
+                        const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
                         return (
                             <a
                                 key={link.id}
@@ -112,7 +118,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-1.5 text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] rounded"
-                                title={link.name}
+                                title={displayName}
                             >
                                 <Icon className="w-3.5 h-3.5" />
                             </a>
@@ -278,6 +284,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                 {visibleLinks.slice(0, 5).map(link => {
                     const col = columns.find(c => c.id === link.columnId);
                     const Icon = getIconComponent(col?.icon);
+                    const isZh = i18n.language.startsWith('zh');
+                    const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
                     return (
                         <div key={link.id} className="flex items-center justify-between p-2 bg-[var(--surface)] hover:bg-[var(--surface-hover)] transition-colors group/link">
                             <a
@@ -288,7 +296,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                                 className="flex items-center gap-2 min-w-0"
                             >
                                 <Icon className="w-3.5 h-3.5 text-[var(--foreground-muted)] group-hover/link:text-amber-500 transition-colors" />
-                                <span className="text-sm text-[var(--foreground-muted)] group-hover/link:text-[var(--foreground)] truncate font-medium">{link.name}</span>
+                                <span className="text-sm text-[var(--foreground-muted)] group-hover/link:text-[var(--foreground)] truncate font-medium">{displayName}</span>
                             </a>
                             <button onClick={(e) => handleCopyLink(e, link)} className="text-[var(--foreground-muted)] opacity-0 group-hover/link:opacity-50 hover:opacity-100 transition-all">
                                 {copiedId === link.id ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}

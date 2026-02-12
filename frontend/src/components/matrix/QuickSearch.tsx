@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -36,7 +37,7 @@ const filterItems = (
         // Search through links
         visibleLinks.forEach(link => {
             const column = columns.find(c => c.id === link.columnId);
-            const combined = `${svc.name} ${link.name} ${column?.title || ''}`.toLowerCase();
+            const combined = `${svc.name} ${link.name} ${link.nameZh || ''} ${column?.title || ''}`.toLowerCase();
             if (combined.includes(lowerQuery)) {
                 results.push({ service: svc, link, column });
             }
@@ -54,6 +55,7 @@ const filterItems = (
 };
 
 export const QuickSearch: React.FC = () => {
+    const { i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -162,7 +164,7 @@ export const QuickSearch: React.FC = () => {
                                         <>
                                             <ArrowRight className="w-3 h-3 text-[var(--foreground-muted)] opacity-30" />
                                             <div className="text-[var(--foreground-muted)] text-sm">
-                                                {item.link.name}
+                                                {(i18n.language.startsWith('zh') && item.link.nameZh) ? item.link.nameZh : item.link.name}
                                             </div>
                                             {item.column && (
                                                 <span className="text-xs text-[var(--foreground-muted)] bg-[var(--surface-hover)] px-1.5 py-0.5 rounded">

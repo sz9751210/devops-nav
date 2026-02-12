@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
+import { useToastStore } from '../../store/useToastStore';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -169,6 +170,7 @@ const SortableEnvironmentItem = ({
 export const EnvironmentSettings: React.FC = () => {
     const { t } = useTranslation();
     const { config, addEnvironment, updateEnvironment, removeEnvironment, setEnvConfig } = useNavigationStore();
+    const { addToast } = useToastStore();
     const [newEnv, setNewEnv] = useState('');
     const [editingEnv, setEditingEnv] = useState<string | null>(null);
     const [expandedEnv, setExpandedEnv] = useState<string | null>(null);
@@ -183,8 +185,25 @@ export const EnvironmentSettings: React.FC = () => {
             const trimmedEnv = newEnv.trim().toLowerCase();
             if (editingEnv) {
                 updateEnvironment(editingEnv, trimmedEnv);
+                addToast({
+                    type: 'success',
+                    title: t('actions.success'),
+                    message: t('settings.environments.updated', 'Environment updated successfully'),
+                });
             } else if (!config.environments.includes(trimmedEnv)) {
                 addEnvironment(trimmedEnv);
+                addToast({
+                    type: 'success',
+                    title: t('actions.success'),
+                    message: t('settings.environments.created', 'Environment created successfully'),
+                });
+            } else {
+                addToast({
+                    type: 'error',
+                    title: t('actions.error'),
+                    message: t('settings.environments.exists', 'Environment already exists'),
+                });
+                return;
             }
             resetForm();
         }
@@ -329,7 +348,16 @@ export const EnvironmentSettings: React.FC = () => {
                                         allServices={allServices}
                                         onExpand={() => setExpandedEnv(isExpanded ? null : env)}
                                         onEdit={() => handleEdit(env)}
-                                        onRemove={() => removeEnvironment(env)}
+                                        onRemove={() => {
+                                            if (window.confirm(t('confirm.delete_environment', { name: env }))) {
+                                                removeEnvironment(env);
+                                                addToast({
+                                                    type: 'success',
+                                                    title: t('actions.success'),
+                                                    message: t('settings.environments.deleted', 'Environment deleted successfully'),
+                                                });
+                                            }
+                                        }}
                                         onSelectAll={() => selectAll(env)}
                                         onDeselectAll={() => deselectAll(env)}
                                         onToggleService={(serviceId) => toggleService(env, serviceId)}

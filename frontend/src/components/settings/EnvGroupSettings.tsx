@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
+import { useToastStore } from '../../store/useToastStore';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -90,6 +91,7 @@ const SortableEnvGroupItem = ({ group, onEdit, onRemove }: Omit<SortableEnvGroup
 export const EnvGroupSettings: React.FC = () => {
     const { t } = useTranslation();
     const { config, addEnvGroup, updateEnvGroup, removeEnvGroup } = useNavigationStore();
+    const { addToast } = useToastStore();
     const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
     const [newGroup, setNewGroup] = useState({
         id: '',
@@ -113,6 +115,11 @@ export const EnvGroupSettings: React.FC = () => {
                     pattern: newGroup.pattern.trim() || undefined,
                     environments: newGroup.environments,
                 });
+                addToast({
+                    type: 'success',
+                    title: t('actions.success'),
+                    message: t('settings.env_groups.updated', 'Environment Group updated successfully'),
+                });
             } else {
                 // Auto-generate ID from name
                 const generatedId = newGroup.name.trim().toLowerCase()
@@ -126,6 +133,11 @@ export const EnvGroupSettings: React.FC = () => {
                         icon: newGroup.icon || '📦',
                         pattern: newGroup.pattern.trim() || undefined,
                         environments: newGroup.environments,
+                    });
+                    addToast({
+                        type: 'success',
+                        title: t('actions.success'),
+                        message: t('settings.env_groups.created', 'Environment Group created successfully'),
                     });
                 }
             }
@@ -332,7 +344,16 @@ export const EnvGroupSettings: React.FC = () => {
                                     key={group.id}
                                     group={group}
                                     onEdit={() => handleEdit(group)}
-                                    onRemove={() => removeEnvGroup(group.id)}
+                                    onRemove={() => {
+                                        if (window.confirm(t('confirm.delete_env_group', { name: group.name }))) {
+                                            removeEnvGroup(group.id);
+                                            addToast({
+                                                type: 'success',
+                                                title: t('actions.success'),
+                                                message: t('settings.env_groups.deleted', 'Environment Group deleted successfully'),
+                                            });
+                                        }
+                                    }}
                                 />
                             ))
                         )}

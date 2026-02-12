@@ -9,6 +9,7 @@ export interface ServiceLink {
     id: string;              // Unique link ID
     columnId: string;        // Which column category this belongs to (e.g., 'monitoring')
     name: string;            // Display name (e.g., 'Grafana Dashboard')
+    nameZh?: string;         // Display name in Traditional Chinese (optional)
     url: string;             // Direct URL (no template, user enters full URL)
     environments?: string[]; // Limit to specific envs (empty = all)
     children?: ServiceLink[]; // Nested links

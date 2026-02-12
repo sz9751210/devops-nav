@@ -67,8 +67,8 @@ export const ApplicationDetail: React.FC<ApplicationDetailProps> = ({ app, onClo
     }, [config.services, app.serviceIds]);
 
     return (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/20 backdrop-blur-[1px] animate-in fade-in duration-200">
-            <div className="w-full max-w-4xl bg-[var(--surface)] border-l border-[var(--border)] h-full shadow-2xl flex flex-col slide-in-from-right duration-300">
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="w-full max-w-4xl bg-[var(--surface)]/95 backdrop-blur-md border-l border-[var(--border)] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 sm:duration-300">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-[var(--border)] shrink-0">
                     <div className="flex items-center gap-4">

@@ -108,3 +108,21 @@ h6 {
     linear-gradient(to right, var(--border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
 }
+
+@layer utilities {
+  .glass {
+    @apply bg-[var(--surface)]/60 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-panel {
+    @apply bg-[var(--surface)]/40 backdrop-blur-md border border-[var(--border)] shadow-xl;
+  }
+  
+  .glass-hover {
+    @apply transition-all duration-300 hover:bg-[var(--surface-hover)]/80 hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+}

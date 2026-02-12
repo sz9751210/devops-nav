@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
+import { useToastStore } from '../../store/useToastStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
 import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -12,6 +13,7 @@ import { CSS } from '@dnd-kit/utilities';
 export const ServiceSettings: React.FC = () => {
     const { t } = useTranslation();
     const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink, reorderServices } = useNavigationStore();
+    const { addToast } = useToastStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -155,7 +157,17 @@ export const ServiceSettings: React.FC = () => {
                     <Pencil className="w-3.5 h-3.5" />
                 </button>
                 <button
-                    onClick={(e) => { e.stopPropagation(); removeService(service.id); }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(t('confirm.delete_service', { name: service.name }))) {
+                            removeService(service.id);
+                            addToast({
+                                type: 'success',
+                                title: t('actions.success'),
+                                message: t('settings.services.deleted', 'Service deleted successfully'),
+                            });
+                        }
+                    }}
                     className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                 >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -170,7 +182,7 @@ export const ServiceSettings: React.FC = () => {
                 <div
                     ref={setNodeRef}
                     style={style}
-                    className="group relative bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all flex flex-col h-full"
+                    className="group relative glass-panel glass-hover rounded-lg p-4 flex flex-col h-full"
                 >
                     <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3 min-w-0">
@@ -216,7 +228,16 @@ export const ServiceSettings: React.FC = () => {
                                     <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 <button
-                                    onClick={() => removeService(service.id)}
+                                    onClick={() => {
+                                        if (window.confirm(t('confirm.delete_service', { name: service.name }))) {
+                                            removeService(service.id);
+                                            addToast({
+                                                type: 'success',
+                                                title: t('actions.success'),
+                                                message: t('settings.services.deleted', 'Service deleted successfully'),
+                                            });
+                                        }
+                                    }}
                                     className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -250,9 +271,9 @@ export const ServiceSettings: React.FC = () => {
         }
 
         return (
-            <div ref={setNodeRef} style={style} className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+            <div ref={setNodeRef} style={style} className="glass-panel rounded overflow-hidden">
                 {/* Service Header */}
-                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)] transition-colors">
+                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)]/50 transition-colors">
                     {isDndEnabled && (
                         <div
                             {...attributes}
@@ -336,7 +357,16 @@ export const ServiceSettings: React.FC = () => {
                                                         <Pencil className="w-3.5 h-3.5" />
                                                     </button>
                                                     <button
-                                                        onClick={() => removeService(child.id)}
+                                                        onClick={() => {
+                                                            if (window.confirm(t('confirm.delete_service', { name: child.name }))) {
+                                                                removeService(child.id);
+                                                                addToast({
+                                                                    type: 'success',
+                                                                    title: t('actions.success'),
+                                                                    message: t('settings.services.deleted', 'Service deleted successfully'),
+                                                                });
+                                                            }
+                                                        }}
                                                         className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
                                                         title={t('actions.delete')}
                                                     >
@@ -412,6 +442,17 @@ export const ServiceSettings: React.FC = () => {
                                                 autoFocus
                                             />
                                         </div>
+                                        {/* Chinese Name Input */}
+                                        <div className={addingChildLinkTo ? "md:col-span-3" : ""}>
+                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label_zh')}</label>
+                                            <input
+                                                type="text"
+                                                value={linkForm.nameZh || ''}
+                                                onChange={(e) => setLinkForm({ ...linkForm, nameZh: e.target.value })}
+                                                placeholder={t('form.placeholders.link_name_example')}
+                                                className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
+                                            />
+                                        </div>
                                         {!addingChildLinkTo && (
                                             <div>
                                                 <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
@@ -480,10 +521,15 @@ export const ServiceSettings: React.FC = () => {
                             {/* Link List */}
                             <div className="space-y-1">
                                 {(() => {
+                                    const { i18n } = useTranslation();
                                     const renderLinks = (links: ServiceLink[], depth = 0, parentLink?: ServiceLink): React.ReactNode[] => {
                                         return links.map((link) => {
                                             const column = config.columns.find((c) => c.id === link.columnId);
                                             const hasChildren = link.children && link.children.length > 0;
+
+                                            // Determine display name based on language
+                                            const isZh = i18n.language.startsWith('zh');
+                                            const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
 
                                             return (
                                                 <div key={link.id} className="space-y-1">
@@ -509,7 +555,7 @@ export const ServiceSettings: React.FC = () => {
                                                                 ) : (
                                                                     <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
                                                                 )}
-                                                                <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{link.name}</span>
+                                                                <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{displayName}</span>
                                                                 {column && (
                                                                     <span className="text-xs px-1.5 py-0.5 bg-[var(--surface)] text-[var(--foreground-muted)] rounded font-mono uppercase border border-[var(--border)]">
                                                                         {column.title}
@@ -548,7 +594,16 @@ export const ServiceSettings: React.FC = () => {
                                                                 <Pencil className="w-3 h-3" />
                                                             </button>
                                                             <button
-                                                                onClick={() => removeServiceLink(service.id, link.id)}
+                                                                onClick={() => {
+                                                                    if (window.confirm(t('confirm.delete_link', { name: link.name }))) {
+                                                                        removeServiceLink(service.id, link.id);
+                                                                        addToast({
+                                                                            type: 'success',
+                                                                            title: t('actions.success'),
+                                                                            message: t('settings.services.link_deleted', 'Link deleted successfully'),
+                                                                        });
+                                                                    }
+                                                                }}
                                                                 className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded"
                                                             >
                                                                 <Trash2 className="w-3 h-3" />
@@ -591,7 +646,11 @@ export const ServiceSettings: React.FC = () => {
         if (serviceForm.id && serviceForm.name) {
             // Check if ID already exists
             if (config.services.some(s => s.id === serviceForm.id)) {
-                alert("Service ID already exists!");
+                addToast({
+                    type: 'error',
+                    title: t('actions.error'),
+                    message: t('settings.services.id_exists', 'Service ID already exists'),
+                });
                 return;
             }
 
@@ -602,6 +661,11 @@ export const ServiceSettings: React.FC = () => {
                 description: serviceForm.description,
                 parentId: serviceForm.parentId,
                 links: [],
+            });
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.services.created', 'Service created successfully'),
             });
             resetServiceForm();
             if (serviceForm.parentId) {
@@ -615,6 +679,11 @@ export const ServiceSettings: React.FC = () => {
     const handleUpdateService = () => {
         if (editingServiceId) {
             updateService(editingServiceId, serviceForm);
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.services.updated', 'Service updated successfully'),
+            });
             resetServiceForm();
         }
     };
@@ -636,6 +705,11 @@ export const ServiceSettings: React.FC = () => {
                 url: linkForm.url,
                 environments: linkForm.environments,
             }, addingChildLinkTo || undefined);
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.services.link_added', 'Link added successfully'),
+            });
             resetLinkForm();
         }
     };
@@ -643,6 +717,11 @@ export const ServiceSettings: React.FC = () => {
     const handleUpdateLink = (serviceId: string) => {
         if (editingLinkId) {
             updateServiceLink(serviceId, editingLinkId, linkForm);
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.services.link_updated', 'Link updated successfully'),
+            });
             resetLinkForm();
         }
     };

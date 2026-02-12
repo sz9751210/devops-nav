@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Layers, Box, Edit } from 'lucide-react';
+import { useToastStore } from '../../store/useToastStore';
 import { EnvSelector } from '../matrix/EnvSelector';
 import { ApplicationDetail } from './ApplicationDetail';
 import { ApplicationForm } from './ApplicationForm';
@@ -10,6 +11,7 @@ import type { Application } from '../../types/schema';
 
 export const ApplicationsPage: React.FC = () => {
     const { config, currentEnv, addApplication, updateApplication } = useNavigationStore();
+    const { addToast } = useToastStore();
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -65,11 +67,26 @@ export const ApplicationsPage: React.FC = () => {
             const existingIndex = applications.findIndex(a => a.id === app.id);
             if (existingIndex >= 0) {
                 updateApplication(app.id, app);
+                addToast({
+                    type: 'success',
+                    title: t('actions.success'),
+                    message: t('applications.updated_success', 'Application updated successfully'),
+                });
             } else {
                 addApplication(app);
+                addToast({
+                    type: 'success',
+                    title: t('actions.success'),
+                    message: t('applications.created_success', 'Application created successfully'),
+                });
             }
         } catch (error) {
             console.error("Failed to save application", error);
+            addToast({
+                type: 'error',
+                title: t('actions.error'),
+                message: t('applications.save_error', 'Failed to save application'),
+            });
         }
 
         setIsCreating(false);
@@ -144,7 +161,7 @@ export const ApplicationsPage: React.FC = () => {
                                 <div
                                     key={app.id}
                                     onClick={() => handleCardClick(app)}
-                                    className="group bg-[var(--surface)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all cursor-pointer flex flex-col"
+                                    className="group glass-panel glass-hover rounded-lg p-5 cursor-pointer flex flex-col"
                                 >
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3">

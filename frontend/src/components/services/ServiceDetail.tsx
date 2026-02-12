@@ -15,7 +15,7 @@ interface ServiceDetailProps {
 }
 
 export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { config } = useNavigationStore();
     const [copiedValue, setCopiedValue] = useState<string | null>(null);
 
@@ -203,6 +203,9 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
                                             const hasChildren = link.children && link.children.length > 0;
                                             const isExpanded = expandedLinks.has(link.id);
 
+                                            const isZh = i18n.language.startsWith('zh');
+                                            const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
+
                                             return (
                                                 <div key={link.id} className="flex flex-col gap-1 w-full">
                                                     <div className="flex items-center gap-2" style={{ marginLeft: depth > 0 ? `${depth * 1}rem` : 0 }}>
@@ -232,7 +235,7 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
                                                             </div>
                                                             <div className="min-w-0 flex-1">
                                                                 <div className="text-sm font-medium text-[var(--foreground)] group-hover:text-amber-500 transition-colors truncate">
-                                                                    {link.name}
+                                                                    {displayName}
                                                                 </div>
                                                                 <div className="text-xs text-[var(--foreground-muted)] opacity-60 truncate">
                                                                     {col?.title || t('service_page.resource_fallback')}

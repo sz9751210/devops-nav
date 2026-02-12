@@ -167,6 +167,7 @@ const resources = {
             "form": {
                 "id": "ID",
                 "label": "Label",
+                "label_zh": "Label (Chinese)",
                 "tags": "Tags",
                 "metadata": "Metadata",
                 "group": "Namespace / Group",
@@ -394,6 +395,7 @@ const resources = {
             "form": {
                 "id": "識別碼 ID",
                 "label": "顯示名稱",
+                "label_zh": "顯示名稱 (中文)",
                 "tags": "標籤",
                 "metadata": "元數據",
                 "group": "命名空間 / 群組",

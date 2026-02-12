@@ -39,11 +39,14 @@ const getServiceColor = (id: string) => {
 };
 
 export const LinkListItem: React.FC<LinkListItemProps> = ({ service, link, column }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { addRecentService } = useNavigationStore();
     const [copied, setCopied] = useState(false);
     const Icon = getIconComponent(column?.icon);
     const color = getServiceColor(service.id);
+
+    const isZh = i18n.language.startsWith('zh');
+    const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
 
     const handleClick = () => {
         addRecentService(service.id);
@@ -72,7 +75,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({ service, link, colum
                     className="flex-1 min-w-0 flex flex-col"
                 >
                     <div className="text-sm font-semibold text-[var(--foreground)] truncate">
-                        {link.name}
+                        {displayName}
                     </div>
                     {link.url && (
                         <div className="text-xs text-[var(--foreground-muted)] truncate opacity-50 font-mono">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
+import { useToastStore } from '../../store/useToastStore';
 import type { ColumnDefinition } from '../../types/schema';
 import {
     Plus, Trash2, Layers, Pencil, X, Check, Search,
@@ -145,6 +146,7 @@ const IconRenderer: React.FC<{ icon: string, className?: string }> = ({ icon, cl
 export const ColumnSettings: React.FC = () => {
     const { t } = useTranslation();
     const { config, addColumn, updateColumn, removeColumn } = useNavigationStore();
+    const { addToast } = useToastStore();
     const [isAddingColumn, setIsAddingColumn] = useState(false);
     const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
     const [columnForm, setColumnForm] = useState<Partial<ColumnDefinition>>({});
@@ -165,6 +167,11 @@ export const ColumnSettings: React.FC = () => {
                 type: 'link',
                 icon: columnForm.icon || 'link',
             });
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.columns.created', 'Column created successfully'),
+            });
             resetColumnForm();
         }
     };
@@ -172,6 +179,11 @@ export const ColumnSettings: React.FC = () => {
     const handleUpdateColumn = () => {
         if (editingColumnId && columnForm.title) {
             updateColumn(editingColumnId, columnForm);
+            addToast({
+                type: 'success',
+                title: t('actions.success'),
+                message: t('settings.columns.updated', 'Column updated successfully'),
+            });
             resetColumnForm();
         }
     };
@@ -420,7 +432,16 @@ export const ColumnSettings: React.FC = () => {
                                     <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 <button
-                                    onClick={() => removeColumn(column.id)}
+                                    onClick={() => {
+                                        if (window.confirm(t('confirm.delete_column', { title: column.title }))) {
+                                            removeColumn(column.id);
+                                            addToast({
+                                                type: 'success',
+                                                title: t('actions.success'),
+                                                message: t('settings.columns.deleted', 'Column deleted successfully'),
+                                            });
+                                        }
+                                    }}
                                     className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
