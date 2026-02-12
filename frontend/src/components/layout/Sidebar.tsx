@@ -40,7 +40,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { id: 'navigation', labelKey: 'app.dashboard', icon: LayoutGrid },
-    { id: 'services', labelKey: 'app.services', icon: Server },
     { id: 'applications', labelKey: 'app.applications', icon: Layers },
     { id: 'tutorial', labelKey: 'app.tutorial', icon: BookOpen },
     { id: 'env-settings', labelKey: 'app.environments', icon: Globe, groupKey: 'app.configuration' },

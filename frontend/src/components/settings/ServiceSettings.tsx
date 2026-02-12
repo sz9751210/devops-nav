@@ -10,6 +10,8 @@ export const ServiceSettings: React.FC = () => {
     const { t } = useTranslation();
     const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useNavigationStore();
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [expandedService, setExpandedService] = useState<string | null>(null);
     const [isAddingService, setIsAddingService] = useState(false);
     const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
@@ -39,11 +41,18 @@ export const ServiceSettings: React.FC = () => {
         });
     };
 
-    // Get unique groups for suggestions
+    // Get unique groups for suggestions and filtering
     const groups = useMemo(() => {
         const set = new Set<string>();
         config.services.forEach(s => { if (s.group) set.add(s.group); });
-        return Array.from(set);
+        return Array.from(set).sort();
+    }, [config.services]);
+
+    // Get unique tags for filtering
+    const allTags = useMemo(() => {
+        const tags = new Set<string>();
+        config.services.forEach(s => s.tags?.forEach(t => tags.add(t)));
+        return Array.from(tags).sort();
     }, [config.services]);
 
     // Filter services - Only show ROOT services (no parentId) unless searching
@@ -52,16 +61,33 @@ export const ServiceSettings: React.FC = () => {
 
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            return services.filter(s =>
+            services = services.filter(s =>
                 s.name.toLowerCase().includes(q) ||
                 s.id.toLowerCase().includes(q) ||
                 s.group?.toLowerCase().includes(q)
             );
         }
 
+        if (selectedGroup) {
+            services = services.filter(s => s.group === selectedGroup);
+        }
+
+        if (selectedTags.length > 0) {
+            services = services.filter(s => {
+                if (!s.tags) return false;
+                return selectedTags.every(tag => s.tags?.includes(tag));
+            });
+        }
+
+        const hasFilters = searchQuery || selectedGroup || selectedTags.length > 0;
+
+        if (hasFilters) {
+            return services;
+        }
+
         // Default: Only show root services
         return services.filter(s => !s.parentId);
-    }, [config.services, searchQuery]);
+    }, [config.services, searchQuery, selectedGroup, selectedTags]);
 
     // Get children for a specific parent
     const getChildServices = (parentId: string) => {
@@ -167,16 +193,59 @@ export const ServiceSettings: React.FC = () => {
                 )}
             </div>
 
-            {/* Search */}
-            <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] opacity-50 transition-colors group-focus-within:text-amber-500 group-focus-within:opacity-100" />
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t('settings.services.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
-                />
+            {/* Search & Filter Bar */}
+            <div className="space-y-4">
+                <div className="flex gap-4">
+                    <div className="relative group flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] opacity-50 transition-colors group-focus-within:text-amber-500 group-focus-within:opacity-100" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder={t('settings.services.search_placeholder')}
+                            className="w-full pl-10 pr-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] placeholder-[var(--foreground-muted)] text-sm focus:outline-none focus:border-amber-500/50 transition-all font-mono"
+                        />
+                    </div>
+                    <div className="relative min-w-[200px]">
+                        <select
+                            value={selectedGroup || ''}
+                            onChange={(e) => setSelectedGroup(e.target.value || null)}
+                            className="w-full h-full pl-3 pr-8 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] appearance-none focus:outline-none focus:border-amber-500/50 transition-all cursor-pointer"
+                        >
+                            <option value="">{t('actions.all_groups')}</option>
+                            {groups.map(group => (
+                                <option key={group} value={group}>{group}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)] pointer-events-none" />
+                    </div>
+                </div>
+
+                {/* Tags Filter */}
+                {allTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        <span className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider py-1">{t('form.tags')}:</span>
+                        {allTags.map(tag => {
+                            const isSelected = selectedTags.includes(tag);
+                            return (
+                                <button
+                                    key={tag}
+                                    onClick={() => setSelectedTags(prev =>
+                                        isSelected ? prev.filter(t => t !== tag) : [...prev, tag]
+                                    )}
+                                    className={clsx(
+                                        "px-2 py-0.5 rounded text-xs font-mono border transition-all",
+                                        isSelected
+                                            ? "bg-amber-500 text-black border-amber-600 font-bold"
+                                            : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-amber-500/50 hover:text-[var(--foreground)]"
+                                    )}
+                                >
+                                    #{tag}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
 
             {/* Add/Edit Service Form */}
