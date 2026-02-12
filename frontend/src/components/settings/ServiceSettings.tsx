@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { useToastStore } from '../../store/useToastStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
-import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical, Layers, Box } from 'lucide-react';
+import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical, Layers } from 'lucide-react';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
@@ -660,6 +660,7 @@ export const ServiceSettings: React.FC = () => {
     };
 
     const renderGroupedServiceCard = (service: ServiceDefinition) => {
+        const linkCount = service.links?.length || 0;
         const childCount = getChildServiceCount(service.id);
         const isZh = i18n.language.startsWith('zh');
         const displayName = (isZh && service.nameZh) ? service.nameZh : service.name;
@@ -690,17 +691,36 @@ export const ServiceSettings: React.FC = () => {
                         >
                             <Pencil className="w-3.5 h-3.5" />
                         </button>
+                        <button
+                            onClick={() => {
+                                if (window.confirm(t('confirm.delete_service', { name: service.name }))) {
+                                    removeService(service.id);
+                                    addToast({ type: 'success', title: t('actions.success'), message: t('settings.services.deleted', 'Service deleted successfully') });
+                                }
+                            }}
+                            className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded bg-[var(--surface-hover)]"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                     </div>
                 </div>
 
                 <div className="border-t border-[#27272a]/50 pt-4 mt-2">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
-                            <Box className="w-4 h-4" />
-                            <span>{childCount} {t('service_page.count_badge')}</span>
+                        <div className="flex items-center gap-4 text-sm text-zinc-400 font-medium">
+                            <div className="flex items-center gap-1.5">
+                                <Link2 className="w-4 h-4" />
+                                <span>{linkCount} {t('settings.services.links_count')}</span>
+                            </div>
+                            {childCount > 0 && (
+                                <div className="flex items-center gap-1.5 text-blue-400">
+                                    <GitFork className="w-4 h-4" />
+                                    <span>{childCount} Children</span>
+                                </div>
+                            )}
                         </div>
                         <button
-                            onClick={() => setExpandedService(service.id)}
+                            onClick={() => { setViewMode('list'); setExpandedService(service.id); }}
                             className="text-[10px] font-bold text-amber-500/60 hover:text-amber-500 uppercase tracking-widest font-mono"
                         >
                             {t('actions.edit')} Links
@@ -836,6 +856,18 @@ export const ServiceSettings: React.FC = () => {
                             title={t('actions.view_list')}
                         >
                             <List className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grouped')}
+                            className={clsx(
+                                "p-1.5 rounded-sm transition-all",
+                                viewMode === 'grouped'
+                                    ? "bg-[var(--surface-hover)] text-[var(--foreground)] shadow-sm"
+                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                            )}
+                            title={t('actions.all_groups')}
+                        >
+                            <Layers className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => setViewMode('grid')}
