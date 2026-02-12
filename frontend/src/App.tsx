@@ -60,6 +60,23 @@ function App() {
     }
   }, [isDarkMode]);
 
+  // Global keyboard shortcuts: Ctrl+, → Settings, Esc → close modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+, or Cmd+, → navigate to env settings
+      if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+        e.preventDefault();
+        setCurrentPage('env-settings');
+      }
+      // Esc → close topology modal
+      if (e.key === 'Escape' && isTopologyOpen) {
+        setIsTopologyOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTopologyOpen]);
+
 
 
 

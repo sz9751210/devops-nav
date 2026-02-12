@@ -40,6 +40,19 @@ export const EnvironmentPicker: React.FC<EnvironmentPickerProps> = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // Ctrl+E shortcut to toggle env selector (global variant only)
+    useEffect(() => {
+        if (variant !== 'global') return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+                e.preventDefault();
+                setIsOpen(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [variant]);
+
     // Helper to check if an env is selected
     const isSelected = (env: string) => {
         if (Array.isArray(selected)) {

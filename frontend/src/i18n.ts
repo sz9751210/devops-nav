@@ -207,28 +207,71 @@ const resources = {
             },
             "tutorial": {
                 "welcome_title": "Welcome to OpsBridge",
-                "welcome_desc": "Your mission control for navigating complex service architectures. Here is how to get the most out of it.",
-                "environments": {
-                    "title": "Contextual Environments",
-                    "desc": "Switch between Development, Staging, and Production instantly. All links update dynamically based on your selected context."
+                "welcome_desc": "Your mission control for navigating complex service architectures. Follow the steps below to get started, then explore advanced features.",
+                "quick_start_title": "Quick Start — 4 Steps to Get Running",
+                "features_title": "Core Features",
+                "shortcuts_title": "Keyboard Shortcuts",
+                "steps": {
+                    "env": {
+                        "title": "Create Environments",
+                        "desc": "Add your deployment targets like dev, staging, prod. Use Environment Groups to cluster them with wildcard patterns (e.g., lab-*).",
+                        "path": "Settings → Environments"
+                    },
+                    "columns": {
+                        "title": "Define Columns",
+                        "desc": "Create resource categories such as Monitoring, Logs, CI/CD. These become columns in your navigation matrix.",
+                        "path": "Settings → Columns"
+                    },
+                    "services": {
+                        "title": "Register Services",
+                        "desc": "Add your microservices. Assign groups, tags, and descriptions. Create parent-child hierarchies for organized nesting.",
+                        "path": "Settings → Services"
+                    },
+                    "links": {
+                        "title": "Add Resource Links",
+                        "desc": "Expand a service card and add links. Each link maps to a column and optionally to specific environments. Links support nesting too.",
+                        "path": "Services → Edit Links"
+                    }
                 },
-                "columns": {
-                    "title": "Service Categories",
-                    "desc": "Services are organized by functional columns (e.g., Monitoring, Logs, Infra). Use Settings to customize these categories."
+                "features": {
+                    "views": {
+                        "title": "List & Grid Views",
+                        "desc": "Toggle between list and card views. Both auto-group services by their group with section headers and count badges."
+                    },
+                    "hierarchy": {
+                        "title": "Hierarchical Services",
+                        "desc": "Create parent-child service relationships. Child services are displayed nested under their parent in the navigation matrix."
+                    },
+                    "filtering": {
+                        "title": "Smart Filtering",
+                        "desc": "Use the search bar, tag filters, or group dropdown to narrow down your view instantly."
+                    },
+                    "bilingual": {
+                        "title": "Bilingual Support",
+                        "desc": "Service and link names support both English and Chinese. The UI automatically displays the correct language based on your setting."
+                    },
+                    "inline_edit": {
+                        "title": "Inline Link Editor",
+                        "desc": "Edit resource links directly from both list and grid views — no page navigation required. Click 'Edit Links' to expand."
+                    },
+                    "yaml": {
+                        "title": "YAML Sync & Backup",
+                        "desc": "Export your entire configuration as YAML for version control. Import by pasting YAML or use Smart Snippets for common toolsets."
+                    }
                 },
-                "services": {
-                    "title": "Service Directory",
-                    "desc": "A unified catalog of all your microservices. Filter by tags, owners, or groups to find what you need quickly."
-                },
-                "filtering": {
-                    "title": "Smart Filtering",
-                    "desc": "Use the search bar or tag filters to narrow down the view. Type 'payment' to see only payment-related services and links."
+                "shortcuts": {
+                    "search": "Open Quick Search",
+                    "env": "Toggle Environment Selector",
+                    "settings": "Open Settings",
+                    "close": "Close Modals / Panels"
                 },
                 "pro_tips": {
                     "title": "Pro Tips",
-                    "tip1": "Click the environment selector in the top bar to switch contexts.",
-                    "tip2": "Use the import/export feature to back up your configuration.",
-                    "tip3": "Group your environments (e.g., lab-*) in Settings for better organization."
+                    "tip1": "Use the environment selector in the top bar to switch contexts — all links update dynamically.",
+                    "tip2": "Drag and drop services in the list view to reorder them (works when no filters are active).",
+                    "tip3": "Group your environments with wildcard patterns (e.g., lab-*) for a cleaner dropdown.",
+                    "tip4": "Use the import/export feature to back up your configuration as YAML — perfect for GitOps.",
+                    "tip5": "Click a service row in the navigation matrix to open its detail page with all metadata and links."
                 }
             }
         }
@@ -431,28 +474,71 @@ const resources = {
             },
             "tutorial": {
                 "welcome_title": "歡迎使用運維導航",
-                "welcome_desc": "您的微服務架構導航中心。以下是使用本系統的最佳實踐指南。",
-                "environments": {
-                    "title": "環境上下文切換",
-                    "desc": "在開發 (Dev)、測試 (Staging) 與生產 (Prod) 環境間快速切換。所有服務連結將根據當前環境自動更新。"
+                "welcome_desc": "您的微服務架構導航中心。按照以下步驟快速上手，接著探索進階功能。",
+                "quick_start_title": "快速開始 — 四步完成設定",
+                "features_title": "核心功能",
+                "shortcuts_title": "鍵盤快速鍵",
+                "steps": {
+                    "env": {
+                        "title": "建立環境",
+                        "desc": "新增部署目標如 dev、staging、prod。使用環境群組功能，透過萬用字元（如 lab-*）自動歸類。",
+                        "path": "系統設定 → 環境管理"
+                    },
+                    "columns": {
+                        "title": "定義欄位",
+                        "desc": "建立資源分類如監控面板、日誌系統、CI/CD。這些將成為導航矩陣的直欄。",
+                        "path": "系統設定 → 欄位設定"
+                    },
+                    "services": {
+                        "title": "註冊服務",
+                        "desc": "新增您的微服務，設定群組、標籤與描述。可建立父子階層關係實現巢狀管理。",
+                        "path": "系統設定 → 服務清單"
+                    },
+                    "links": {
+                        "title": "新增資源連結",
+                        "desc": "展開服務卡片後新增連結。每個連結對應一個欄位，可選擇綁定特定環境。連結也支援父子巢狀。",
+                        "path": "服務清單 → 編輯連結"
+                    }
                 },
-                "columns": {
-                    "title": "服務分類目錄",
-                    "desc": "服務連結依據功能欄位（如：監控、日誌、基礎設施）進行分類。您可以隨時在設定中自定義這些欄位。"
+                "features": {
+                    "views": {
+                        "title": "列表與卡片視圖",
+                        "desc": "切換列表與卡片兩種視圖。兩者皆支援依群組自動分類，顯示區段標題與計數徽章。"
+                    },
+                    "hierarchy": {
+                        "title": "階層式服務架構",
+                        "desc": "支援父子服務關聯，子服務在導航矩陣中巢狀顯示於父服務下方。"
+                    },
+                    "filtering": {
+                        "title": "智慧篩選",
+                        "desc": "使用搜尋列、標籤過濾器或群組下拉選單，瞬間縮小檢視範圍。"
+                    },
+                    "bilingual": {
+                        "title": "雙語支援",
+                        "desc": "服務與連結名稱支援英文/中文雙語顯示，系統依語言設定自動切換。"
+                    },
+                    "inline_edit": {
+                        "title": "原地編輯連結",
+                        "desc": "在列表與卡片視圖中直接編輯連結，無需跳轉頁面。點擊「編輯連結」即可展開。"
+                    },
+                    "yaml": {
+                        "title": "YAML 同步與備份",
+                        "desc": "匯出完整配置為 YAML 以便版本控制。支援直接貼上匯入，或使用快速代碼片段。"
+                    }
                 },
-                "services": {
-                    "title": "服務資源目錄",
-                    "desc": "所有微服務的統一目錄。透過標籤、負責人或群組篩選，快速找到您需要的資源。"
-                },
-                "filtering": {
-                    "title": "智慧篩選",
-                    "desc": "使用搜尋列或標籤過濾器來縮小範圍。例如輸入 'payment' 即可查看相關支付服務的所有連結。"
+                "shortcuts": {
+                    "search": "開啟快速搜尋",
+                    "env": "切換環境選單",
+                    "settings": "進入系統設定",
+                    "close": "關閉彈窗 / 面板"
                 },
                 "pro_tips": {
                     "title": "使用技巧",
-                    "tip1": "點擊頂部欄的環境選擇器可快速切換操作環境。",
-                    "tip2": "使用匯入/匯出功能備份您的 YAML 配置。",
-                    "tip3": "在設定中將環境進行分組（如 lab-*）以獲得更整潔的選單。"
+                    "tip1": "使用頂部環境選擇器切換操作環境 — 所有連結會自動更新。",
+                    "tip2": "在列表視圖中拖拽服務可改變排列順序（無篩選條件時可用）。",
+                    "tip3": "用萬用字元將環境分組（如 lab-*），讓下拉選單更整潔。",
+                    "tip4": "使用匯入/匯出功能將配置備份為 YAML — 完美適配 GitOps 工作流。",
+                    "tip5": "在導航矩陣中點擊服務列，可開啟詳細頁面查看完整元數據與連結。"
                 }
             }
         }
