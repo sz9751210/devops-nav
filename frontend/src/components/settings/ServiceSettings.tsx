@@ -15,7 +15,7 @@ export const ServiceSettings: React.FC = () => {
     const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink, reorderServices } = useNavigationStore();
     const { addToast } = useToastStore();
     const [searchQuery, setSearchQuery] = useState('');
-    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'grouped'>('grouped');
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [expandedService, setExpandedService] = useState<string | null>(null);
@@ -146,8 +146,8 @@ export const ServiceSettings: React.FC = () => {
         }
     };
 
-    // Disable DND when filters or grouped view are active
-    const isDndEnabled = !searchQuery && !selectedGroup && selectedTags.length === 0 && viewMode !== 'grouped';
+    // Disable DND when filters or grid view are active
+    const isDndEnabled = !searchQuery && !selectedGroup && selectedTags.length === 0 && viewMode !== 'grid';
 
     // --- Sortable Item Component ---
     const SortableServiceItem = ({ service, viewMode }: { service: ServiceDefinition, viewMode: 'list' | 'grid' }) => {
@@ -664,69 +664,312 @@ export const ServiceSettings: React.FC = () => {
         const childCount = getChildServiceCount(service.id);
         const isZh = i18n.language.startsWith('zh');
         const displayName = (isZh && service.nameZh) ? service.nameZh : service.name;
+        const isExpanded = expandedService === service.id;
 
         return (
             <div
                 key={service.id}
-                className="group relative bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-amber-500/30 transition-all shadow-sm"
+                className="group relative bg-[#18181b] border border-[#27272a] rounded-lg hover:border-amber-500/30 transition-all shadow-sm"
             >
-                <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
-                            <Layers className="w-6 h-6 text-amber-500" />
-                        </div>
-                        <div className="min-w-0">
-                            <h3 className="font-bold text-white text-lg truncate mb-0.5">
-                                {displayName}
-                            </h3>
-                            <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest leading-none">
-                                {service.id}
+                <div className="p-5">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-4 min-w-0">
+                            <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
+                                <Layers className="w-6 h-6 text-amber-500" />
+                            </div>
+                            <div className="min-w-0">
+                                <h3 className="font-bold text-white text-lg truncate mb-0.5">
+                                    {displayName}
+                                </h3>
+                                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest leading-none">
+                                    {service.id}
+                                </div>
                             </div>
                         </div>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                onClick={() => { setEditingServiceId(service.id); setServiceForm(service); setIsAddingService(true); }}
+                                className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-500 rounded bg-[var(--surface-hover)]"
+                            >
+                                <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (window.confirm(t('confirm.delete_service', { name: service.name }))) {
+                                        removeService(service.id);
+                                        addToast({ type: 'success', title: t('actions.success'), message: t('settings.services.deleted', 'Service deleted successfully') });
+                                    }
+                                }}
+                                className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded bg-[var(--surface-hover)]"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                            onClick={() => { setEditingServiceId(service.id); setServiceForm(service); setIsAddingService(true); }}
-                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-500 rounded bg-[var(--surface-hover)]"
-                        >
-                            <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                            onClick={() => {
-                                if (window.confirm(t('confirm.delete_service', { name: service.name }))) {
-                                    removeService(service.id);
-                                    addToast({ type: 'success', title: t('actions.success'), message: t('settings.services.deleted', 'Service deleted successfully') });
+
+                    <div className="border-t border-[#27272a]/50 pt-4 mt-2">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-sm text-zinc-400 font-medium">
+                                <div className="flex items-center gap-1.5">
+                                    <Link2 className="w-4 h-4" />
+                                    <span>{linkCount} {t('settings.services.links_count')}</span>
+                                </div>
+                                {childCount > 0 && (
+                                    <div className="flex items-center gap-1.5 text-blue-400">
+                                        <GitFork className="w-4 h-4" />
+                                        <span>{childCount} Children</span>
+                                    </div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setExpandedService(isExpanded ? null : service.id)}
+                                className={clsx(
+                                    "text-xs font-bold uppercase tracking-widest font-mono transition-colors",
+                                    isExpanded ? "text-amber-500" : "text-amber-500/60 hover:text-amber-500"
+                                )}
+                            >
+                                {isExpanded
+                                    ? (isZh ? '收合連結' : 'Close Links')
+                                    : (isZh ? '編輯連結' : 'Edit Links')
                                 }
-                            }}
-                            className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded bg-[var(--surface-hover)]"
-                        >
-                            <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div className="border-t border-[#27272a]/50 pt-4 mt-2">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm text-zinc-400 font-medium">
-                            <div className="flex items-center gap-1.5">
-                                <Link2 className="w-4 h-4" />
-                                <span>{linkCount} {t('settings.services.links_count')}</span>
-                            </div>
-                            {childCount > 0 && (
-                                <div className="flex items-center gap-1.5 text-blue-400">
-                                    <GitFork className="w-4 h-4" />
-                                    <span>{childCount} Children</span>
+                {/* Expanded Link Editing Panel */}
+                {isExpanded && (
+                    <div className="border-t border-[#27272a] p-5 space-y-3 bg-[#111113]">
+                        <h4 className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider flex items-center gap-2">
+                            <Link2 className="w-3.5 h-3.5" />
+                            Resource Links
+                        </h4>
+
+                        {/* Add Link Button */}
+                        {isAddingLink !== service.id && !editingLinkId && (
+                            <button
+                                onClick={() => { setIsAddingLink(service.id); setLinkForm({}); setAddingChildLinkTo(null); }}
+                                className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-[var(--foreground-muted)] hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
+                            >
+                                <Plus className="w-3 h-3" />
+                                {t('actions.add_resource_link')}
+                            </button>
+                        )}
+
+                        {/* Add/Edit Link Form */}
+                        {(isAddingLink === service.id || editingLinkId) && (
+                            <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono relative">
+                                {addingChildLinkTo && (
+                                    <div className="mb-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded">
+                                        <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1 mb-1">
+                                            <GitFork className="w-3 h-3" />
+                                            {editingLinkId ? "Editing Child of:" : "Adding Child Link To:"}
+                                        </div>
+                                        {(() => {
+                                            const parentLink = service.links?.find(l => l.id === addingChildLinkTo);
+                                            if (parentLink) {
+                                                return (
+                                                    <div className="flex flex-col gap-0.5 ml-4">
+                                                        <span className="text-sm font-bold text-[var(--foreground)]">{parentLink.name}</span>
+                                                        <span className="text-xs text-[var(--foreground-muted)] truncate">{parentLink.url}</span>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+                                    </div>
+                                )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
+                                        <input
+                                            type="text"
+                                            value={linkForm.name || ''}
+                                            onChange={(e) => {
+                                                const name = e.target.value;
+                                                setLinkForm(prev => ({
+                                                    ...prev,
+                                                    name,
+                                                    id: editingLinkId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                                }));
+                                            }}
+                                            placeholder={t('form.placeholders.link_name_example')}
+                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label_zh')}</label>
+                                        <input
+                                            type="text"
+                                            value={linkForm.nameZh || ''}
+                                            onChange={(e) => setLinkForm({ ...linkForm, nameZh: e.target.value })}
+                                            placeholder={t('form.placeholders.link_name_example')}
+                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
+                                        />
+                                    </div>
+                                    {!addingChildLinkTo && (
+                                        <div>
+                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
+                                            <select
+                                                value={linkForm.columnId || ''}
+                                                onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
+                                                className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
+                                            >
+                                                <option value="">{t('settings.services.select_column')}</option>
+                                                {config.columns.map((c) => (
+                                                    <option key={c.id} value={c.id}>{c.title}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                                <div>
+                                    <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
+                                    <input
+                                        type="text"
+                                        value={linkForm.url || ''}
+                                        onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
+                                        placeholder={t('form.placeholders.url_example')}
+                                        className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50 font-mono"
+                                    />
+                                </div>
+                                {!addingChildLinkTo && (
+                                    <div>
+                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
+                                        <div className="flex flex-wrap gap-1">
+                                            {config.environments.map((env: string) => (
+                                                <button
+                                                    key={env}
+                                                    onClick={() => {
+                                                        const current = linkForm.environments || [];
+                                                        const next = current.includes(env) ? current.filter(e => e !== env) : [...current, env];
+                                                        setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
+                                                    }}
+                                                    className={clsx(
+                                                        "px-2 py-1 text-xs rounded transition-all uppercase tracking-tighter border",
+                                                        linkForm.environments?.includes(env)
+                                                            ? "bg-amber-500 text-black border-amber-600"
+                                                            : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-[var(--foreground-muted)]"
+                                                    )}
+                                                >
+                                                    {env}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="flex justify-end gap-2 pt-1">
+                                    <button onClick={resetLinkForm} className="text-xs text-[var(--foreground-muted)] hover:text-[var(--foreground)] uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                        {t('actions.cancel')}
+                                    </button>
+                                    <button
+                                        onClick={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
+                                        disabled={!linkForm.id || !linkForm.name || !linkForm.url || !linkForm.columnId}
+                                        className="bg-amber-500/90 hover:bg-amber-500 text-black text-xs font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
+                                    >
+                                        {editingLinkId ? t('actions.update') : t('actions.commit')}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Link List */}
+                        <div className="space-y-1">
+                            {(() => {
+                                const renderLinks = (links: ServiceLink[], depth = 0, parentLink?: ServiceLink): React.ReactNode[] => {
+                                    return links.map((link) => {
+                                        const column = config.columns.find((c) => c.id === link.columnId);
+                                        const hasChildren = link.children && link.children.length > 0;
+                                        const linkDisplayName = (isZh && link.nameZh) ? link.nameZh : link.name;
+
+                                        return (
+                                            <div key={link.id} className="space-y-1">
+                                                <div
+                                                    className={clsx(
+                                                        "flex items-center justify-between px-3 py-2 bg-[var(--surface-hover)] border border-[var(--border)] rounded group/link transition-all",
+                                                        depth > 0 && "ml-6 border-l-4 border-l-[var(--border)]"
+                                                    )}
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            {hasChildren ? (
+                                                                <button
+                                                                    onClick={() => toggleLinkExpanded(link.id)}
+                                                                    className="p-0.5 rounded hover:bg-[var(--surface)] text-[var(--foreground-muted)] transition-colors"
+                                                                >
+                                                                    {expandedLinks.has(link.id) ? (
+                                                                        <ChevronDown className="w-3 h-3" />
+                                                                    ) : (
+                                                                        <ChevronRight className="w-3 h-3" />
+                                                                    )}
+                                                                </button>
+                                                            ) : (
+                                                                <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
+                                                            )}
+                                                            <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{linkDisplayName}</span>
+                                                            {column && (
+                                                                <span className="text-xs px-1.5 py-0.5 bg-[var(--surface)] text-[var(--foreground-muted)] rounded font-mono uppercase border border-[var(--border)]">
+                                                                    {column.title}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-xs text-[var(--foreground-muted)] font-mono truncate mt-0.5">{link.url}</div>
+                                                    </div>
+                                                    <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
+                                                        {depth === 0 && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setIsAddingLink(service.id);
+                                                                    setLinkForm({ columnId: link.columnId, environments: link.environments });
+                                                                    setAddingChildLinkTo(link.id);
+                                                                }}
+                                                                className="p-1 text-[var(--foreground-muted)] hover:text-blue-500 rounded"
+                                                                title="Add Child Link"
+                                                            >
+                                                                <GitFork className="w-3 h-3" />
+                                                            </button>
+                                                        )}
+                                                        <button
+                                                            onClick={() => startEditLink(link, parentLink?.id)}
+                                                            className="p-1 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded"
+                                                        >
+                                                            <Pencil className="w-3 h-3" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (window.confirm(t('confirm.delete_link', { name: link.name }))) {
+                                                                    removeServiceLink(service.id, link.id);
+                                                                    addToast({
+                                                                        type: 'success',
+                                                                        title: t('actions.success'),
+                                                                        message: t('settings.services.link_deleted', 'Link deleted successfully'),
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded"
+                                                        >
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {hasChildren && expandedLinks.has(link.id) && renderLinks(link.children!, depth + 1, link)}
+                                            </div>
+                                        );
+                                    });
+                                };
+
+                                return renderLinks(service.links || []);
+                            })()}
                         </div>
-                        <button
-                            onClick={() => { setViewMode('list'); setExpandedService(service.id); }}
-                            className="text-[10px] font-bold text-amber-500/60 hover:text-amber-500 uppercase tracking-widest font-mono"
-                        >
-                            {t('actions.edit')} Links
-                        </button>
+
+                        {linkCount === 0 && isAddingLink !== service.id && (
+                            <p className="text-center text-[var(--foreground-muted)] opacity-50 text-xs py-4 font-mono font-bold uppercase tracking-widest">
+                                {t('settings.services.no_links_defined')}
+                            </p>
+                        )}
                     </div>
-                </div>
+                )}
             </div>
         );
     };
@@ -858,18 +1101,6 @@ export const ServiceSettings: React.FC = () => {
                             <List className="w-4 h-4" />
                         </button>
                         <button
-                            onClick={() => setViewMode('grouped')}
-                            className={clsx(
-                                "p-1.5 rounded-sm transition-all",
-                                viewMode === 'grouped'
-                                    ? "bg-[var(--surface-hover)] text-[var(--foreground)] shadow-sm"
-                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-                            )}
-                            title={t('actions.all_groups')}
-                        >
-                            <Layers className="w-4 h-4" />
-                        </button>
-                        <button
                             onClick={() => setViewMode('grid')}
                             className={clsx(
                                 "p-1.5 rounded-sm transition-all",
@@ -912,10 +1143,7 @@ export const ServiceSettings: React.FC = () => {
                         <select
                             value={selectedGroup || ''}
                             onChange={(e) => {
-                                const val = e.target.value || null;
-                                setSelectedGroup(val);
-                                if (!val) setViewMode('grouped');
-                                else setViewMode('list');
+                                setSelectedGroup(e.target.value || null);
                             }}
                             className="w-full h-full pl-3 pr-8 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] appearance-none focus:outline-none focus:border-amber-500/50 transition-all cursor-pointer"
                         >
@@ -1063,18 +1291,15 @@ export const ServiceSettings: React.FC = () => {
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
             >
-                <div className={clsx(
-                    "space-y-4",
-                    viewMode === 'grid' && "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 space-y-0"
-                )}>
+                <div className="space-y-4">
                     {filteredServices.length === 0 ? (
-                        <div className="col-span-full text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
+                        <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
                             {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
                         </div>
-                    ) : (
-                        <>
-                            {viewMode === 'grouped' ? (
-                                <div className="space-y-10 col-span-full">
+                    ) : viewMode === 'grid' ? (
+                        <div className="space-y-10">
+                            {!selectedGroup && groupedServices.groups.length > 0 ? (
+                                <>
                                     {groupedServices.groups.map(group => (
                                         <div key={group.name} className="space-y-6">
                                             <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50">
@@ -1094,7 +1319,7 @@ export const ServiceSettings: React.FC = () => {
                                         <div className="space-y-6">
                                             <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50 opacity-70">
                                                 <Layers className="w-6 h-6 text-zinc-500 mr-3" />
-                                                {groupedServices.groups.length > 0 ? t('applications.ungrouped') : t('actions.all_groups')}
+                                                {t('applications.ungrouped')}
                                                 <span className="text-sm font-medium text-zinc-400 ml-3 bg-zinc-800 w-8 h-8 flex items-center justify-center rounded-full">
                                                     {groupedServices.uncategorized.length}
                                                 </span>
@@ -1104,22 +1329,26 @@ export const ServiceSettings: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-                                </div>
+                                </>
                             ) : (
-                                <SortableContext
-                                    items={filteredServices.map(s => s.id)}
-                                    strategy={rectSortingStrategy}
-                                >
-                                    {filteredServices.map((service) => (
-                                        <SortableServiceItem
-                                            key={service.id}
-                                            service={service}
-                                            viewMode={viewMode === 'grid' ? 'grid' : 'list'}
-                                        />
-                                    ))}
-                                </SortableContext>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredServices.map(service => renderGroupedServiceCard(service))}
+                                </div>
                             )}
-                        </>
+                        </div>
+                    ) : (
+                        <SortableContext
+                            items={filteredServices.map(s => s.id)}
+                            strategy={rectSortingStrategy}
+                        >
+                            {filteredServices.map((service) => (
+                                <SortableServiceItem
+                                    key={service.id}
+                                    service={service}
+                                    viewMode="list"
+                                />
+                            ))}
+                        </SortableContext>
                     )}
                 </div >
             </DndContext>
