@@ -146,5 +146,13 @@ OpsBridge 採用自定義的 **「工程師高對比」** 佈景主題：
 
 ---
 
+## ☕ 支持作者
+
+如果你覺得這個專案對你有幫助，歡迎請我喝杯咖啡！
+
+<a href="https://buymeacoffee.com/alanwang1207" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+---
+
 ## 📄 授權條款
 本專案採用 MIT 授權條款。
