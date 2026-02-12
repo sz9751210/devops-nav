@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Search, Hammer, Star, Server, Layers } from 'lucide-react';
+import { Search, Hammer, Star, Server, Layers, LayoutList, LayoutGrid, Box } from 'lucide-react';
 import { clsx } from 'clsx';
 import { ServiceDetail } from './ServiceDetail';
 
@@ -12,6 +12,7 @@ export const ServicesPage: React.FC = () => {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
     const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'list' | 'grouped'>('grouped');
 
     // Derived State
     const allTags = useMemo(() => {
@@ -169,19 +170,19 @@ export const ServicesPage: React.FC = () => {
             <div
                 key={service.id}
                 onClick={() => setSelectedServiceId(service.id)}
-                className="group relative bg-[var(--surface)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all cursor-pointer"
+                className="group relative bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-amber-500/30 transition-all cursor-pointer shadow-sm"
             >
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
-                        <Layers className="w-5 h-5 text-amber-500" />
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                        <Layers className="w-6 h-6 text-amber-500" />
                     </div>
-                    <h3 className="font-semibold text-[var(--foreground)] text-base group-hover:text-amber-500 transition-colors truncate">
+                    <h3 className="font-bold text-white text-lg">
                         {service.name}
                     </h3>
                 </div>
-                <div className="border-t border-[var(--border)] pt-3">
-                    <div className="flex items-center gap-1.5 text-sm text-[var(--foreground-muted)]">
-                        <Server className="w-3.5 h-3.5" />
+                <div className="border-t border-[#27272a]/50 pt-4 mt-2">
+                    <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
+                        <Box className="w-4 h-4" />
                         <span>{childCount} {t('service_page.count_badge')}</span>
                     </div>
                 </div>
@@ -210,6 +211,32 @@ export const ServicesPage: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
+                    <div className="flex items-center p-1 bg-[var(--surface)] border border-[var(--border)] rounded-lg mr-2">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={clsx(
+                                "p-1.5 rounded-md transition-all",
+                                viewMode === 'list'
+                                    ? "bg-amber-500 text-black shadow-sm"
+                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]"
+                            )}
+                            title={t('actions.list_view', 'List View')}
+                        >
+                            <LayoutList className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grouped')}
+                            className={clsx(
+                                "p-1.5 rounded-md transition-all",
+                                viewMode === 'grouped'
+                                    ? "bg-amber-500 text-black shadow-sm"
+                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100 hover:bg-[var(--surface-hover)]"
+                            )}
+                            title={t('actions.grouped_view', 'Grouped View')}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                    </div>
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-mono font-bold border border-amber-500/20">
                         {filteredServices.length} {t('service_page.count_badge')}
                     </span>
@@ -219,7 +246,10 @@ export const ServicesPage: React.FC = () => {
             {/* Group Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                 <button
-                    onClick={() => setSelectedGroup(null)}
+                    onClick={() => {
+                        setSelectedGroup(null);
+                        setViewMode('grouped');
+                    }}
                     className={clsx(
                         "px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
                         !selectedGroup
@@ -235,7 +265,10 @@ export const ServicesPage: React.FC = () => {
                     return (
                         <button
                             key={group}
-                            onClick={() => setSelectedGroup(group)}
+                            onClick={() => {
+                                setSelectedGroup(group);
+                                setViewMode('list');
+                            }}
                             className={clsx(
                                 "px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2",
                                 isSelected
@@ -252,7 +285,10 @@ export const ServicesPage: React.FC = () => {
                 })}
                 {hasUncategorized && (
                     <button
-                        onClick={() => setSelectedGroup('__UNCATEGORIZED__')}
+                        onClick={() => {
+                            setSelectedGroup('__UNCATEGORIZED__');
+                            setViewMode('list');
+                        }}
                         className={clsx(
                             "px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2",
                             selectedGroup === '__UNCATEGORIZED__'
@@ -314,34 +350,34 @@ export const ServicesPage: React.FC = () => {
 
             {/* Service Grid with Groups */}
             <div className="space-y-8">
-                {/* Show All Groups */}
-                {!selectedGroup && (
+                {/* Grouped View */}
+                {viewMode === 'grouped' && (
                     <>
                         {groupedServices.groups.map(group => (
-                            <div key={group.name} className="space-y-4">
-                                <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2 pb-2 border-b border-[var(--border)]">
-                                    <Layers className="w-5 h-5 text-amber-500" />
+                            <div key={group.name} className="space-y-6">
+                                <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50">
+                                    <Layers className="w-6 h-6 text-amber-500 mr-3" />
                                     {group.name}
-                                    <span className="text-xs font-normal text-[var(--foreground-muted)] ml-2 bg-[var(--surface-hover)] px-2 py-0.5 rounded-full">
+                                    <span className="text-sm font-medium text-zinc-400 ml-3 bg-zinc-800 w-8 h-8 flex items-center justify-center rounded-full">
                                         {group.services.length}
                                     </span>
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {group.services.map(service => renderGroupedServiceCard(service))}
                                 </div>
                             </div>
                         ))}
 
                         {groupedServices.uncategorized.length > 0 && (
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2 pb-2 border-b border-[var(--border)] opacity-70">
-                                    <Layers className="w-5 h-5 text-[var(--foreground-muted)]" />
+                            <div className="space-y-6">
+                                <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50 opacity-70">
+                                    <Layers className="w-6 h-6 text-zinc-500 mr-3" />
                                     {groupedServices.groups.length > 0 ? t('app.ungrouped') : t('app.all_services')}
-                                    <span className="text-xs font-normal text-[var(--foreground-muted)] ml-2 bg-[var(--surface-hover)] px-2 py-0.5 rounded-full">
+                                    <span className="text-sm font-medium text-zinc-400 ml-3 bg-zinc-800 w-8 h-8 flex items-center justify-center rounded-full">
                                         {groupedServices.uncategorized.length}
                                     </span>
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {groupedServices.uncategorized.map(service => renderGroupedServiceCard(service))}
                                 </div>
                             </div>
@@ -349,8 +385,8 @@ export const ServicesPage: React.FC = () => {
                     </>
                 )}
 
-                {/* Show Selected Group Only */}
-                {selectedGroup && (
+                {/* List View (Filtered or All) */}
+                {viewMode === 'list' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filteredServices.map(service => renderServiceCard(service))}
                     </div>

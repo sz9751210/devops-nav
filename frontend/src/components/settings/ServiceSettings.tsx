@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { useToastStore } from '../../store/useToastStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
-import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical } from 'lucide-react';
+import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical, Layers, Box } from 'lucide-react';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
@@ -11,11 +11,11 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, r
 import { CSS } from '@dnd-kit/utilities';
 
 export const ServiceSettings: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink, reorderServices } = useNavigationStore();
     const { addToast } = useToastStore();
     const [searchQuery, setSearchQuery] = useState('');
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'grouped'>('grouped');
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [expandedService, setExpandedService] = useState<string | null>(null);
@@ -95,6 +95,31 @@ export const ServiceSettings: React.FC = () => {
         return services.filter(s => !s.parentId);
     }, [config.services, searchQuery, selectedGroup, selectedTags]);
 
+    const groupedServices = useMemo(() => {
+        const groups: Record<string, typeof filteredServices> = {};
+        const uncategorized: typeof filteredServices = [];
+
+        filteredServices.forEach(service => {
+            if (service.group) {
+                if (!groups[service.group]) groups[service.group] = [];
+                groups[service.group].push(service);
+            } else {
+                uncategorized.push(service);
+            }
+        });
+
+        const sortedGroupNames = Object.keys(groups).sort();
+
+        return {
+            groups: sortedGroupNames.map(name => ({ name, services: groups[name] })),
+            uncategorized
+        };
+    }, [filteredServices]);
+
+    const getChildServiceCount = (serviceId: string) => {
+        return config.services.filter(s => s.parentId === serviceId).length;
+    };
+
     // Get children for a specific parent
     const getChildServices = (parentId: string) => {
         return config.services.filter(s => s.parentId === parentId);
@@ -121,8 +146,8 @@ export const ServiceSettings: React.FC = () => {
         }
     };
 
-    // Disable DND when filters are active to avoid logical complexity
-    const isDndEnabled = !searchQuery && !selectedGroup && selectedTags.length === 0;
+    // Disable DND when filters or grouped view are active
+    const isDndEnabled = !searchQuery && !selectedGroup && selectedTags.length === 0 && viewMode !== 'grouped';
 
     // --- Sortable Item Component ---
     const SortableServiceItem = ({ service, viewMode }: { service: ServiceDefinition, viewMode: 'list' | 'grid' }) => {
@@ -634,6 +659,58 @@ export const ServiceSettings: React.FC = () => {
         );
     };
 
+    const renderGroupedServiceCard = (service: ServiceDefinition) => {
+        const childCount = getChildServiceCount(service.id);
+        const isZh = i18n.language.startsWith('zh');
+        const displayName = (isZh && service.nameZh) ? service.nameZh : service.name;
+
+        return (
+            <div
+                key={service.id}
+                className="group relative bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-amber-500/30 transition-all shadow-sm"
+            >
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
+                            <Layers className="w-6 h-6 text-amber-500" />
+                        </div>
+                        <div className="min-w-0">
+                            <h3 className="font-bold text-white text-lg truncate mb-0.5">
+                                {displayName}
+                            </h3>
+                            <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest leading-none">
+                                {service.id}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                            onClick={() => { setEditingServiceId(service.id); setServiceForm(service); setIsAddingService(true); }}
+                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-500 rounded bg-[var(--surface-hover)]"
+                        >
+                            <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                </div>
+
+                <div className="border-t border-[#27272a]/50 pt-4 mt-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
+                            <Box className="w-4 h-4" />
+                            <span>{childCount} {t('service_page.count_badge')}</span>
+                        </div>
+                        <button
+                            onClick={() => setExpandedService(service.id)}
+                            className="text-[10px] font-bold text-amber-500/60 hover:text-amber-500 uppercase tracking-widest font-mono"
+                        >
+                            {t('actions.edit')} Links
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     // Service form handles
     const resetServiceForm = () => {
         setServiceForm({});
@@ -802,7 +879,12 @@ export const ServiceSettings: React.FC = () => {
                     <div className="relative min-w-[200px]">
                         <select
                             value={selectedGroup || ''}
-                            onChange={(e) => setSelectedGroup(e.target.value || null)}
+                            onChange={(e) => {
+                                const val = e.target.value || null;
+                                setSelectedGroup(val);
+                                if (!val) setViewMode('grouped');
+                                else setViewMode('list');
+                            }}
                             className="w-full h-full pl-3 pr-8 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] appearance-none focus:outline-none focus:border-amber-500/50 transition-all cursor-pointer"
                         >
                             <option value="">{t('actions.all_groups')}</option>
@@ -866,8 +948,6 @@ export const ServiceSettings: React.FC = () => {
                                         ...prev,
                                         name,
                                         id: editingServiceId ? prev.id : (
-                                            // Prefix child ID with parent ID for uniqueness/clarity? Optional but good for collision avoidance
-                                            // addingChildTo ? `${addingChildTo}-${name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}` : 
                                             name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
                                         )
                                     }));
@@ -875,6 +955,17 @@ export const ServiceSettings: React.FC = () => {
                                 placeholder={t('form.placeholders.service_name')}
                                 className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                                 autoFocus
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1 font-mono">{t('form.label_zh')}</label>
+                            <input
+                                type="text"
+                                value={serviceForm.nameZh || ''}
+                                onChange={(e) => setServiceForm({ ...serviceForm, nameZh: e.target.value })}
+                                placeholder={t('form.placeholders.service_name')}
+                                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] text-sm focus:outline-none focus:border-amber-500/50 transition-all"
                             />
                         </div>
 
@@ -941,7 +1032,7 @@ export const ServiceSettings: React.FC = () => {
                 onDragEnd={handleDragEnd}
             >
                 <div className={clsx(
-                    "space-y-2",
+                    "space-y-4",
                     viewMode === 'grid' && "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 space-y-0"
                 )}>
                     {filteredServices.length === 0 ? (
@@ -949,18 +1040,54 @@ export const ServiceSettings: React.FC = () => {
                             {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
                         </div>
                     ) : (
-                        <SortableContext
-                            items={filteredServices.map(s => s.id)}
-                            strategy={rectSortingStrategy}
-                        >
-                            {filteredServices.map((service) => (
-                                <SortableServiceItem
-                                    key={service.id}
-                                    service={service}
-                                    viewMode={viewMode}
-                                />
-                            ))}
-                        </SortableContext>
+                        <>
+                            {viewMode === 'grouped' ? (
+                                <div className="space-y-10 col-span-full">
+                                    {groupedServices.groups.map(group => (
+                                        <div key={group.name} className="space-y-6">
+                                            <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50">
+                                                <Layers className="w-6 h-6 text-amber-500 mr-3" />
+                                                {group.name}
+                                                <span className="text-sm font-medium text-zinc-400 ml-3 bg-zinc-800 w-8 h-8 flex items-center justify-center rounded-full">
+                                                    {group.services.length}
+                                                </span>
+                                            </h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                {group.services.map(service => renderGroupedServiceCard(service))}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {groupedServices.uncategorized.length > 0 && (
+                                        <div className="space-y-6">
+                                            <h2 className="text-2xl font-bold text-white flex items-center pb-4 border-b border-zinc-800/50 opacity-70">
+                                                <Layers className="w-6 h-6 text-zinc-500 mr-3" />
+                                                {groupedServices.groups.length > 0 ? t('applications.ungrouped') : t('actions.all_groups')}
+                                                <span className="text-sm font-medium text-zinc-400 ml-3 bg-zinc-800 w-8 h-8 flex items-center justify-center rounded-full">
+                                                    {groupedServices.uncategorized.length}
+                                                </span>
+                                            </h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                {groupedServices.uncategorized.map(service => renderGroupedServiceCard(service))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <SortableContext
+                                    items={filteredServices.map(s => s.id)}
+                                    strategy={rectSortingStrategy}
+                                >
+                                    {filteredServices.map((service) => (
+                                        <SortableServiceItem
+                                            key={service.id}
+                                            service={service}
+                                            viewMode={viewMode === 'grid' ? 'grid' : 'list'}
+                                        />
+                                    ))}
+                                </SortableContext>
+                            )}
+                        </>
                     )}
                 </div >
             </DndContext>

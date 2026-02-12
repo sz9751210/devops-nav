@@ -29,6 +29,7 @@ export interface ColumnDefinition {
 export interface ServiceDefinition {
     id: string;
     name: string;
+    nameZh?: string;
     group?: string;
     description?: string;
     tags?: string[]; // For flexible filtering (e.g., "java", "critical")
