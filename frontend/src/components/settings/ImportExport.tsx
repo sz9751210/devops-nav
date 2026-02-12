@@ -105,7 +105,8 @@ export const ImportExport: React.FC = () => {
                     value={yamlContent}
                     onChange={(e) => setYamlContent(e.target.value)}
                     placeholder={t('settings.import_export.editor_placeholder')}
-                    className="w-full h-[400px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-sm placeholder-[var(--foreground-muted)] opacity-50 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
+                    spellCheck={false}
+                    className="w-full h-[500px] px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded text-[var(--foreground)] font-mono text-xs leading-relaxed placeholder-[var(--foreground-muted)]/50 focus:outline-none focus:border-amber-500/50 resize-none transition-all shadow-inner"
                 />
                 {yamlContent && (
                     <button
