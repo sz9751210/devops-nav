@@ -4,6 +4,7 @@ import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ColumnDefinition, ServiceLink } from '../../types/schema';
 import { ExternalLink, Terminal, Globe, FileText, Database, Star, Activity, Settings, Eye, Link2, Info, Copy, Check, Hammer, Hash, User, MessageCircle, MoreVertical, CopyCheck, TerminalSquare } from 'lucide-react';
 import { clsx } from 'clsx';
+import { generateColorFromHash } from '../../utils/colors';
 
 export interface ServiceCardProps {
     service: ServiceDefinition;
@@ -136,8 +137,9 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
     return (
         <div
             className={clsx(
-                "group relative bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 transition-all duration-200 hover:border-amber-500/30",
-                isHovered && "shadow-lg shadow-black/20"
+                "group relative bg-[var(--surface)]/80 backdrop-blur-md border border-[var(--border)] rounded-lg p-4 transition-all duration-300",
+                "hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5 hover:-translate-y-0.5",
+                isHovered && "z-10"
             )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -271,7 +273,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, columns, curr
                 service.tags && service.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                         {service.tags.map(tag => (
-                            <span key={tag} className="px-1.5 py-[2px] text-xs font-mono rounded bg-[var(--surface-hover)] text-[var(--foreground-muted)] border border-[var(--border)]">
+                            <span key={tag} className={clsx("px-1.5 py-[2px] text-xs font-mono rounded border", generateColorFromHash(tag))}>
                                 #{tag}
                             </span>
                         ))}

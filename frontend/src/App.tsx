@@ -318,7 +318,7 @@ function App() {
         isDarkMode={isDarkMode}
         onThemeToggle={() => setIsDarkMode(!isDarkMode)}
       />
-      <main className="flex-1 overflow-auto relative">
+      <main className="flex-1 overflow-auto relative z-10">
         <AnnouncementBanner />
         <div className="max-w-7xl mx-auto px-6 py-4">
           {renderPage()}
@@ -327,6 +327,11 @@ function App() {
       <QuickSearch />
       <ToastContainer />
 
+      {/* Ambient Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen animate-pulse duration-[4000ms]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-amber-500/5 blur-[120px] mix-blend-screen animate-pulse duration-[5000ms]" />
+      </div>
 
       {isTopologyOpen && <Suspense fallback={null}><TopologyModal onClose={() => setIsTopologyOpen(false)} /></Suspense>}
 

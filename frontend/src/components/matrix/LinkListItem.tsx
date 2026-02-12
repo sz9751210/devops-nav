@@ -4,6 +4,7 @@ import type { ServiceDefinition, ServiceLink, ColumnDefinition } from '../../typ
 import { ExternalLink, Terminal, Globe, Activity, FileText, Settings, Eye, Database, Link2, Copy, Check } from 'lucide-react';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import { clsx } from 'clsx';
+import { generateColorFromHash } from '../../utils/colors';
 
 interface LinkListItemProps {
     service: ServiceDefinition;
@@ -25,25 +26,12 @@ const getIconComponent = (iconName?: string) => {
     return iconMap[iconName || ''] || ExternalLink;
 };
 
-const getServiceColor = (id: string) => {
-    const colors = [
-        { text: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-        { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-        { text: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-        { text: 'text-violet-500', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
-        { text: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
-        { text: 'text-cyan-500', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
-    ];
-    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colors[hash % colors.length];
-};
-
 export const LinkListItem: React.FC<LinkListItemProps> = ({ service, link, column }) => {
     const { t, i18n } = useTranslation();
     const { addRecentService } = useNavigationStore();
     const [copied, setCopied] = useState(false);
     const Icon = getIconComponent(column?.icon);
-    const color = getServiceColor(service.id);
+    const color = generateColorFromHash(service.id);
 
     const isZh = i18n.language.startsWith('zh');
     const displayName = (isZh && link.nameZh) ? link.nameZh : link.name;
@@ -86,7 +74,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({ service, link, colum
             </div>
 
             <div className="flex items-center gap-3 shrink-0">
-                <span className={clsx("text-xs font-mono px-2 py-0.5 rounded border", color.text, color.bg, color.border)}>
+                <span className={clsx("text-xs font-mono px-2 py-0.5 rounded border", color)}>
                     {service.id}
                 </span>
 

@@ -8,6 +8,7 @@ import {
     Copy, Check, Hammer, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { generateColorFromHash } from '../../utils/colors';
 
 interface ServiceDetailProps {
     service: ServiceDefinition;
@@ -85,7 +86,7 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
             <div className="flex items-center gap-4">
                 <button
                     onClick={onBack}
-                    className="p-2 rounded-full hover:bg-[var(--surface-hover)] text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-colors border border-transparent hover:border-[var(--border)]"
+                    className="p-2 rounded-full hover:bg-[var(--surface-hover)] text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-all border border-transparent hover:border-[var(--border)] active:scale-95"
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -133,7 +134,7 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
                                     <div className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider mb-2">{t('form.tags')}</div>
                                     <div className="flex flex-wrap gap-2">
                                         {service.tags.map(tag => (
-                                            <span key={tag} className="px-2 py-0.5 rounded text-xs font-mono bg-[var(--surface-hover)] text-[var(--foreground-muted)] border border-[var(--border)]">
+                                            <span key={tag} className={clsx("px-2 py-0.5 rounded text-xs font-mono border", generateColorFromHash(tag))}>
                                                 #{tag}
                                             </span>
                                         ))}
@@ -225,7 +226,7 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className={clsx(
-                                                                "group flex-1 flex items-center gap-3 p-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:border-amber-500/40 hover:bg-[var(--surface-hover)] transition-all",
+                                                                "group flex-1 flex items-center gap-3 p-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:border-amber-500/40 hover:bg-[var(--surface-hover)] transition-all active:scale-[0.99]",
                                                                 depth > 0 && !hasChildren && "ml-4 border-l-4 border-l-amber-500/20",
                                                                 depth > 0 && hasChildren && "border-l-4 border-l-amber-500/20"
                                                             )}
