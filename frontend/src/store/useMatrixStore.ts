@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { OpsNavigationConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig, ServiceLink } from '../types/schema';
+import type { OpsNavigationConfig, Environment, ColumnDefinition, ServiceDefinition, EnvGroup, EnvSpecificConfig, ServiceLink, Application } from '../types/schema';
 import { api } from '../lib/api';
 import jsyaml from 'js-yaml';
 
@@ -71,6 +71,11 @@ interface NavigationState {
     updateEnvGroup: (id: string, updates: Partial<EnvGroup>) => void;
     reorderEnvGroups: (newOrder: EnvGroup[]) => void;
     removeEnvGroup: (id: string) => void;
+
+    // Application CRUD
+    addApplication: (app: Application) => void;
+    updateApplication: (id: string, updates: Partial<Application>) => void;
+    removeApplication: (id: string) => void;
 
     // Link Usage Tracking
     trackLinkUsage: (serviceId: string, columnId: string) => void;
@@ -516,6 +521,33 @@ export const useNavigationStore = create<NavigationState>()(
         removeEnvGroup: (id) => {
             const { config } = get();
             set({ config: { ...config, envGroups: (config.envGroups || []).filter(g => g.id !== id) } });
+            debouncedSave(() => get().saveConfig());
+        },
+
+        // Application CRUD
+        addApplication: (app) => {
+            const { config } = get();
+            set({ config: { ...config, applications: [...(config.applications || []), app] } });
+            debouncedSave(() => get().saveConfig());
+        },
+        updateApplication: (id, updates) => {
+            const { config } = get();
+            set({
+                config: {
+                    ...config,
+                    applications: (config.applications || []).map(a => a.id === id ? { ...a, ...updates } : a)
+                }
+            });
+            debouncedSave(() => get().saveConfig());
+        },
+        removeApplication: (id) => {
+            const { config } = get();
+            set({
+                config: {
+                    ...config,
+                    applications: (config.applications || []).filter(a => a.id !== id)
+                }
+            });
             debouncedSave(() => get().saveConfig());
         },
 

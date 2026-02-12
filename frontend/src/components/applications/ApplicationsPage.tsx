@@ -9,7 +9,7 @@ import { ApplicationForm } from './ApplicationForm';
 import type { Application } from '../../types/schema';
 
 export const ApplicationsPage: React.FC = () => {
-    const { config, currentEnv } = useNavigationStore();
+    const { config, currentEnv, addApplication, updateApplication } = useNavigationStore();
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -62,24 +62,11 @@ export const ApplicationsPage: React.FC = () => {
 
     const handleSaveApplication = async (app: Application) => {
         try {
-            const updatedApps = [...applications];
-            const existingIndex = updatedApps.findIndex(a => a.id === app.id);
-
+            const existingIndex = applications.findIndex(a => a.id === app.id);
             if (existingIndex >= 0) {
-                updatedApps[existingIndex] = app;
+                updateApplication(app.id, app);
             } else {
-                updatedApps.push(app);
-            }
-
-            const newConfig = { ...config, applications: updatedApps };
-            const response = await fetch('/api/config', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newConfig)
-            });
-
-            if (response.ok) {
-                window.location.reload();
+                addApplication(app);
             }
         } catch (error) {
             console.error("Failed to save application", error);
