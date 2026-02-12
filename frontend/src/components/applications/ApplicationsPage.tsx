@@ -188,7 +188,7 @@ export const ApplicationsPage: React.FC = () => {
                                     <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--foreground-muted)]">
                                         <div className="flex items-center gap-1.5">
                                             <Box className="w-3.5 h-3.5" />
-                                            <span>{app.serviceIds?.length || 0} Services</span>
+                                            <span>{app.serviceIds?.length || 0} {t('app_detail.services', 'Services')}</span>
                                         </div>
                                         {app.tags && app.tags.length > 0 && (
                                             <div className="flex gap-1">

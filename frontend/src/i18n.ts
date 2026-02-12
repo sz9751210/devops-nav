@@ -185,8 +185,12 @@ const resources = {
                     "link_name_example": "Main Dashboard",
                     "url_example": "https://...",
                     "owner_placeholder": "Team or Individual",
-                    "environments_placeholder": "Select environments..."
+                    "environments_placeholder": "Select environments...",
+                    "app_name_example": "e.g. Payment Gateway",
+                    "tags_example": "comma, separated, tags",
+                    "description_app": "Brief description of this application..."
                 },
+                "show_selected_only": "Show Selected",
                 "owner": "Owner",
                 "associated_services": "Associated Services",
                 "search_services_to_link": "Search services to link...",
@@ -404,8 +408,12 @@ const resources = {
                     "link_name_example": "例如: 主儀表板",
                     "url_example": "https://...",
                     "owner_placeholder": "團隊或個人名稱",
-                    "environments_placeholder": "選擇環境..."
+                    "environments_placeholder": "選擇環境...",
+                    "app_name_example": "例如: Payment Gateway",
+                    "tags_example": "標籤 (以逗號分隔)",
+                    "description_app": "請輸入應用程式的簡短描述..."
                 },
+                "show_selected_only": "只顯示已選項目",
                 "owner": "負責人 (Owner)",
                 "associated_services": "關聯服務",
                 "search_services_to_link": "搜尋欲關聯的服務...",

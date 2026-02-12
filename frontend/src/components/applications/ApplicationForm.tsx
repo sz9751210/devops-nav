@@ -33,6 +33,12 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
 
     const availableServices = config.services || [];
 
+    const existingGroups = useMemo(() => {
+        const apps = config.applications || [];
+        const groups = new Set(apps.map(a => a.group).filter((g): g is string => !!g));
+        return Array.from(groups).sort();
+    }, [config.applications]);
+
     const filteredServices = useMemo(() => {
         const selectedEnvs = formData.environments || [];
         const hasEnvFilter = selectedEnvs.length > 0 && !showSelectedOnly;
@@ -204,7 +210,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     className="w-full h-9 px-3 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
-                                    placeholder="e.g. Payment Gateway"
+                                    placeholder={t('form.placeholders.app_name_example', 'e.g. Payment Gateway')}
                                     autoFocus
                                 />
                             </div>
@@ -221,7 +227,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
                                     list="existing-groups"
                                 />
                                 <datalist id="existing-groups">
-                                    {/* Ideally populate from existing groups */}
+                                    {existingGroups.map(group => (
+                                        <option key={group} value={group} />
+                                    ))}
                                 </datalist>
                             </div>
                         </div>
@@ -234,7 +242,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
                                 value={formData.description || ''}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 className="w-full h-20 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none resize-none"
-                                placeholder="Brief description of this application..."
+                                placeholder={t('form.placeholders.description_app', 'Brief description of this application...')}
                             />
                         </div>
 
@@ -270,7 +278,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialData, o
                                     value={formData.tags?.join(', ') || ''}
                                     onChange={e => setFormData({ ...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
                                     className="w-full h-9 px-3 bg-[var(--background)] border border-[var(--border)] rounded text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
-                                    placeholder="comma, separated, tags"
+                                    placeholder={t('form.placeholders.tags_example', 'comma, separated, tags')}
                                 />
                             </div>
                         </div>
