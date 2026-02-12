@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-nav-ingress
+  namespace: devops-nav
+  annotations:
+    # Example annotations for Nginx ingress controller.
+    # Adjust based on your actual Ingress Controller (e.g., GKE Ingress, AWS ALB, Nginx).
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # or "gce" depending on environment
+  rules:
+    - host: devops-nav.local # Change this to your actual domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: devops-nav-frontend-service
+                port:
+                  number: 80

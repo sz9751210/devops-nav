@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devops-nav-frontend-config
+  namespace: devops-nav
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+
+        # Enable gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_proxied expired no-cache no-store private auth;
+        gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml application/json;
+
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
+
+            # Cache static assets
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+            }
+        }
+
+        location /api {
+            # Proxy to the backend service
+            proxy_pass http://devops-nav-backend-service:3001;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        # Health check endpoint
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-nav-frontend
+  namespace: devops-nav
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-nav-frontend
+  template:
+    metadata:
+      labels:
+        app: devops-nav-frontend
+    spec:
+      containers:
+        - name: devops-nav-frontend
+          image: devops-nav-frontend:0.1
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: devops-nav-frontend-config
+      imagePullSecrets:
+        - name: nexus-docker-registry-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-nav-frontend-service
+  namespace: devops-nav
+spec:
+  selector:
+    app: devops-nav-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
+  type: ClusterIP

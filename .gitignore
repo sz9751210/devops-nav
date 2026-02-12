@@ -112,5 +112,5 @@ dist
 # Docker
 docker-compose.override.yml
 build.sh
-k8s/*
+k8s-tmp/*
 .env
