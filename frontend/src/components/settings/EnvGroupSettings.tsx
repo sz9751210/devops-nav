@@ -1,9 +1,91 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
-import { Plus, Trash2, FolderTree, Pencil, X, Check } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, Plus, Trash2, FolderTree, Pencil, X, Check } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { EnvGroup } from '../../types/schema';
+
+interface SortableEnvGroupItemProps {
+    group: EnvGroup;
+    index: number;
+    onEdit: () => void;
+    onRemove: () => void;
+}
+
+const SortableEnvGroupItem = ({ group, onEdit, onRemove }: Omit<SortableEnvGroupItemProps, 'index'>) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: group.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : 1,
+        opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={clsx(
+                "flex items-center justify-between px-4 py-3 rounded border transition-all group",
+                "bg-[var(--surface)] border-[var(--border)] hover:border-amber-500/30 hover:bg-[var(--surface-hover)] hover:shadow-md mb-2"
+            )}
+        >
+            <div className="flex items-center gap-3 overflow-hidden">
+                <div
+                    {...attributes}
+                    {...listeners}
+                    className="cursor-grab active:cursor-grabbing text-[var(--foreground-muted)] hover:text-[var(--foreground)] shrink-0"
+                >
+                    <GripVertical className="w-5 h-5" />
+                </div>
+                <span className="text-xl shrink-0 grayscale group-hover:grayscale-0 transition-all">{group.icon || '📦'}</span>
+                <div className="min-w-0">
+                    <div className="font-bold text-[var(--foreground)] group-hover:text-amber-500 transition-colors text-sm truncate">
+                        {group.name}
+                    </div>
+                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5 font-mono uppercase tracking-tighter truncate">
+                        ID: <span className="text-amber-500/70">{group.id}</span>
+                        {group.pattern && (
+                            <span className="ml-3">
+                                PTRN: <span className="text-emerald-500/70">{group.pattern}</span>
+                            </span>
+                        )}
+                        {group.environments && group.environments.length > 0 && (
+                            <span className="ml-3">
+                                MANUAL: <span className="text-blue-500/70">{group.environments.length}</span>
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                    onClick={onEdit}
+                    className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
+                >
+                    <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button
+                    onClick={onRemove}
+                    className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                >
+                    <Trash2 className="w-3.5 h-3.5" />
+                </button>
+            </div>
+        </div>
+    );
+};
 
 export const EnvGroupSettings: React.FC = () => {
     const { t } = useTranslation();
@@ -79,6 +161,33 @@ export const EnvGroupSettings: React.FC = () => {
             return new Set<string>();
         }
     }, [newGroup.pattern, config.environments]);
+
+
+    // DnD Sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (active.id !== over?.id) {
+            const oldIndex = envGroups.findIndex((item) => item.id === active.id);
+            const newIndex = envGroups.findIndex((item) => item.id === over?.id);
+
+            if (oldIndex !== -1 && newIndex !== -1) {
+                const newGroups = arrayMove(envGroups, oldIndex, newIndex);
+                useNavigationStore.getState().reorderEnvGroups(newGroups);
+            }
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -204,82 +313,31 @@ export const EnvGroupSettings: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-                {envGroups.length === 0 ? (
-                    <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
-                        {t('settings.env_groups.no_groups')}
-                    </div>
-                ) : (
-                    envGroups.map((group, index) => (
-                        <div
-                            key={group.id}
-                            draggable
-                            onDragStart={(e) => {
-                                e.dataTransfer.setData('text/plain', index.toString());
-                                e.dataTransfer.effectAllowed = 'move';
-                                // Add a ghost class or style if needed
-                                // (e.target as HTMLElement).classList.add('opacity-50'); 
-                            }}
-                            onDragOver={(e) => {
-                                e.preventDefault(); // Necessary to allow dropping
-                                e.dataTransfer.dropEffect = 'move';
-                            }}
-                            onDrop={(e) => {
-                                e.preventDefault();
-                                const sourceIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
-                                const targetIndex = index;
-
-                                if (sourceIndex === targetIndex) return;
-
-                                const newGroups = [...envGroups];
-                                const [movedGroup] = newGroups.splice(sourceIndex, 1);
-                                newGroups.splice(targetIndex, 0, movedGroup);
-
-                                // Call store action to update order
-                                useNavigationStore.getState().reorderEnvGroups(newGroups);
-                            }}
-                            className={clsx(
-                                "flex items-center justify-between px-4 py-3 rounded border transition-all group cursor-move",
-                                "bg-[var(--surface)] border-[var(--border)] hover:border-amber-500/30 hover:bg-[var(--surface-hover)] hover:shadow-md"
-                            )}
-                        >
-                            <div className="flex items-center gap-3 pointer-events-none">
-                                <span className="text-xl shrink-0 grayscale group-hover:grayscale-0 transition-all">{group.icon || '📦'}</span>
-                                <div>
-                                    <div className="font-bold text-[var(--foreground)] group-hover:text-amber-500 transition-colors text-sm">
-                                        {group.name}
-                                    </div>
-                                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5 font-mono uppercase tracking-tighter">
-                                        ID: <span className="text-amber-500/70">{group.id}</span>
-                                        {group.pattern && (
-                                            <span className="ml-3">
-                                                PTRN: <span className="text-emerald-500/70">{group.pattern}</span>
-                                            </span>
-                                        )}
-                                        {group.environments && group.environments.length > 0 && (
-                                            <span className="ml-3">
-                                                MANUAL: <span className="text-blue-500/70">{group.environments.length}</span>
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext
+                        items={envGroups.map(g => g.id)}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        {envGroups.length === 0 ? (
+                            <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono">
+                                {t('settings.env_groups.no_groups')}
                             </div>
-                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
-                                <button
-                                    onClick={() => handleEdit(group)}
-                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
-                                >
-                                    <Pencil className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                    onClick={() => removeEnvGroup(group.id)}
-                                    className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
-                                >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+                        ) : (
+                            envGroups.map((group) => (
+                                <SortableEnvGroupItem
+                                    key={group.id}
+                                    group={group}
+                                    onEdit={() => handleEdit(group)}
+                                    onRemove={() => removeEnvGroup(group.id)}
+                                />
+                            ))
+                        )}
+                    </SortableContext>
+                </DndContext>
             </div>
 
 

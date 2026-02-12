@@ -2,14 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '../../store/useMatrixStore';
 import type { ServiceDefinition, ServiceLink } from '../../types/schema';
-import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork } from 'lucide-react';
+import { Plus, Trash2, Package, Pencil, X, Check, Search, ChevronDown, ChevronRight, Link2, GitFork, LayoutGrid, List, GripVertical } from 'lucide-react';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export const ServiceSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink } = useNavigationStore();
+    const { config, addService, updateService, removeService, addServiceLink, updateServiceLink, removeServiceLink, reorderServices } = useNavigationStore();
     const [searchQuery, setSearchQuery] = useState('');
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [expandedService, setExpandedService] = useState<string | null>(null);
@@ -94,7 +98,488 @@ export const ServiceSettings: React.FC = () => {
         return config.services.filter(s => s.parentId === parentId);
     };
 
-    // Service form handlers
+    // --- Drag and Drop Logic ---
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (active.id !== over?.id) {
+            const oldIndex = config.services.findIndex((item) => item.id === active.id);
+            const newIndex = config.services.findIndex((item) => item.id === over?.id);
+
+            if (oldIndex !== -1 && newIndex !== -1) {
+                reorderServices(arrayMove(config.services, oldIndex, newIndex));
+            }
+        }
+    };
+
+    // Disable DND when filters are active to avoid logical complexity
+    const isDndEnabled = !searchQuery && !selectedGroup && selectedTags.length === 0;
+
+    // --- Sortable Item Component ---
+    const SortableServiceItem = ({ service, viewMode }: { service: ServiceDefinition, viewMode: 'list' | 'grid' }) => {
+        const {
+            attributes,
+            listeners,
+            setNodeRef,
+            transform,
+            transition,
+            isDragging
+        } = useSortable({ id: service.id, disabled: !isDndEnabled });
+
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition,
+            zIndex: isDragging ? 10 : 1,
+            opacity: isDragging ? 0.5 : 1,
+        };
+
+        const childServices = getChildServices(service.id);
+        const linkCount = service.links?.length || 0;
+        const childCount = childServices.length;
+        const isExpanded = expandedService === service.id;
+
+        // Common Action Buttons
+        const renderActions = () => (
+            <div className="flex items-center gap-1">
+                <button
+                    onClick={(e) => { e.stopPropagation(); setEditingServiceId(service.id); setServiceForm(service); setIsAddingService(true); }}
+                    className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
+                >
+                    <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); removeService(service.id); }}
+                    className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
+                >
+                    <Trash2 className="w-3.5 h-3.5" />
+                </button>
+            </div>
+        );
+
+
+        if (viewMode === 'grid') {
+            const initial = service.name.charAt(0).toUpperCase();
+            return (
+                <div
+                    ref={setNodeRef}
+                    style={style}
+                    className="group relative bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all flex flex-col h-full"
+                >
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                            {/* Drag Handle for Grid - Make the Initial Icon the handle? Or separate icon? */}
+                            {isDndEnabled && (
+                                <div
+                                    {...attributes}
+                                    {...listeners}
+                                    className="absolute top-2 right-2 p-1.5 text-[var(--foreground-muted)] opacity-20 group-hover:opacity-100 cursor-grab active:cursor-grabbing hover:bg-[var(--surface-hover)] rounded"
+                                >
+                                    <GripVertical className="w-4 h-4" />
+                                </div>
+                            )}
+
+                            <div className="w-10 h-10 rounded bg-[var(--surface-hover)] flex items-center justify-center border border-[var(--border)] text-[var(--foreground-muted)] font-bold text-lg group-hover:text-amber-500 group-hover:border-amber-500/30 transition-colors shrink-0">
+                                {initial}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <h3 className="font-semibold text-[var(--foreground)] text-base leading-tight truncate pr-6 group-hover:text-amber-500 transition-colors">
+                                    {service.name}
+                                </h3>
+                                <div className="text-xs text-[var(--foreground-muted)] font-mono mt-0.5 opacity-70">
+                                    {service.id}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {service.description && (
+                        <p className="text-sm text-[var(--foreground-muted)] line-clamp-2 mb-4 flex-1">
+                            {service.description}
+                        </p>
+                    )}
+
+                    <div className="flex items-center justify-between pt-4 border-t border-[var(--border)] mt-auto">
+                        <div className="flex items-center gap-2">
+                            {/* Actions for Grid */}
+                            <div className="flex items-center gap-1 mr-2 border-r border-[var(--border)] pr-2">
+                                <button
+                                    onClick={() => { setEditingServiceId(service.id); setServiceForm(service); setIsAddingService(true); }}
+                                    className="p-1 text-[var(--foreground-muted)] hover:text-amber-500 rounded transition-colors"
+                                >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                    onClick={() => removeService(service.id)}
+                                    className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+
+                            {service.group && (
+                                <div className="px-2 py-0.5 rounded bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--foreground-muted)] text-xs font-medium truncate max-w-[80px]">
+                                    {service.group}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] font-mono shrink-0">
+                            {linkCount > 0 && (
+                                <div className="flex items-center gap-1" title={`${linkCount} Links`}>
+                                    <Link2 className="w-3 h-3" />
+                                    {linkCount}
+                                </div>
+                            )}
+                            {childCount > 0 && (
+                                <div className="flex items-center gap-1 text-blue-400" title={`${childCount} Children`}>
+                                    <GitFork className="w-3 h-3" />
+                                    {childCount}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div ref={setNodeRef} style={style} className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+                {/* Service Header */}
+                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)] transition-colors">
+                    {isDndEnabled && (
+                        <div
+                            {...attributes}
+                            {...listeners}
+                            className="mr-3 cursor-grab active:cursor-grabbing text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                        >
+                            <GripVertical className="w-5 h-5" />
+                        </div>
+                    )}
+                    <button
+                        onClick={() => setExpandedService(isExpanded ? null : service.id)}
+                        className="flex-1 flex items-center gap-3 text-left min-w-0"
+                    >
+                        {isExpanded ? <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)]" /> : <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)]" />}
+                        <div className="flex items-center gap-3 min-w-0">
+                            <span className="font-bold text-[var(--foreground)] text-sm tracking-tight truncate">{service.name}</span>
+
+                            <div className="flex gap-2 shrink-0">
+                                {linkCount > 0 && (
+                                    <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase border border-[var(--border)] px-1.5 rounded hidden sm:inline-block">{linkCount} Links</span>
+                                )}
+                                {childCount > 0 && (
+                                    <span className="text-xs text-blue-400/80 font-mono uppercase border border-blue-500/20 bg-blue-500/5 px-1.5 rounded hidden sm:inline-block">{childCount} Children</span>
+                                )}
+                            </div>
+
+                            {service.group && (
+                                <span className="text-xs text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase truncate max-w-[100px] hidden sm:inline-block">
+                                    {service.group}
+                                </span>
+                            )}
+                        </div>
+                    </button>
+                    {renderActions()}
+                </div>
+
+                {/* Expanded: Links & Children (No Dragging for inner content yet) */}
+                {isExpanded && (
+                    <div className="border-t border-[var(--border)] p-4 bg-[var(--background)] space-y-6 cursor-default">
+                        {/* Child Services Section */}
+                        <div className="space-y-3">
+                            {childServices.length > 0 && (
+                                <div className="space-y-2">
+                                    <h4 className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider flex items-center gap-2 mb-3">
+                                        <GitFork className="w-3.5 h-3.5" />
+                                        Child Services
+                                    </h4>
+
+                                    <div className="space-y-1 pl-1">
+                                        {childServices.map(child => (
+                                            <div key={child.id} className="group flex items-center justify-between py-2 px-3 hover:bg-[var(--surface-hover)] rounded-md border border-transparent hover:border-[var(--border)] transition-all">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50"></div>
+                                                    <div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-bold text-sm text-[var(--foreground)]">{child.name}</span>
+                                                            {child.group && (
+                                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground-muted)] uppercase tracking-wider opacity-70">
+                                                                    {child.group}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-xs text-[var(--foreground-muted)] font-mono opacity-60 mt-0.5 flex items-center gap-2">
+                                                            <span>{child.id}</span>
+                                                            {child.description && (
+                                                                <>
+                                                                    <span className="w-0.5 h-0.5 bg-[var(--foreground-muted)] rounded-full"></span>
+                                                                    <span className="truncate max-w-[200px]">{child.description}</span>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => { setEditingServiceId(child.id); setServiceForm(child); setAddingChildTo(service.id); }}
+                                                        className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-500 hover:bg-amber-500/10 rounded transition-colors"
+                                                        title={t('actions.edit')}
+                                                    >
+                                                        <Pencil className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => removeService(child.id)}
+                                                        className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                                                        title={t('actions.delete')}
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="h-px bg-[var(--border)] w-full opacity-50"></div>
+
+                        {/* Links Section */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider flex items-center gap-2">
+                                <Link2 className="w-3.5 h-3.5" />
+                                Resource Links
+                            </h4>
+
+                            {/* Add Link Button */}
+                            {isAddingLink !== service.id && !editingLinkId && (
+                                <button
+                                    onClick={() => { setIsAddingLink(service.id); setLinkForm({}); setAddingChildLinkTo(null); }}
+                                    className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-[var(--foreground-muted)] hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
+                                >
+                                    <Plus className="w-3 h-3" />
+                                    {t('actions.add_resource_link')}
+                                </button>
+                            )}
+
+                            {/* Add/Edit Link Form */}
+                            {(isAddingLink === service.id || editingLinkId) && (
+                                <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono relative">
+                                    {addingChildLinkTo && (
+                                        <div className="mb-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded">
+                                            <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1 mb-1">
+                                                <GitFork className="w-3 h-3" />
+                                                {editingLinkId ? "Editing Child of:" : "Adding Child Link To:"}
+                                            </div>
+                                            {(() => {
+                                                const parentLink = service.links?.find(l => l.id === addingChildLinkTo);
+                                                if (parentLink) {
+                                                    return (
+                                                        <div className="flex flex-col gap-0.5 ml-4">
+                                                            <span className="text-sm font-bold text-[var(--foreground)]">{parentLink.name}</span>
+                                                            <span className="text-xs text-[var(--foreground-muted)] truncate">{parentLink.url}</span>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })()}
+                                        </div>
+                                    )}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div className={addingChildLinkTo ? "md:col-span-3" : ""}>
+                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
+                                            <input
+                                                type="text"
+                                                value={linkForm.name || ''}
+                                                onChange={(e) => {
+                                                    const name = e.target.value;
+                                                    setLinkForm(prev => ({
+                                                        ...prev,
+                                                        name,
+                                                        id: editingLinkId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+                                                    }));
+                                                }}
+                                                placeholder={t('form.placeholders.link_name_example')}
+                                                className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
+                                                autoFocus
+                                            />
+                                        </div>
+                                        {!addingChildLinkTo && (
+                                            <div>
+                                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
+                                                <select
+                                                    value={linkForm.columnId || ''}
+                                                    onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
+                                                    className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
+                                                >
+                                                    <option value="">{t('settings.services.select_column')}</option>
+                                                    {config.columns.map((c) => (
+                                                        <option key={c.id} value={c.id}>{c.title}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
+                                        <input
+                                            type="text"
+                                            value={linkForm.url || ''}
+                                            onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
+                                            placeholder={t('form.placeholders.url_example')}
+                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50 font-mono"
+                                        />
+                                    </div>
+                                    {!addingChildLinkTo && (
+                                        <div>
+                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
+                                            <div className="flex flex-wrap gap-1">
+                                                {config.environments.map((env: string) => (
+                                                    <button
+                                                        key={env}
+                                                        onClick={() => {
+                                                            const current = linkForm.environments || [];
+                                                            const next = current.includes(env) ? current.filter(e => e !== env) : [...current, env];
+                                                            setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
+                                                        }}
+                                                        className={clsx(
+                                                            "px-2 py-1 text-xs rounded transition-all uppercase tracking-tighter border",
+                                                            linkForm.environments?.includes(env)
+                                                                ? "bg-amber-500 text-black border-amber-600"
+                                                                : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-[var(--foreground-muted)]"
+                                                        )}
+                                                    >
+                                                        {env}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-end gap-2 pt-1">
+                                        <button onClick={resetLinkForm} className="text-xs text-[var(--foreground-muted)] hover:text-[var(--foreground)] uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
+                                            {t('actions.cancel')}
+                                        </button>
+                                        <button
+                                            onClick={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
+                                            disabled={!linkForm.id || !linkForm.name || !linkForm.url || !linkForm.columnId}
+                                            className="bg-amber-500/90 hover:bg-amber-500 text-black text-xs font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
+                                        >
+                                            {editingLinkId ? t('actions.update') : t('actions.commit')}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            {/* Link List */}
+                            <div className="space-y-1">
+                                {(() => {
+                                    const renderLinks = (links: ServiceLink[], depth = 0, parentLink?: ServiceLink): React.ReactNode[] => {
+                                        return links.map((link) => {
+                                            const column = config.columns.find((c) => c.id === link.columnId);
+                                            const hasChildren = link.children && link.children.length > 0;
+
+                                            return (
+                                                <div key={link.id} className="space-y-1">
+                                                    <div
+                                                        className={clsx(
+                                                            "flex items-center justify-between px-3 py-2 bg-[var(--surface-hover)] border border-[var(--border)] rounded group/link transition-all",
+                                                            depth > 0 && "ml-6 border-l-4 border-l-[var(--border)]"
+                                                        )}
+                                                    >
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                {hasChildren ? (
+                                                                    <button
+                                                                        onClick={() => toggleLinkExpanded(link.id)}
+                                                                        className="p-0.5 rounded hover:bg-[var(--surface)] text-[var(--foreground-muted)] transition-colors"
+                                                                    >
+                                                                        {expandedLinks.has(link.id) ? (
+                                                                            <ChevronDown className="w-3 h-3" />
+                                                                        ) : (
+                                                                            <ChevronRight className="w-3 h-3" />
+                                                                        )}
+                                                                    </button>
+                                                                ) : (
+                                                                    <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
+                                                                )}
+                                                                <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{link.name}</span>
+                                                                {column && (
+                                                                    <span className="text-xs px-1.5 py-0.5 bg-[var(--surface)] text-[var(--foreground-muted)] rounded font-mono uppercase border border-[var(--border)]">
+                                                                        {column.title}
+                                                                    </span>
+                                                                )}
+                                                                {link.environments && link.environments.length > 0 && (
+                                                                    <div className="flex gap-1">
+                                                                        {link.environments.map((env: string) => (
+                                                                            <span key={env} className="text-xs px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
+                                                                                {env}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-xs text-[var(--foreground-muted)] font-mono truncate mt-0.5">{link.url}</div>
+                                                        </div>
+                                                        <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
+                                                            {depth === 0 && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setIsAddingLink(service.id);
+                                                                        setLinkForm({ columnId: link.columnId, environments: link.environments });
+                                                                        setAddingChildLinkTo(link.id);
+                                                                    }}
+                                                                    className="p-1 text-[var(--foreground-muted)] hover:text-blue-500 rounded"
+                                                                    title="Add Child Link"
+                                                                >
+                                                                    <GitFork className="w-3 h-3" />
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={() => startEditLink(link, parentLink?.id)}
+                                                                className="p-1 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded"
+                                                            >
+                                                                <Pencil className="w-3 h-3" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => removeServiceLink(service.id, link.id)}
+                                                                className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded"
+                                                            >
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Recursive Children */}
+                                                    {hasChildren && expandedLinks.has(link.id) && renderLinks(link.children!, depth + 1, link)}
+                                                </div>
+                                            );
+                                        });
+                                    };
+
+                                    return renderLinks(service.links || []);
+                                })()}
+                            </div>
+
+                            {linkCount === 0 && isAddingLink !== service.id && (
+                                <p className="text-center text-[var(--foreground-muted)] opacity-50 text-xs py-4 font-mono font-bold uppercase tracking-widest">
+                                    {t('settings.services.no_links_defined')}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    // Service form handles
     const resetServiceForm = () => {
         setServiceForm({});
         setIsAddingService(false);
@@ -182,15 +667,44 @@ export const ServiceSettings: React.FC = () => {
                         {t('settings.services.subtitle')}
                     </p>
                 </div>
-                {!isAddingService && !editingServiceId && (
-                    <button
-                        onClick={() => { setIsAddingService(true); setServiceForm({}); }}
-                        className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded font-bold transition-all flex items-center gap-2"
-                    >
-                        <Plus className="w-4 h-4" />
-                        {t('actions.add_new')}
-                    </button>
-                )}
+                <div className="flex items-center gap-3">
+                    <div className="flex bg-[var(--surface)] border border-[var(--border)] rounded-md p-0.5">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={clsx(
+                                "p-1.5 rounded-sm transition-all",
+                                viewMode === 'list'
+                                    ? "bg-[var(--surface-hover)] text-[var(--foreground)] shadow-sm"
+                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                            )}
+                            title={t('actions.view_list')}
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={clsx(
+                                "p-1.5 rounded-sm transition-all",
+                                viewMode === 'grid'
+                                    ? "bg-[var(--surface-hover)] text-[var(--foreground)] shadow-sm"
+                                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                            )}
+                            title={t('actions.view_grid')}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    {!isAddingService && !editingServiceId && (
+                        <button
+                            onClick={() => { setIsAddingService(true); setServiceForm({}); }}
+                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded font-bold transition-all flex items-center gap-2"
+                        >
+                            <Plus className="w-4 h-4" />
+                            {t('actions.add_new')}
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Search & Filter Bar */}
@@ -341,355 +855,36 @@ export const ServiceSettings: React.FC = () => {
                 </div>
             )}
 
-            {/* Service List */}
-            <div className="space-y-2">
-                {filteredServices.length === 0 ? (
-                    <div className="text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
-                        {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
-                    </div>
-                ) : (
-                    filteredServices.map((service) => {
-                        const isExpanded = expandedService === service.id;
-                        const childServices = getChildServices(service.id);
-                        const linkCount = service.links?.length || 0;
-                        const childCount = childServices.length;
-
-                        return (
-                            <div key={service.id} className="rounded border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-                                {/* Service Header */}
-                                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-[var(--surface-hover)] transition-colors">
-                                    <button
-                                        onClick={() => setExpandedService(isExpanded ? null : service.id)}
-                                        className="flex-1 flex items-center gap-3 text-left"
-                                    >
-                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)]" /> : <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)]" />}
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-bold text-[var(--foreground)] text-sm tracking-tight">{service.name}</span>
-
-                                            <div className="flex gap-2">
-                                                {linkCount > 0 && (
-                                                    <span className="text-xs text-[var(--foreground-muted)] font-mono uppercase border border-[var(--border)] px-1.5 rounded">{linkCount} Links</span>
-                                                )}
-                                                {childCount > 0 && (
-                                                    <span className="text-xs text-blue-400/80 font-mono uppercase border border-blue-500/20 bg-blue-500/5 px-1.5 rounded">{childCount} Children</span>
-                                                )}
-                                            </div>
-
-                                            {service.group && (
-                                                <span className="text-xs text-amber-500/60 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 font-mono uppercase">
-                                                    {service.group}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </button>
-                                    <div className="flex items-center gap-1">
-                                        <button
-                                            onClick={() => { setEditingServiceId(service.id); setServiceForm(service); }}
-                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded transition-colors"
-                                        >
-                                            <Pencil className="w-3.5 h-3.5" />
-                                        </button>
-                                        <button
-                                            onClick={() => removeService(service.id)}
-                                            className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 rounded transition-colors"
-                                        >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Expanded: Links & Children */}
-                                {isExpanded && (
-                                    <div className="border-t border-[var(--border)] p-4 bg-[var(--background)] space-y-6">
-
-                                        {/* Child Services Section */}
-                                        <div className="space-y-3">
-                                            {childServices.length > 0 && (
-                                                <div className="space-y-2">
-                                                    <h4 className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider flex items-center gap-2 mb-3">
-                                                        <GitFork className="w-3.5 h-3.5" />
-                                                        Child Services
-                                                    </h4>
-
-                                                    <div className="space-y-1 pl-1">
-                                                        {childServices.map(child => (
-                                                            <div key={child.id} className="group flex items-center justify-between py-2 px-3 hover:bg-[var(--surface-hover)] rounded-md border border-transparent hover:border-[var(--border)] transition-all">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50"></div>
-                                                                    <div>
-                                                                        <div className="flex items-center gap-2">
-                                                                            <span className="font-bold text-sm text-[var(--foreground)]">{child.name}</span>
-                                                                            {child.group && (
-                                                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground-muted)] uppercase tracking-wider opacity-70">
-                                                                                    {child.group}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="text-xs text-[var(--foreground-muted)] font-mono opacity-60 mt-0.5 flex items-center gap-2">
-                                                                            <span>{child.id}</span>
-                                                                            {child.description && (
-                                                                                <>
-                                                                                    <span className="w-0.5 h-0.5 bg-[var(--foreground-muted)] rounded-full"></span>
-                                                                                    <span className="truncate max-w-[200px]">{child.description}</span>
-                                                                                </>
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                    <button
-                                                                        onClick={() => { setEditingServiceId(child.id); setServiceForm(child); setAddingChildTo(service.id); }}
-                                                                        className="p-1.5 text-[var(--foreground-muted)] hover:text-amber-500 hover:bg-amber-500/10 rounded transition-colors"
-                                                                        title={t('actions.edit')}
-                                                                    >
-                                                                        <Pencil className="w-3.5 h-3.5" />
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => removeService(child.id)}
-                                                                        className="p-1.5 text-[var(--foreground-muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
-                                                                        title={t('actions.delete')}
-                                                                    >
-                                                                        <Trash2 className="w-3.5 h-3.5" />
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="h-px bg-[var(--border)] w-full opacity-50"></div>
-
-                                        {/* Links Section */}
-                                        <div className="space-y-3">
-                                            <h4 className="text-xs font-bold text-[var(--foreground-muted)] uppercase tracking-wider flex items-center gap-2">
-                                                <Link2 className="w-3.5 h-3.5" />
-                                                Resource Links
-                                            </h4>
-
-                                            {/* Add Link Button */}
-                                            {isAddingLink !== service.id && !editingLinkId && (
-                                                <button
-                                                    onClick={() => { setIsAddingLink(service.id); setLinkForm({}); setAddingChildLinkTo(null); }}
-                                                    className="w-full py-2 border border-dashed border-[var(--border)] hover:border-amber-500/30 text-[var(--foreground-muted)] hover:text-amber-500 rounded text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all font-mono"
-                                                >
-                                                    <Plus className="w-3 h-3" />
-                                                    {t('actions.add_resource_link')}
-                                                </button>
-                                            )}
-
-                                            {/* Add/Edit Link Form */}
-                                            {(isAddingLink === service.id || editingLinkId) && (
-                                                <div className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded space-y-3 font-mono relative">
-                                                    {addingChildLinkTo && (
-                                                        <div className="mb-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded">
-                                                            <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1 mb-1">
-                                                                <GitFork className="w-3 h-3" />
-                                                                {editingLinkId ? "Editing Child of:" : "Adding Child Link To:"}
-                                                            </div>
-                                                            {(() => {
-                                                                const parentLink = service.links?.find(l => l.id === addingChildLinkTo);
-                                                                if (parentLink) {
-                                                                    return (
-                                                                        <div className="flex flex-col gap-0.5 ml-4">
-                                                                            <span className="text-sm font-bold text-[var(--foreground)]">{parentLink.name}</span>
-                                                                            <span className="text-xs text-[var(--foreground-muted)] truncate">{parentLink.url}</span>
-                                                                        </div>
-                                                                    );
-                                                                }
-                                                                return null;
-                                                            })()}
-                                                        </div>
-                                                    )}
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                        <div className={addingChildLinkTo ? "md:col-span-3" : ""}>
-                                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.label')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={linkForm.name || ''}
-                                                                onChange={(e) => {
-                                                                    const name = e.target.value;
-                                                                    setLinkForm(prev => ({
-                                                                        ...prev,
-                                                                        name,
-                                                                        id: editingLinkId ? prev.id : name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-                                                                    }));
-                                                                }}
-                                                                placeholder={t('form.placeholders.link_name_example')}
-                                                                className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50"
-                                                                autoFocus
-                                                            />
-                                                        </div>
-                                                        {!addingChildLinkTo && (
-                                                            <div>
-                                                                <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('app.columns')}</label>
-                                                                <select
-                                                                    value={linkForm.columnId || ''}
-                                                                    onChange={(e) => setLinkForm({ ...linkForm, columnId: e.target.value })}
-                                                                    className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] focus:outline-none focus:border-amber-500/50"
-                                                                >
-                                                                    <option value="">{t('settings.services.select_column')}</option>
-                                                                    {config.columns.map((c) => (
-                                                                        <option key={c.id} value={c.id}>{c.title}</option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-1">{t('form.url')}</label>
-                                                        <input
-                                                            type="text"
-                                                            value={linkForm.url || ''}
-                                                            onChange={(e) => setLinkForm({ ...linkForm, url: e.target.value })}
-                                                            placeholder={t('form.placeholders.url_example')}
-                                                            className="w-full px-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)] placeholder:opacity-50 focus:outline-none focus:border-amber-500/50 font-mono"
-                                                        />
-                                                    </div>
-                                                    {!addingChildLinkTo && (
-                                                        <div>
-                                                            <label className="block text-xs font-bold text-[var(--foreground-muted)] uppercase mb-2">{t('form.environments')}</label>
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {config.environments.map((env: string) => (
-                                                                    <button
-                                                                        key={env}
-                                                                        onClick={() => {
-                                                                            const current = linkForm.environments || [];
-                                                                            const next = current.includes(env) ? current.filter(e => e !== env) : [...current, env];
-                                                                            setLinkForm({ ...linkForm, environments: next.length ? next : undefined });
-                                                                        }}
-                                                                        className={clsx(
-                                                                            "px-2 py-1 text-xs rounded transition-all uppercase tracking-tighter border",
-                                                                            linkForm.environments?.includes(env)
-                                                                                ? "bg-amber-500 text-black border-amber-600"
-                                                                                : "bg-[var(--background)] text-[var(--foreground-muted)] border-[var(--border)] hover:border-[var(--foreground-muted)]"
-                                                                        )}
-                                                                    >
-                                                                        {env}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    <div className="flex justify-end gap-2 pt-1">
-                                                        <button onClick={resetLinkForm} className="text-xs text-[var(--foreground-muted)] hover:text-[var(--foreground)] uppercase px-2 py-1 font-bold tracking-widest transition-colors font-mono">
-                                                            {t('actions.cancel')}
-                                                        </button>
-                                                        <button
-                                                            onClick={() => editingLinkId ? handleUpdateLink(service.id) : handleAddLink(service.id)}
-                                                            disabled={!linkForm.id || !linkForm.name || !linkForm.url || !linkForm.columnId}
-                                                            className="bg-amber-500/90 hover:bg-amber-500 text-black text-xs font-bold uppercase tracking-widest px-3 py-1 rounded transition-all disabled:opacity-20 font-mono"
-                                                        >
-                                                            {editingLinkId ? t('actions.update') : t('actions.commit')}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {/* Link List */}
-                                            <div className="space-y-1">
-                                                {(() => {
-                                                    const renderLinks = (links: ServiceLink[], depth = 0, parentLink?: ServiceLink): React.ReactNode[] => {
-                                                        return links.map((link) => {
-                                                            const column = config.columns.find((c) => c.id === link.columnId);
-                                                            const hasChildren = link.children && link.children.length > 0;
-
-                                                            return (
-                                                                <div key={link.id} className="space-y-1">
-                                                                    <div
-                                                                        className={clsx(
-                                                                            "flex items-center justify-between px-3 py-2 bg-[var(--surface-hover)] border border-[var(--border)] rounded group/link transition-all",
-                                                                            depth > 0 && "ml-6 border-l-4 border-l-[var(--border)]"
-                                                                        )}
-                                                                    >
-                                                                        <div className="flex-1 min-w-0">
-                                                                            <div className="flex items-center gap-2">
-                                                                                {hasChildren ? (
-                                                                                    <button
-                                                                                        onClick={() => toggleLinkExpanded(link.id)}
-                                                                                        className="p-0.5 rounded hover:bg-[var(--surface)] text-[var(--foreground-muted)] transition-colors"
-                                                                                    >
-                                                                                        {expandedLinks.has(link.id) ? (
-                                                                                            <ChevronDown className="w-3 h-3" />
-                                                                                        ) : (
-                                                                                            <ChevronRight className="w-3 h-3" />
-                                                                                        )}
-                                                                                    </button>
-                                                                                ) : (
-                                                                                    <Link2 className="w-3 h-3 text-[var(--foreground-muted)]" />
-                                                                                )}
-                                                                                <span className="font-bold text-[var(--foreground)] text-xs tracking-tight">{link.name}</span>
-                                                                                {column && (
-                                                                                    <span className="text-xs px-1.5 py-0.5 bg-[var(--surface)] text-[var(--foreground-muted)] rounded font-mono uppercase border border-[var(--border)]">
-                                                                                        {column.title}
-                                                                                    </span>
-                                                                                )}
-                                                                                {link.environments && link.environments.length > 0 && (
-                                                                                    <div className="flex gap-1">
-                                                                                        {link.environments.map((env: string) => (
-                                                                                            <span key={env} className="text-xs px-1 py-0.5 bg-amber-500/5 text-amber-500/50 rounded font-mono uppercase tracking-tighter border border-amber-500/10">
-                                                                                                {env}
-                                                                                            </span>
-                                                                                        ))}
-                                                                                    </div>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="text-xs text-[var(--foreground-muted)] font-mono truncate mt-0.5">{link.url}</div>
-                                                                        </div>
-                                                                        <div className="flex gap-1 opacity-0 group-hover/link:opacity-100 transition-opacity">
-                                                                            {depth === 0 && (
-                                                                                <button
-                                                                                    onClick={() => {
-                                                                                        setIsAddingLink(service.id);
-                                                                                        setLinkForm({ columnId: link.columnId, environments: link.environments });
-                                                                                        setAddingChildLinkTo(link.id);
-                                                                                    }}
-                                                                                    className="p-1 text-[var(--foreground-muted)] hover:text-blue-500 rounded"
-                                                                                    title="Add Child Link"
-                                                                                >
-                                                                                    <GitFork className="w-3 h-3" />
-                                                                                </button>
-                                                                            )}
-                                                                            <button
-                                                                                onClick={() => startEditLink(link, parentLink?.id)}
-                                                                                className="p-1 text-[var(--foreground-muted)] hover:text-amber-600 dark:hover:text-amber-500 rounded"
-                                                                            >
-                                                                                <Pencil className="w-3 h-3" />
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => removeServiceLink(service.id, link.id)}
-                                                                                className="p-1 text-[var(--foreground-muted)] hover:text-red-500 rounded"
-                                                                            >
-                                                                                <Trash2 className="w-3 h-3" />
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    {/* Recursive Children */}
-                                                                    {hasChildren && expandedLinks.has(link.id) && renderLinks(link.children!, depth + 1, link)}
-                                                                </div>
-                                                            );
-                                                        });
-                                                    };
-
-                                                    return renderLinks(service.links || []);
-                                                })()}
-                                            </div>
-
-                                            {linkCount === 0 && isAddingLink !== service.id && (
-                                                <p className="text-center text-[var(--foreground-muted)] opacity-50 text-xs py-4 font-mono font-bold uppercase tracking-widest">
-                                                    {t('settings.services.no_links_defined')}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })
-                )}
-            </div >
+            {/* Service List / Grid */}
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <div className={clsx(
+                    "space-y-2",
+                    viewMode === 'grid' && "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 space-y-0"
+                )}>
+                    {filteredServices.length === 0 ? (
+                        <div className="col-span-full text-center py-10 text-[var(--foreground-muted)] opacity-50 border border-dashed border-[var(--border)] rounded bg-[var(--surface)] text-sm font-mono uppercase tracking-tighter">
+                            {searchQuery ? t('app.no_matches_found') : t('settings.services.no_services_defined')}
+                        </div>
+                    ) : (
+                        <SortableContext
+                            items={filteredServices.map(s => s.id)}
+                            strategy={rectSortingStrategy}
+                        >
+                            {filteredServices.map((service) => (
+                                <SortableServiceItem
+                                    key={service.id}
+                                    service={service}
+                                    viewMode={viewMode}
+                                />
+                            ))}
+                        </SortableContext>
+                    )}
+                </div >
+            </DndContext>
 
             <div className="h-4"></div>
         </div >

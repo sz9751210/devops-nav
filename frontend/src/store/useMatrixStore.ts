@@ -54,6 +54,9 @@ interface NavigationState {
     updateService: (id: string, updates: Partial<ServiceDefinition>) => void;
     removeService: (id: string) => void;
 
+    // Service Reordering
+    reorderServices: (newOrder: ServiceDefinition[]) => void;
+
     // Service Link CRUD
     addServiceLink: (serviceId: string, link: ServiceLink, parentLinkId?: string) => void;
     updateServiceLink: (serviceId: string, linkId: string, updates: Partial<ServiceLink>) => void;
@@ -329,6 +332,12 @@ export const useNavigationStore = create<NavigationState>()(
         removeService: (id) => {
             const { config } = get();
             set({ config: { ...config, services: config.services.filter(s => s.id !== id) } });
+            debouncedSave(() => get().saveConfig());
+        },
+
+        reorderServices: (newOrder) => {
+            const { config } = get();
+            set({ config: { ...config, services: newOrder } });
             debouncedSave(() => get().saveConfig());
         },
 
