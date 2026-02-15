@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Frontend (Nginx)
   ops-navigation:
@@ -8,6 +10,8 @@ services:
       - api
     environment:
       - API_URL=http://api:3001
+    networks:
+      - ops-net
 
   # Backend API
   api:
@@ -15,11 +19,14 @@ services:
     ports:
       - "3001:3001"
     environment:
+      # Connect to the mongo service using the container name
       - MONGODB_URI=mongodb://mongo:27017/opsbridge
       - PORT=3001
     depends_on:
       - mongo
     restart: unless-stopped
+    networks:
+      - ops-net
 
   # MongoDB
   mongo:
@@ -28,12 +35,18 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      # Mount the initialization script to simpler setup
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      # Mount the English initialization script
+      - ./init-mongo-en.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     environment:
       # This triggers the initialization script if the DB is empty
       - MONGO_INITDB_DATABASE=opsbridge
     restart: unless-stopped
+    networks:
+      - ops-net
 
 volumes:
   mongo_data:
+
+networks:
+  ops-net:
+    driver: bridge
